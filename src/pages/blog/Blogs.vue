@@ -23,7 +23,7 @@
 import {useQuasar} from 'quasar';
 import {ref} from "vue";
 import {api} from "boot/axios";
-import "../components/notifyTools"
+import "components/notifyTools"
 import {CommFail, CommSeccess, LoadingFail, LoadingNotify, LoadingSucceed} from "components/notifyTools";
 import BlogCard from "components/blog/BlogCard.vue";
 
@@ -44,7 +44,7 @@ function loadBlogs() {
     username = "sdadgz";
   }
 
-  api.get("/blog/blogs/" + username).then(res => {
+  api.get("/blog/" + username + "/blogs").then(res => {
     if (res.data.code == 200) {
       LoadingSucceed(loadNot);
       blogs.value = res.data.data;

@@ -1,16 +1,19 @@
-import { RouteRecordRaw } from 'vue-router';
+import {RouteRecordRaw} from 'vue-router';
 
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
-    children: [{ path: '', component: () => import('pages/MainBlogs.vue') }],
+    children: [{path: '', component: () => import('pages/blog/Blogs.vue')}],
   },
 
   {
-    path: '/blog/',
+    path: '/blog',
     component: () => import('layouts/MainLayout.vue'),
-    children: [{ path: '', component: () => import('pages/MainBlogs.vue') }],
+    children: [
+      {path: ':username/blogs/', component: () => import('pages/blog/Blogs.vue')},
+      {path: ':username/blog/:title/', component: () => import('pages/blog/Blog.vue')}
+    ],
   },
 
   // Always leave this as last one,

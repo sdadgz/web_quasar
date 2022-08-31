@@ -1,22 +1,29 @@
 <template>
   <div class="q-pa-md">
-    <q-card class="blog-card" v-intersection.once="cardIn">
+    <q-card class="blog-card" v-intersection.once="cardIn" @click="toBlog">
 
+      <!--  标题    -->
       <q-card-section>
         <div class="text-h6">{{ blog.title }}</div>
       </q-card-section>
 
+      <!--   图片   -->
       <q-card class="blog-img" @mouseover="onImg" @mouseout="outImg">
+
         <div class="img-to-big">
-            <q-img :ratio="16/9"
-                   v-if="blog.img != null"
-                   :src="blog.img.url"/>
-            <q-img :ratio="16/9" v-else :src="backgroundImg"/>
+          <q-img :ratio="16/9"
+                 v-if="blog.img != null"
+                 :src="blog.img.url"/>
+          <q-img :ratio="16/9" v-else :src="backgroundImg"/>
+          <div class="info-to-small" :class="{canSee: imgMagnify}">
+            {{ blog.detail }}
+          </div>
         </div>
+
+
       </q-card>
 
       <q-card-section>
-        <div class="text-body2">{{ blog.detail }}</div>
         <div class="text-h6">{{ blog.user.name }}</div>
         <div class="text-h6">{{ blog.createtime }}</div>
       </q-card-section>
@@ -25,14 +32,23 @@
 </template>
 
 <script setup lang="ts">
-// 父级传参
 import {ref} from "vue";
+import {useRouter} from "vue-router";
 
+const $router = useRouter();
+
+// 父级传参
 const props = defineProps(['blog', 'backgroundImg']);
 let imgMagnify = ref(false);
 
+function toBlog() {
+  const username = props.blog.user.name;
+  const title = props.blog.title;
+  $router.push("/blog/" + username + "/blog/" + title + "/");
+}
+
 function cardIn(entry: any) {
-  console.log(entry.isIntersecting);
+  console.log("这里差个动画没做BlogCard.vue::051");
 }
 
 // 鼠标放在图片上
@@ -57,35 +73,31 @@ function outImg() {
   border-radius: 10px;
 }
 
-@keyframes imageAnimation {
-  0% {
-    transform: scale(1);
-  }
-  100% {
-    transform: scale(1.2);
-  }
-}
-
 .img-to-big {
   transition: .35s ease-in-out;
 }
 
-.img-to-big:hover{
+.img-to-big:hover {
   transform: scale(1.2);
 }
 
-.img {
-  animation-name: imageAnimation;
-  animation-duration: .35s;
-  animation-timing-function: ease-in-out;
-  animation-fill-mode: both;
+.info-to-small {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  text-align: center;
+  transform: scale(5);
+  visibility: hidden;
+  transition: .35s ease-in-out;
 }
 
-.imgR {
-  animation-name: imageAnimation;
-  animation-duration: .35s;
-  animation-direction: reverse;
-  animation-timing-function: ease-in-out;
-  animation-fill-mode: both;
+.info-to-small:hover {
+  transform: scale(.8);
+}
+
+.canSee {
+  visibility: visible;
 }
 </style>

@@ -8,7 +8,7 @@
     <q-footer reveal style="background-color: unset">
       <div class="row justify-center">
         <div class="col-auto justify-center">
-          <a style="color: #1D1D1D;text-decoration: none" href="https://beian.miit.gov.cn/">京ICP备2022019075号-1</a>
+          <a style="color: #1D1D1D;text-decoration: none" href="https://beian.miit.gov.cn/" target="_blank">京ICP备2022019075号-1</a>
         </div>
       </div>
     </q-footer>
