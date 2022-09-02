@@ -19,7 +19,7 @@ import {ref} from "vue";
 
 const props = defineProps(['index', 'textArr', 'colm']);
 
-let type = ref();
+const type = ref();
 
 start();
 
@@ -35,7 +35,6 @@ function spaseF(t) {
     add++;
     t = t.substring(1);
   }
-  console.log(add)
   return add;
 }
 

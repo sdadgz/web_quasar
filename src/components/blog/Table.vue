@@ -16,8 +16,8 @@ import {ref} from "vue";
 
 const props = defineProps(['index', 'textArr', 'colm']);
 
-let columns = ref([]);
-let dataRow = ref([]);
+const columns = ref([]);
+const dataRow = ref([]);
 
 start();
 

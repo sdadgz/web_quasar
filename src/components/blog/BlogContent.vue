@@ -115,12 +115,12 @@ import Table from "./Table.vue";
 import CodeField from "./CodeField.vue";
 
 const props = defineProps(['textArr']);
-let arrRef = ref([]);
+const arrRef = ref([]);
 // 表格维度
-let tableR = ref(0);
-let tableC = ref(0); // 与代码块列数
-let passIndex = ref(0);
-let blogIndexT = ref([]);
+const tableR = ref(0);
+const tableC = ref(0); // 与代码块列数
+const passIndex = ref(0);
+const blogIndexT = ref([]);
 
 // 监控
 watch(() => props.textArr, () => {

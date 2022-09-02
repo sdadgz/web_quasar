@@ -11,8 +11,16 @@ const routes: RouteRecordRaw[] = [
     path: '/blog',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      {path: ':username/blogs/', component: () => import('pages/blog/Blogs.vue')},
-      {path: ':username/blog/:title/', component: () => import('pages/blog/Blog.vue')}
+      {path: ':username/blogs', component: () => import('pages/blog/Blogs.vue')},
+      {path: ':username/blog/:title', component: () => import('pages/blog/Blog.vue')}
+    ],
+  },
+  {
+    path: '/user',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {path: 'login', component: () => import('pages/user/Login.vue')},
+      {path: ':username', component: () => import('pages/user/User.vue')},
     ],
   },
 

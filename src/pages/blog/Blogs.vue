@@ -1,7 +1,10 @@
 <template>
-  <q-img :src="backgroundImg" style="width: 101%;height: 101%;position: fixed;background-size: 100% 100%"/>
+  <q-img :src="backgroundImg" style="width: 101%;height: 101%;position: fixed;z-index: -1"/>
 
   <div class="q-pa-md q-gutter-sm">
+
+    <Header/>
+
     <q-card>
       <q-img
         :src="backgroundImg"
@@ -26,36 +29,42 @@ import {api} from "boot/axios";
 import "components/notifyTools"
 import {CommFail, CommSeccess, LoadingFail, LoadingNotify, LoadingSucceed} from "components/notifyTools";
 import BlogCard from "components/blog/BlogCard.vue";
+import {useRouter} from "vue-router";
+import Header from "components/public/Header.vue";
 
 const $q = useQuasar();
+const $router = useRouter();
 
 // banner
-let backgroundImg = ref("https://sdadgz.cn/download/img/1.png");
+const backgroundImg = ref("https://sdadgz.cn/download/img/1.png");
 
-let blogs = ref([]);
+const blogs = ref([]);
 
 loadBlogs();
 
 function loadBlogs() {
   const loadNot = LoadingNotify();
+  let username = $router.currentRoute.value.params.username;
 
-  let username = $q.cookies.get("username");
-  if (username == null) {
+  // 是不是访问根目录
+  if (username === undefined) {
     username = "sdadgz";
+    const fromLocal = localStorage.getItem("username");
+    if (fromLocal !== null) {
+      username = fromLocal;
+    }
   }
 
   api.get("/blog/" + username + "/blogs").then(res => {
-    if (res.data.code == 200) {
+    if (res.code === "200") {
       LoadingSucceed(loadNot);
-      blogs.value = res.data.data;
+      blogs.value = res.data;
     } else {
       LoadingFail(loadNot);
     }
   }).catch(() => {
     LoadingFail(loadNot);
   })
-
-
 }
 
 </script>

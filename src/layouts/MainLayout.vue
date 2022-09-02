@@ -24,14 +24,17 @@ import EssentialLink from 'components/EssentialLink.vue';
 </script>
 
 <style>
-body{
+
+body {
   overflow-y: auto;
 }
+
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
   background-color: #F5F5F5;
 }
+
 ::-webkit-scrollbar-thumb {
   border-radius: 10px;
   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);

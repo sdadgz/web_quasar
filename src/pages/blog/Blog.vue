@@ -1,5 +1,5 @@
 <template>
-  <q-img :src="backgroundImg" style="width: 101%;height: 101%;position: fixed"/>
+  <q-img :src="backgroundImg" style="width: 101%;height: 101%;position: fixed;z-index: -1"/>
 
   <div class="q-pa-md q-gutter-sm">
 
@@ -20,49 +20,84 @@
 
     <!--   博客    -->
     <q-card class="blog-container shadow-10">
+      <q-card-section style="font-size: 2em">
+        {{ blogTitle }}
+      </q-card-section>
+      <q-img :src="backgroundImg" style="margin-bottom: 66px"/>
       <BlogContent :textArr="textArr"/>
     </q-card>
+
+    <!--  右侧  -->
+    <q-avatar
+      class="a"
+      style="height: 46px;width: 46px;margin-right: 1%;position: fixed;right: 1%"
+      @click="gotoUser"
+      :icon="useIcon ? 'account_circle' : ''"
+    >
+      <img v-if="!useIcon" :src="avatar" alt="地址错误"/>
+    </q-avatar>
 
   </div>
 </template>
 
 <script setup>
 import {ref} from "vue";
-import {blogIndexDefault} from "components/models";
+import {blogIndexDefault} from "../../components/models";
 import LeftIndex from "../../components/blog/LeftIndex.vue";
 import BlogContent from "../../components/blog/BlogContent.vue";
 import {useRouter} from "vue-router";
-import {api} from "boot/axios";
-import {LoadingFail, LoadingNotify, LoadingSucceed} from "components/notifyTools";
+import {api} from "../../boot/axios";
+import {LoadingFail, LoadingNotify, LoadingSucceed} from "../../components/notifyTools";
+import Header from "../../components/public/Header.vue";
 
 // banner
-let backgroundImg = ref("https://sdadgz.cn/download/img/1.png");
+const backgroundImg = ref("https://sdadgz.cn/download/img/1.png");
 
 const $router = useRouter();
-let blogIndex = ref([]);
-let textArr = ref([]);
-let blogTextShow = ref(false);
+const blogIndex = ref([]);
+const textArr = ref([]);
+const blogTitle = ref();
+const blogTextShow = ref(false);
+const avatar = ref(localStorage.getItem("avatar"));
+const useIcon = ref(false);
+const username = ref(localStorage.getItem("username"));
 
-blogIndex.value = blogIndexDefault.value;
 getBlog();
+setUserInfo();
 
 function getBlog() {
   const not = LoadingNotify();
-  // 首位是空字符，用逻辑索引
-  let strArr = $router.currentRoute.value.path.split('/');
-  const username = strArr[2];
-  const title = strArr[4];
+  // 获取url参数
+  const username = $router.currentRoute.value.params.username;
+  const title = $router.currentRoute.value.params.title;
   api.get("/blog/" + username + "/blog/" + title).then(res => {
     LoadingSucceed(not);
-    const str = res.data.data.text;
+    const str = res.data.text;
     textArr.value = str.split("\n");
     blogIndex.value = produceIndex(textArr.value);
-    blogTextShow = true;
+    blogTitle.value = res.data.title;
+    blogTextShow.value = true;
   }).catch(() => {
     LoadingFail(not);
   })
 }
 
+// 设置用户信息
+function setUserInfo() {
+  if (avatar.value === null) {
+    useIcon.value = true;
+  }
+}
+
+// 去用户页
+function gotoUser() {
+  if (username.value === null) {
+    $router.push("/");
+  }
+  $router.push("/user/" + username.value);
+}
+
+// 左侧索引
 function produceIndex(textArr) {
   let res = [];
   for (let i = 0; i < textArr.length; i++) {

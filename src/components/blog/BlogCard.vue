@@ -39,12 +39,12 @@ const $router = useRouter();
 
 // 父级传参
 const props = defineProps(['blog', 'backgroundImg']);
-let imgMagnify = ref(false);
+const imgMagnify = ref(false);
 
 function toBlog() {
   const username = props.blog.user.name;
   const title = props.blog.title;
-  $router.push("/blog/" + username + "/blog/" + title + "/");
+  $router.push("/blog/" + username + "/blog/" + title);
 }
 
 function cardIn(entry: any) {

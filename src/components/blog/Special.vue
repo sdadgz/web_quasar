@@ -21,8 +21,8 @@ import {watch} from "vue";
 
 const props = defineProps(['text']);
 
-let textArr = ref([]);
-let statusArr = ref([]);
+const textArr = ref([]);
+const statusArr = ref([]);
 
 start();
 
