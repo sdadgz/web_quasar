@@ -29,7 +29,7 @@ function start() {
   let strArr = props.textArr[i].split("|");
   // 录入表头
   for (let j = 1; j < strArr.length - 1; j++) {
-    columns.value.push({field: strArr[j].replaceAll(" ", ''), label: strArr[j].replaceAll(" ", ''), align: "left"});
+    columns.value.push({"field": strArr[j].replaceAll(" ", ''), "label": strArr[j].replaceAll(" ", ''), align: "left"});
   }
   // 跳过分割线
   i += 2;
@@ -39,10 +39,13 @@ function start() {
     let obj = {};
     strArr = props.textArr[j].split("|");
     for (let k = 1; k < strArr.length - 1; k++) {
-      Object.assign(obj, {[`${columns.value[k - 1].field}`]: strArr[k]});
+      Object.assign(obj, {[columns.value[k - 1].field]: strArr[k]});
     }
     dataRow.value.push(obj);
   }
+
+  console.log(columns.value);
+  console.log(dataRow.value);
 }
 
 </script>

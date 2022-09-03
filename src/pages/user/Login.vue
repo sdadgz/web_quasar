@@ -9,8 +9,11 @@
           <q-card-section>{{ pageTitle }}</q-card-section>
 
           <q-card-section>
-            <q-input rounded v-model="usernameR" label="用户名" lazy-rules
-                     :rules="[(val) => (val && val.length > 0) || '输入值为空']"/>
+            <q-input
+              rounded
+              v-model="usernameR" label="用户名" :lazy-rules="true"
+              :rules="[(val) => (val.length > 0) || '输入值为空']"
+            />
           </q-card-section>
 
           <q-card-section>
@@ -25,7 +28,7 @@
             <q-card-section v-if="registerR">
               <q-input
                 rounded v-model="conformR" label="确认密码" lazy-rules
-                :rules="[(val) => (val === passwordR && val.length > 0) || '两次输入密码不一致']"
+                :rules="[(val) => ( val && val === passwordR && val.length > 0) || '两次输入密码不一致']"
                 type="password"
               />
             </q-card-section>
@@ -49,7 +52,7 @@
 import {ref} from "vue";
 import {useQuasar} from "quasar";
 import {api} from "../../boot/axios";
-import {CommSeccess} from "../../components/notifyTools";
+import {CommFail, CommSeccess} from "../../components/notifyTools";
 import {useRouter} from "vue-router";
 
 const $q = useQuasar();
@@ -74,6 +77,7 @@ function start() {
   }
 }
 
+// 登录和注册切换
 function switchLabel() {
   const temp = first.value;
   first.value = second.value;
@@ -82,6 +86,14 @@ function switchLabel() {
   conformR.value = "";
 }
 
+// 重置输入框
+function clearAll() {
+  usernameR.value = "";
+  passwordR.value = "";
+  conformR.value = "";
+}
+
+// 点击右侧 登录/注册 按钮
 function handlerLogin() {
   localStorage.clear();
   if (second.value === '登录' && loginRule()) { // 登录
@@ -95,18 +107,11 @@ function handlerLogin() {
       }
     })
   } else if (second.value === '注册' && regRule()) { // 注册
-    api.post("/user", {
-      "name": usernameR.value,
-      "password": passwordR.value
-    }).then(res => {
-      if (res.code === "200") {
-        setUserInfo(res.data);
-        CommSeccess("注册成功");
-      }
-    })
+    const a = register(usernameR.value);
   }
 }
 
+// 从本地获取用户基本信息
 function setUserInfo(data) {
   localStorage.setItem("token", data.token);
   localStorage.setItem("username", data.user.name);
@@ -122,6 +127,31 @@ function loginRule() {
 // 注册请求限制
 function regRule() {
   return (loginRule() && passwordR.value === conformR.value);
+}
+
+// 注册
+async function register(val) {
+  const nameE = await api.get("/user", {
+    params: {
+      "username": val
+    }
+  }).then(res => {
+    return res.data;
+  });
+  if (!nameE) {
+    const server = await api.post("/user", {
+      "name": usernameR.value,
+      "password": passwordR.value
+    }).then(res => {
+      if (res.code === "200") {
+        setUserInfo(res.data);
+        CommSeccess("注册成功");
+      }
+    });
+  } else {
+    clearAll();
+    CommFail("用户名已被占用");
+  }
 }
 
 </script>

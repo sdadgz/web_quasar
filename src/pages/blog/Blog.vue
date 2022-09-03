@@ -28,21 +28,25 @@
     </q-card>
 
     <!--  右侧  -->
-    <q-avatar
-      class="a"
-      style="height: 46px;width: 46px;margin-right: 1%;position: fixed;right: 1%"
-      @click="gotoUser"
-      :icon="useIcon ? 'account_circle' : ''"
-    >
-      <img v-if="!useIcon" :src="avatar" alt="地址错误"/>
-    </q-avatar>
+    <div class="row justify-end items-center" style="position: fixed;right: 2%;width: 50%">
+
+      <q-btn flat class="barBtn a col-auto" label="home" @click="goHome" icon="home"/>
+
+      <q-avatar
+        class="a col-auto"
+        style="height: 46px;width: 46px"
+        @click="gotoUser"
+        :icon="useIcon ? 'account_circle' : ''"
+      >
+        <img v-if="!useIcon" :src="avatar" alt="地址错误" style="position: absolute;top: 0"/>
+      </q-avatar>
+    </div>
 
   </div>
 </template>
 
 <script setup>
 import {ref} from "vue";
-import {blogIndexDefault} from "../../components/models";
 import LeftIndex from "../../components/blog/LeftIndex.vue";
 import BlogContent from "../../components/blog/BlogContent.vue";
 import {useRouter} from "vue-router";
@@ -93,8 +97,14 @@ function setUserInfo() {
 function gotoUser() {
   if (username.value === null) {
     $router.push("/");
+  } else {
+    $router.push("/user/" + username.value);
   }
-  $router.push("/user/" + username.value);
+}
+
+// 回到主页
+function goHome() {
+  $router.push("/");
 }
 
 // 左侧索引
@@ -147,6 +157,7 @@ function setChildren(res, deep, object) {
 </script>
 
 <style scoped>
+
 .blog-container {
   overflow: hidden;
   position: absolute;
@@ -156,4 +167,17 @@ function setChildren(res, deep, object) {
   background-color: rgba(255, 255, 255, .3);
 }
 
+.barBtn {
+  margin-right: 3%;
+  min-width: 100px;
+}
+
+.a {
+  transition: .35s ease-in-out;
+}
+
+.a:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #ec85a7;
+}
 </style>

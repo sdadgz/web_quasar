@@ -5,12 +5,13 @@
 
     <q-btn flat class="barBtn a" :label="username" @click="gotoUser"/>
 
-    <q-avatar class="a" style="height: 46px;width: 46px;margin-right: 1%" @click="gotoUser">
-      <img :src="avatar" alt="地址错误"/>
+
+    <q-avatar  class="a" style="height: 46px;width: 46px;margin-right: 1%" @click="gotoUser" :icon="useIcon ? 'account_circle' : ''">
+      <img v-if="!useIcon" :src="avatar" alt="地址错误" style="position: absolute;top: 0"/>
     </q-avatar>
 
     <q-btn class="barBtn a" flat dense label="上传" style="margin-right: 1%" @click="gotoUser" icon="upgrade"/>
-    <q-btn class="barBtn a" flat dense label="先扔点东西占位置" style="margin-right: 1%"/>
+    <q-btn class="barBtn a" flat dense label="退出登录" style="margin-right: 1%" @click="logout"/>
   </div>
 </template>
 
@@ -22,12 +23,18 @@ import {useRouter} from "vue-router";
 const $router = useRouter();
 
 const username = ref("未登录");
-const avatar = ref("https://sdadgz.cn/download/img/1.png");
+const avatar = ref();
+const useIcon = ref(true);
 
 start();
 
 function gotoUser() {
-  $router.push("/user/" + username.value);
+  if (username.value !== "未登录") {
+    $router.push("/user/" + username.value);
+  } else {
+    $router.push("/user/login");
+  }
+
 }
 
 function goHome() {
@@ -44,7 +51,13 @@ function start() {
   // 获取头像
   if (localAvatar !== null) {
     avatar.value = localAvatar;
+    useIcon.value = false;
   }
+}
+
+function logout() {
+  localStorage.clear();
+  $router.push("/user/login");
 }
 
 </script>
