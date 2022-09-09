@@ -12,26 +12,64 @@
       />
     </q-card>
 
+    <!--  博客表  -->
     <q-card style="background-color: rgba(255,255,255,.5)">
       <div style="padding: 10px">
-        <q-btn class="user-btn" icon="replay" color="primary" @click="refreshBtn" :loading="btnLoading" label="刷新"/>
-        <q-btn class="user-btn" icon="add_circle_outline" @click="addTable" color="secondary" label="新增"/>
-        <q-btn class="user-btn" icon="edit" color="purple" label="修改"/>
-        <q-btn class="user-btn" icon="delete_forever" color="red" label="删除"/>
+        <q-btn
+          class="user-btn"
+          icon="replay"
+          color="primary"
+          @click="refreshBtn"
+          :loading="btnLoading"
+          label="刷新"
+        />
+        <q-btn
+          class="user-btn"
+          icon="add_circle_outline"
+          @click="addBtn"
+          color="secondary"
+          label="新增"
+        />
+        <q-btn
+          class="user-btn"
+          icon="edit"
+          color="purple"
+          label="修改"
+          @click="updateBtn"
+        />
+        <q-btn
+          class="user-btn"
+          icon="delete_forever"
+          color="red"
+          label="删除"
+          @click="deleteBtn"
+        />
       </div>
 
       <q-table
-        style="background-color: rgba(236,133,167,0.28)"
+        style="background-color: rgba(236,133,167,0.28);"
         :columns="columns"
         :rows="rows"
-        row-key="title"
+        row-key="id"
         hide-pagination
         selection="multiple"
         v-model:selected="selected"
         :selected-rows-label="getSelectedString"
         :loading="tableLoading"
+        :pagination="pagination"
       >
       </q-table>
+
+      <!--   分页   -->
+      <div class="q-pa-lg flex flex-center">
+        <q-pagination
+          v-model="currentPage"
+          :max="pageCount"
+          direction-links
+          @click="loadBlogs"
+          style="min-width: 2em"
+        />
+      </div>
     </q-card>
 
     <!--  弹出对话窗  -->
@@ -39,6 +77,7 @@
       <q-card class="column" style="width: 460px;padding: 33px 50px">
         <q-scroll-area style="height: 90vh">
 
+          <!--    弹窗标题      -->
           <q-card-section class="row justify-between">
             <div class="text-h6">
               {{ dialogText }}
@@ -46,42 +85,65 @@
             <q-btn icon="close" flat round dense v-close-popup/>
           </q-card-section>
 
+          <!--    笔记标题      -->
           <q-card-section>
             <q-input
-              v-model="titleI"
+              v-model="titleInfo"
               :rules="[ val => val && val.length > 0 || '输入值为空']"
-              label="标题"
-            />
+              label="标题"/>
           </q-card-section>
 
+          <!--     笔记简介     -->
           <q-card-section>
             <q-input
-              v-model="detailI"
-              label="简介"
-            />
+              v-model="detailInfo"
+              label="简介"/>
           </q-card-section>
 
+          <!--    切换      -->
           <q-card-section>
-            <q-toggle v-model="imgUseId" label="使用已经上传的图片id代替上传图片"/>
+            <q-toggle v-model="imgUseId" label="使用已经上传的图片id代替上传图片"
+                      @click="imgUploader === null ? '' : imgUploader.reset();imgExists = false"/>
           </q-card-section>
 
+          <!--    图片id输入框或上传器      -->
           <q-slide-transition>
             <q-card-section v-if="imgUseId">
-              <q-input v-model="imgI" label="图片id" type="number" :rules="[ val => val && val.length > 0 || '输入值为空']"/>
+              <q-input v-model="imgInfo" label="图片id" :rules="[ val => val && val.length > 0 || '输入值为空']"/>
             </q-card-section>
 
             <q-card-section v-else>
-              <q-uploader label="上传图片" accept=".jpg, image/*"/>
+              <q-uploader
+                ref="imgUploader"
+                label="上传图片"
+                accept=".jpg, image/*"
+                :factory="imgUploadFn"
+                hide-upload-btn
+                @added="imgExists = true"
+                @removed="imgExists = false"
+                @finish="uploadDone = true"
+                @uploaded="imgUploadFinish"
+              />
             </q-card-section>
           </q-slide-transition>
 
-          <q-card-section>
-            <q-uploader label="上传笔记" accept=".md"/>
+          <q-card-section v-if="dialogText === '新增'">
+            <q-uploader
+              ref="mdUploader"
+              label="上传笔记"
+              accept=".md"
+              :factory="mdUploadFn"
+              hide-upload-btn
+              @added="mdExists = true"
+              @removed="mdExists = false"
+              @finish="uploadDone = true"
+              @uploaded="mdUploadFinish"
+            />
           </q-card-section>
 
           <q-card-section class="row justify-between">
-            <q-btn label="重置"/>
-            <q-btn label="提交" color="primary"/>
+            <q-btn @click="reset" label="重置"/>
+            <q-btn @click="submit" label="提交" color="primary"/>
           </q-card-section>
 
 
@@ -89,8 +151,144 @@
       </q-card>
     </q-dialog>
 
+    <!--  图片表  -->
+    <q-card style="background-color: rgba(255,255,255,.5)">
+      <div class="row" style="padding: 10px">
+        <q-btn
+          class="user-btn"
+          icon="replay"
+          color="primary"
+          @click="refreshBtnImg"
+          :loading="btnLoadingImg"
+          label="刷新"
+        />
+        <q-btn
+          class="user-btn"
+          icon="add_circle_outline"
+          @click="addBtnImg"
+          color="secondary"
+          label="新增"
+        />
+      </div>
+      <div class="row">
+        <div class="col" v-for="i in ImgsColumns">
+          <q-infinite-scroll v-if="i === 1" @load="onLoad" :offset="250" :disable="imgsDisable" :key="i">
+            <div v-for="img in imgs[i - 1]">
+              <div class="q-pa-xs">
+                <q-card @click="imgClick(img)" @contextmenu.prevent="openMenu($event,img)">
+                  <q-img :src="img.url"/>
+                </q-card>
+              </div>
+            </div>
+            <template v-slot:loading>
+              <div class="row justify-center q-my-md">
+                <q-spinner-dots color="primary" size="40px"/>
+              </div>
+            </template>
+          </q-infinite-scroll>
+          <!--     待优化，重复代码     -->
+          <div v-else>
+            <div v-for="img in imgs[i - 1]">
+              <div class="q-pa-xs">
+                <q-card @contextmenu.prevent="openMenu($event,img)">
+                  <q-img :src="img.url"/>
+                </q-card>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </q-card>
+
+    <!--  图片弹出对话框  -->
+    <q-dialog v-model="dialogShowImg">
+      <q-card class="column" style="width: 460px;padding: 33px 50px">
+          <q-card-section>
+            {{ dialogTextImg }}
+          </q-card-section>
+
+          <q-card-section>
+            <q-btn-dropdown color="primary" :label="field">
+              <q-list>
+                <q-item clickable v-close-popup @click="field = '全局背景图片'">
+                  <q-item-section>全局背景图片</q-item-section>
+                </q-item>
+
+                <q-item clickable v-close-popup @click="field = '博客主页'">
+                  <q-item-section>博客主页</q-item-section>
+                </q-item>
+
+                <q-item clickable v-close-popup @click="field = '博客内图片'">
+                  <q-item-section>
+                    <q-item-label>博客内图片</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-btn-dropdown>
+          </q-card-section>
+
+          <q-card-section>
+            <q-input v-model="field" label="图片应用领域"/>
+          </q-card-section>
+
+          <!--    图片id输入框或上传器      -->
+          <q-card-section v-if="dialogTextImg !== '新增'">
+            <q-input v-model="imgInfo" label="图片id" readonly/>
+          </q-card-section>
+
+          <q-card-section v-else>
+            <q-uploader
+              ref="imgUploader"
+              label="上传图片"
+              accept=".jpg, image/*"
+              :factory="imgUploadFn"
+              hide-upload-btn
+              @added="imgExists = true"
+              @removed="imgExists = false"
+              @finish="uploadDone = true"
+              @uploaded="imgUploadFinish"
+            />
+          </q-card-section>
+
+          <q-card-section class="row justify-between">
+            <q-btn @click="resetImg" label="重置"/>
+            <q-btn @click="submitImg" label="提交" color="primary"/>
+          </q-card-section>
+      </q-card>
+    </q-dialog>
+
+    <!--  最下面留空  -->
     <div style="width: 1px;height: 233px"/>
 
+    <!--  右键菜单  -->
+    <div :style="{left:left+'px',top:top+'px',position: 'absolute'}" class="shadow-10">
+      <q-slide-transition>
+        <q-card style="max-width: 250px;overflow: auto;background-color: #ec85a7" v-show="visible">
+          <q-list bordered separator>
+
+            <q-item clickable v-ripple>
+              <q-item-section>{{ rightClickItem.field }}</q-item-section>
+            </q-item>
+
+            <q-item v-if="rightClickItem.user">
+              <q-item-section>所有者：{{ rightClickItem.user.name }}</q-item-section>
+            </q-item>
+
+            <q-item clickable v-ripple @click="addBtnImg">
+              <q-item-section>新增</q-item-section>
+            </q-item>
+
+            <q-item clickable v-ripple @click="updateBtnImg">
+              <q-item-section>修改</q-item-section>
+            </q-item>
+
+            <q-item clickable v-ripple @click="deleteBtnImg">
+              <q-item-section>删除</q-item-section>
+            </q-item>
+          </q-list>
+        </q-card>
+      </q-slide-transition>
+    </div>
 
   </div>
 
@@ -98,38 +296,73 @@
 
 <script setup>
 
-import {ref} from "vue";
+import {ref, watch} from "vue";
 import Header from "../../components/public/Header.vue";
-import {LoadingFail, LoadingNotify, LoadingSucceed} from "../../components/notifyTools";
+import {
+  CommFail,
+  CommSeccess,
+  CommWarn,
+  LoadingFail,
+  LoadingNotify,
+  LoadingSucceed
+} from "../../components/notifyTools";
 import {api} from "../../boot/axios";
 import {useRouter} from "vue-router";
-import {blogColumns} from "../../components/user/Table";
+import {BlogColumns, ImgColumns} from "../../components/user/Table";
+import {
+  ImgsColumns,
+  ServerName,
+  TableLength,
+  TableLengthImg,
+  WaterFullOtherImg
+} from "../../components/models";
+import {useQuasar} from "quasar";
+import {checkPicurl} from "../../components/img/img";
 
 const backgroundImg = ref("https://sdadgz.cn/download/img/1.png");
 
 const $router = useRouter();
+const $q = useQuasar();
 
-const blogs = ref([]);
-const columns = ref([]);
-const rows = ref([]);
-const selected = ref([]);
-const tableLoading = ref(true);
-const btnLoading = ref(false);
-const dialogShow = ref(false);
-const dialogText = ref();
-const titleI = ref();
-const detailI = ref();
-const imgUseId = ref(false);
-const imgI = ref();
+const imgUploadUrl = ref("/img/upload"); // 上传地址
+const mdUploadUrl = ref("/blog/upload"); // 上传地址
 
-start();
+const username = ref(localStorage.getItem("username")); // 用户名
+const blogs = ref([]); // 博客s
+const columns = ref([]); // 表头
+const rows = ref([]); // 表格行
+const selected = ref([]); // 表格选中
+const tableLoading = ref(true); // 表格加载状态
+const btnLoading = ref(false); // 刷新状态
+
+const currentPage = ref(1); // 当前页面
+const pageCount = ref(3)  // 页数
+const pageSize = ref(TableLength); // 页数数据数量
+const pagination = ref({rowsPerPage: pageSize.value}) // 表格显示的最大数量
+
+// 弹窗
+const dialogShow = ref(false); // 是否弹窗
+const dialogText = ref(); // 弹出窗标题
+const titleInfo = ref(); // 笔记标题
+const detailInfo = ref(); // 简介信息
+const imgInfo = ref(); // 图片信息-id
+
+const imgUseId = ref(false); // 是否用图片id代替图片
+const field = ref('未使用'); // 图片应用领域
+const imgUploader = ref(null); // 图片上传器
+const mdUploader = ref(null); // 笔记上传器
+const uploadDone = ref(false); // 上传完成
+const imgExists = ref(false); // 图片是否存在
+const mdExists = ref(false); // 图片是否存在
+const blogId = ref(0); // 图片是否存在
 
 function start() {
   loadBlogs();
+  loadImg();
 }
 
 // 加载blogs
-function loadBlogs() {
+async function loadBlogs() {
   const loadNot = LoadingNotify();
   rows.value = [];
   columns.value = [];
@@ -141,47 +374,524 @@ function loadBlogs() {
     return;
   }
 
-  api.get("/blog/" + username + "/blogs").then(res => {
+  await api.get("/blog/" + username + "/page", {
+    params: {
+      "currentPage": currentPage.value,
+      "pageSize": pageSize.value
+    }
+  }).then(res => {
     if (res.code === "200") {
-      LoadingSucceed(loadNot);
-      blogs.value = res.data;
+      blogs.value = res.data.lists;
+      columns.value = BlogColumns; // 从本地获取表名
 
-      columns.value = blogColumns;
-
-      for (let i = 0; i < res.data.length; i++) {
+      // 表格数据
+      for (let i = 0; i < blogs.value.length; i++) {
         let obj = {};
-        for (let j = 0; j < blogColumns.length; j++) {
-          Object.assign(obj, {[`${blogColumns[j].field}`]: eval("res.data[i]." + `${blogColumns[j].field}`)});
+        for (let j = 0; j < BlogColumns.length; j++) {
+          Object.assign(obj, {[`${BlogColumns[j].field}`]: eval("blogs.value[i]." + `${BlogColumns[j].field}`)});
         }
+        // 增加id去重
+        Object.assign(obj, {"id": blogs.value[i].id});
         rows.value.push(obj);
       }
 
+      // 分页
+      pageCount.value = Math.ceil(res.data.total / pageSize.value);
+
+      // 状态结束
+      LoadingSucceed(loadNot);
       tableLoading.value = false;
     } else {
       LoadingFail(loadNot);
+      tableLoading.value = false;
     }
   }).catch(() => {
     LoadingFail(loadNot);
+    tableLoading.value = false;
   })
 }
 
+// 图片变量
+const rowsImg = ref([]);
+const columnsImg = ref([]);
+const tableLoadingImg = ref(false);
+const currentPageImg = ref(1);
+const pageSizeImg = ref(TableLengthImg);
+const imgs = ref([]);
+const pageCountImg = ref(3);
+const paginationImg = ref({rowsPerPage: pageSizeImg.value}) // 表格显示的最大数量
+const columnsAddArr = ref([]); // 计算长度
+
+// 加载图片
+async function loadImg() {
+  tableLoadingImg.value = true;
+  // 未初始化
+  if (imgs.value.length < 1) {
+    imgs.value = new Array(ImgsColumns);
+  }
+  if (columnsAddArr.value < 1) {
+    columnsAddArr.value = new Array(ImgsColumns);
+    columnsAddArr.value.fill(0);
+  }
+
+  // 获取本地用户名
+  let username = localStorage.getItem("username");
+  if (username == null) {
+    return;
+  }
+
+  await api.get("/img/" + username + "/page", {
+    params: {
+      "currentPage": currentPageImg.value,
+      "pageSize": pageSizeImg.value
+    }
+  }).then(res => {
+    if (res.code === "200") {
+      const imgData = res.data.lists; // 获取imgs数据
+
+      // 分页
+      pageCountImg.value = Math.ceil(res.data.total / pageSizeImg.value);
+
+      // 设置瀑布流
+      setImgs(imgData);
+
+      // 状态结束
+      // LoadingSucceed(loadNot);
+      tableLoadingImg.value = false;
+    } else {
+      // LoadingFail(loadNot);
+    }
+  }).catch(() => {
+    // LoadingFail(loadNot);
+  })
+}
+
+async function setImgs(data) {
+  for (let i = 0; i < data.length; i++) {
+    let minIndex = 0;
+    // 找出最小的
+    for (let j = 0; j < ImgsColumns; j++) {
+      if (columnsAddArr.value[j] < columnsAddArr.value[minIndex]) {
+        minIndex = j;
+      }
+    }
+
+    // 加进去
+    let add = await checkPicurl(data[i].url);
+    while (add === undefined) {
+      add = await checkPicurl(data[i].url);
+      await sleep(1);
+    }
+
+    columnsAddArr.value[minIndex] += add + WaterFullOtherImg;
+    if (imgs.value[minIndex] === undefined) {
+      imgs.value[minIndex] = [];
+    }
+    imgs.value[minIndex].push(data[i]);
+  }
+}
+
+const imgsDisable = ref(false);
+
+// 无限滚动
+async function onLoad(index, done) {
+  if (currentPageImg.value > pageCountImg.value) {
+    imgsDisable.value = true;
+    return;
+  }
+  currentPageImg.value = currentPageImg.value + 1;
+  await loadImg();
+  done();
+}
+
+// 图片点击
+function imgClick(img) {
+
+}
+
+const visible = ref(false);
+
+// 关闭右键菜单监听
+watch(() => visible.value, () => {
+  if (visible.value) {
+    document.body.addEventListener('click', closeMenu)
+  } else {
+    document.body.removeEventListener('click', closeMenu)
+  }
+}, {immediate: true})
+
+const rightClickItem = ref([]);
+const top = ref(0);
+const left = ref(0);
+
+// 开启菜单
+function openMenu(e, item) {
+  rightClickItem.value = item;
+
+  const x = e.pageX;
+  const y = e.pageY;
+
+  left.value = x;
+  top.value = y;
+
+  visible.value = true;
+}
+
+// 关闭菜单
+function closeMenu() {
+  visible.value = false;
+}
+
 // 刷新按钮
-function refreshBtn() {
+async function refreshBtn() {
   btnLoading.value = true;
-  loadBlogs();
+  await loadBlogs();
   btnLoading.value = false;
 }
 
+const btnLoadingImg = ref(false);
+
+// 图片刷新按钮
+async function refreshBtnImg() {
+  btnLoadingImg.value = true;
+  await loadImg();
+  btnLoadingImg.value = false;
+}
+
 // 新增按钮
-function addTable() {
-  dialogShow.value = true;
+function addBtn() {
+  reset();
   dialogText.value = '新增';
+  dialogShow.value = true;
+  field.value = '博客首页';
+}
+
+const dialogTextImg = ref();
+const dialogShowImg = ref(false);
+
+// 图片新增按钮
+function addBtnImg() {
+  resetImg();
+  dialogTextImg.value = '新增';
+  dialogShowImg.value = true;
+  field.value = '未定义';
+}
+
+// 修改按钮
+function updateBtn() {
+  // 先重置
+  reset();
+  // 选中是否合法
+  if (selected.value.length !== 1) {
+    CommWarn("请选择一个用户进行修改");
+    return;
+  }
+  // 传值
+  blogId.value = selected.value[0].id;
+  titleInfo.value = selected.value[0].title;
+  detailInfo.value = selected.value[0].detail;
+  imgInfo.value = selected.value[0].imgId;
+
+  dialogText.value = '修改';
+  dialogShow.value = true;
+  field.value = '博客首页';
+}
+
+const selectedImg = ref([]);
+
+// 图片修改按钮
+function updateBtnImg() {
+  // 先重置
+  resetImg();
+  // 选中是否合法
+  // if (selectedImg.value.length !== 1) {
+  //   CommWarn("请选择一个图片进行修改");
+  //   return;
+  // }
+  // 传值
+  // blogId.value = selected.value[0].id;
+  // titleInfo.value = selected.value[0].title;
+  // detailInfo.value = selected.value[0].detail;
+  // imgInfo.value = selected.value[0].imgId;
+
+  imgInfo.value = rightClickItem.value.id;
+
+  dialogTextImg.value = '修改';
+  dialogShowImg.value = true;
+  field.value = '未定义';
+}
+
+// 删除按钮
+function deleteBtn() {
+  if (selected.value.length < 1) {
+    CommWarn("好歹选一个啊");
+    return;
+  }
+  $q.notify({
+    message: '确定要删除所选项目吗？',
+    type: 'negative',
+    position: 'top',
+    actions: [
+      {
+        label: '确定', color: 'yellow', handler: () => {
+          const idlist = [];
+          selected.value.forEach((blog) => {
+            idlist.push(blog.id);
+          })
+          // 删除用户
+          api.delete("/blog", {
+            data: {
+              "idList": idlist
+            }
+          }).then(() => {
+            loadBlogs();
+          })
+        }
+      },
+      {
+        label: '取消', color: 'white', handler: () => { /* ... */
+        }
+      }
+    ]
+  })
+}
+
+// 图片删除按钮
+function deleteBtnImg() {
+  $q.notify({
+    message: '确定要删除所选项目吗？',
+    type: 'negative',
+    position: 'top',
+    actions: [
+      {
+        label: '确定', color: 'yellow', handler: () => {
+          const deleteId = rightClickItem.value.id;
+          // 删除图片
+          api.delete("/img", {
+            data: {
+              "idList": deleteId
+            }
+          }).then(() => {
+            loadImg();
+          })
+        }
+      },
+      {
+        label: '取消', color: 'white'
+      }
+    ]
+  })
+}
+
+// 重置
+function reset() {
+  titleInfo.value = '';
+  detailInfo.value = '';
+  imgInfo.value = '';
+  imgUseId.value = false;
+  imgExists.value = false;
+  uploadDone.value = false;
+  // field.value = 'undefined';
+  if (imgUploader.value !== null) { // 可能为空
+    imgUploader.value.reset();
+  }
+  if (mdUploader.value !== null) {
+    mdUploader.value.reset();
+  }
+}
+
+// 图片重置
+function resetImg() {
+  imgExists.value = false;
+  uploadDone.value = false;
+  field.value = '未定义';
+  if (imgUploader.value !== null) { // 可能为空
+    imgUploader.value.reset();
+  }
+}
+
+// 提交
+async function submit() {
+  if (!imgUseId.value && imgExists.value) {
+    // 上传图片
+    uploadDone.value = false;
+    await imgUploader.value.upload();
+    while (!uploadDone.value) {
+      await sleep(233);
+    }
+    // 上传后自动赋值给imgInfo了
+  }
+
+  // 不合法的imgInfo
+  if (!imgInfo.value) {
+    CommFail("图片不存在");
+    return;
+  }
+
+  uploadDone.value = false;
+  if (dialogText.value === '新增') {
+    if (!mdExists.value) {
+      CommFail("博客不存在");
+      return;
+    }
+    await mdUploader.value.upload();
+    while (!uploadDone.value) {
+      await sleep(233);
+    }
+  } else if (dialogText.value === '修改') {
+    await api.post("/blog/update", {
+      "id": blogId.value,
+      "imgId": imgInfo.value,
+      "title": titleInfo.value,
+      "detail": detailInfo.value
+    }).then(res => {
+      // 处理结果
+      CommSeccess("修改成功");
+      dialogShow.value = false;
+      loadBlogs();
+    }).catch(() => {
+      CommFail("修改失败");
+    })
+  } else {
+    CommFail("无法提交");
+  }
+}
+
+// 图片提交
+async function submitImg() {
+  if (!imgUseId.value && imgExists.value) {
+    // 上传图片
+    uploadDone.value = false;
+    await imgUploader.value.upload();
+    while (!uploadDone.value) {
+      await sleep(233);
+    }
+    // 上传后自动赋值给imgInfo了
+  }
+
+  // 不合法的imgInfo
+  if (!imgInfo.value) {
+    CommFail("图片不存在");
+    return;
+  }
+
+  uploadDone.value = false;
+  if (dialogText.value === '新增') {
+    if (!mdExists.value) {
+      CommFail("博客不存在");
+      return;
+    }
+    await mdUploader.value.upload();
+    while (!uploadDone.value) {
+      await sleep(233);
+    }
+  } else if (dialogText.value === '修改') {
+    await api.post("/blog/update", {
+      "id": blogId.value,
+      "imgId": imgInfo.value,
+      "title": titleInfo.value,
+      "detail": detailInfo.value
+    }).then(res => {
+      // 处理结果
+      CommSeccess("修改成功");
+      dialogShow.value = false;
+      loadBlogs();
+    }).catch(() => {
+      CommFail("修改失败");
+    })
+  } else {
+    CommFail("无法提交");
+  }
+}
+
+// 上传图片工厂函数
+function imgUploadFn() {
+  return new Promise(resolve => {
+    resolve({
+      "url": ServerName + imgUploadUrl.value,
+      "fieldName": "file",
+      "formFields": [
+        {
+          "name": "field",
+          "value": field.value
+        }],
+      "headers": [{
+        "name": "token",
+        "value": localStorage.getItem("token")
+      }]
+    })
+  })
+}
+
+// 上传笔记工厂函数
+function mdUploadFn() {
+  return new Promise(resolve => {
+    resolve({
+      "url": ServerName + mdUploadUrl.value,
+      "fieldName": "file",
+      "formFields": [
+        {
+          "name": "imgId",
+          "value": imgInfo.value
+        },
+        {
+          "name": "title",
+          "value": titleInfo.value
+        },
+        {
+          "name": "detail",
+          "value": detailInfo.value
+        }],
+      "headers": [{
+        "name": "token",
+        "value": localStorage.getItem("token")
+      }]
+    })
+  })
+}
+
+// 图片上传之后
+function imgUploadFinish(info) {
+  const res = JSON.parse(info.xhr.response);
+  if (res.code === '499') { // 未登录
+    CommFail("未登录");
+    $router.push("/user/login");
+  } else if (res.code !== '200') { // 出现异常
+    CommFail(res.msg);
+    dialogShow.value = false;
+  } else {
+    // 正常处理
+    imgInfo.value = res.data.id;
+  }
+}
+
+// 博客上传之后
+function mdUploadFinish(info) {
+  const res = JSON.parse(info.xhr.response);
+  if (res.code === '499') { // 未登录
+    CommFail("未登录");
+    $router.push("/user/login");
+  } else if (res.code !== '200') { // 出现异常
+    CommFail(res.msg);
+    dialogShow.value = false;
+  } else {
+    // 处理
+    CommSeccess("上传成功");
+    reset();
+  }
 }
 
 // 已选几项
 function getSelectedString() {
   return selected.value.length === 0 ? '' : `已选择${selected.value.length}项`;
 }
+
+// 遇到问题睡大觉
+async function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+start();
 
 </script>
 

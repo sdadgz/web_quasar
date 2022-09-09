@@ -2,6 +2,7 @@ import {boot} from 'quasar/wrappers';
 import axios, {AxiosInstance} from 'axios';
 import {CommFail} from "components/notifyTools";
 import {useRouter} from "vue-router";
+import {ServerName} from "components/models";
 
 declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
@@ -25,7 +26,7 @@ declare module "axios" {
 // good idea to move this instance creation inside of the
 // "export default () => {}" function below (which runs individually
 // for each client)
-const api = axios.create({baseURL: 'http://localhost:8000'});
+const api = axios.create({baseURL: ServerName});
 
 export default boot(({app}) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api
@@ -54,14 +55,13 @@ export default boot(({app}) => {
   // 响应拦截器
   api.interceptors.response.use(
     res => {
+      if (res.data.code === '499') {
+        CommFail('请重新登录');
+        window.location.href = "/#/user/login";
+      }
       if (res.data.code !== '200') {
         CommFail(res.data.msg);
       }
-      if (res.data.code === '499') {
-        CommFail('请重新登录')
-        window.location.href = "/#/user/login"
-      }
-
       return res.data;
     }
   )

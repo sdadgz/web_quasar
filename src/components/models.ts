@@ -1,67 +1,20 @@
-// export interface Todo {
-//   id: number;
-//   content: string;
-// }
-//
-// export interface Meta {
-//   totalCount: number;
-// }
+// 上传到服务器需要改的
+export const ServerName = 'http://localhost:8000';
 
-import {ref} from "vue";
+// blogs页面分几列
+export const BlogsColumns = 4;
 
-export interface blogIndexImpl {
-  title: string;
-  children: blogIndexImpl;
-}
+// 瀑布流图片以外占位
+export const WaterFullOther = 0.6;
 
-export let blogIndexDefault = ref([
-  {
-    title: 'docker基础', children: [
-      {
-        title: 'h2', children: [
-          {title: 'h3', children: null},
-          {title: 'h31', children: null}
-        ]
-      },
-      {
-        title: 'h21', children: null
-      }
-    ]
-  },
-  {title: "h11", children: null},
-  {title: 'h11', children: null},
-  {title: 'h11', children: null},
-  {title: 'h11', children: null},
-  {title: 'h11', children: null},
-  {title: 'h11', children: null},
-  {title: 'h11', children: null},
-  {title: 'h11', children: null},
-  {title: 'h11', children: null},
-  {title: 'h11', children: null},
-  {title: 'h11', children: null},
-  {title: 'h11', children: null},
-  {title: 'h11', children: null},
-  {title: 'h11', children: null},
-  {title: 'h11', children: null},
-  {title: 'h11', children: null},
-  {title: 'h11', children: null},
-  {title: 'h11', children: null},
-  {title: 'h11', children: null},
-  {title: 'h11', children: null},
-  {title: 'h11', children: null},
-  {title: 'h11', children: null},
-  {title: 'h11', children: null},
-  {title: 'h11', children: null},
-  {title: 'h11', children: null},
-  {title: 'h11', children: null},
-  {title: 'h11', children: null},
-  {title: 'h11', children: null},
-  {title: 'h11', children: null},
-  {title: 'h11', children: null},
-  {title: 'h11', children: null},
-  {title: 'h11', children: null},
-  {title: 'h11', children: null},
-  {title: 'h11', children: null},
-  {title: 'h11', children: null},
-  {title: 'h11', children: null}
-]);
+// 瀑布流图片以外占位
+export const WaterFullOtherImg = 0.0;
+
+// 表格长度
+export const TableLength = 6;
+
+// 图片表格长度
+export const TableLengthImg = 6;
+
+// 图片列数
+export const ImgsColumns = 4;

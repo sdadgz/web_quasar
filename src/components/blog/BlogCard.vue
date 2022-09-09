@@ -11,10 +11,9 @@
       <q-card class="blog-img" @mouseover="onImg" @mouseout="outImg">
 
         <div class="img-to-big">
-          <q-img :ratio="16/9"
-                 v-if="blog.img != null"
+          <q-img v-if="blog.img != null"
                  :src="blog.img.url"/>
-          <q-img :ratio="16/9" v-else :src="backgroundImg"/>
+          <q-img v-else :src="backgroundImg"/>
           <div class="info-to-small" :class="{canSee: imgMagnify}">
             {{ blog.detail }}
           </div>
