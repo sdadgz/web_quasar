@@ -7,7 +7,8 @@ export async function checkPicurl(url) {
   const img = await new Image();
   img.src = await url;
   img.onerror = await function () {
-    CommWarn("警告：错误的图片地址");
+    // CommWarn("警告：错误的图片地址");
+    console.log(url);
     return 1.002;
   }
 

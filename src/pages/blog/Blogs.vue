@@ -89,7 +89,7 @@ async function setBlogs(data) {
     }
     // 最小索引增加图片
     let add = await checkPicurl(data[i].img.url);
-    while (add === undefined) {
+    while (add === undefined && data[i].img.url) {
       add = await checkPicurl(data[i].img.url);
       await sleep(1);
     }

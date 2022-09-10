@@ -203,57 +203,57 @@
     <!--  图片弹出对话框  -->
     <q-dialog v-model="dialogShowImg">
       <q-card class="column" style="width: 460px;padding: 33px 50px">
-          <q-card-section>
-            {{ dialogTextImg }}
-          </q-card-section>
+        <q-card-section>
+          {{ dialogTextImg }}
+        </q-card-section>
 
-          <q-card-section>
-            <q-btn-dropdown color="primary" :label="field">
-              <q-list>
-                <q-item clickable v-close-popup @click="field = '全局背景图片'">
-                  <q-item-section>全局背景图片</q-item-section>
-                </q-item>
+        <q-card-section>
+          <q-btn-dropdown color="primary" :label="field">
+            <q-list>
+              <q-item clickable v-close-popup @click="field = '全局背景图片'">
+                <q-item-section>全局背景图片</q-item-section>
+              </q-item>
 
-                <q-item clickable v-close-popup @click="field = '博客主页'">
-                  <q-item-section>博客主页</q-item-section>
-                </q-item>
+              <q-item clickable v-close-popup @click="field = '博客主页'">
+                <q-item-section>博客主页</q-item-section>
+              </q-item>
 
-                <q-item clickable v-close-popup @click="field = '博客内图片'">
-                  <q-item-section>
-                    <q-item-label>博客内图片</q-item-label>
-                  </q-item-section>
-                </q-item>
-              </q-list>
-            </q-btn-dropdown>
-          </q-card-section>
+              <q-item clickable v-close-popup @click="field = '博客内图片'">
+                <q-item-section>
+                  <q-item-label>博客内图片</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-btn-dropdown>
+        </q-card-section>
 
-          <q-card-section>
-            <q-input v-model="field" label="图片应用领域"/>
-          </q-card-section>
+        <q-card-section>
+          <q-input v-model="field" label="图片应用领域"/>
+        </q-card-section>
 
-          <!--    图片id输入框或上传器      -->
-          <q-card-section v-if="dialogTextImg !== '新增'">
-            <q-input v-model="imgInfo" label="图片id" readonly/>
-          </q-card-section>
+        <!--    图片id输入框或上传器      -->
+        <q-card-section v-if="dialogTextImg !== '新增'">
+          <q-input v-model="imgInfo" label="图片id" readonly/>
+        </q-card-section>
 
-          <q-card-section v-else>
-            <q-uploader
-              ref="imgUploader"
-              label="上传图片"
-              accept=".jpg, image/*"
-              :factory="imgUploadFn"
-              hide-upload-btn
-              @added="imgExists = true"
-              @removed="imgExists = false"
-              @finish="uploadDone = true"
-              @uploaded="imgUploadFinish"
-            />
-          </q-card-section>
+        <q-card-section v-else>
+          <q-uploader
+            ref="imgUploader"
+            label="上传图片"
+            accept=".jpg, image/*"
+            :factory="imgUploadFn"
+            hide-upload-btn
+            @added="imgExists = true"
+            @removed="imgExists = false"
+            @finish="uploadDone = true"
+            @uploaded="imgUploadFinish"
+          />
+        </q-card-section>
 
-          <q-card-section class="row justify-between">
-            <q-btn @click="resetImg" label="重置"/>
-            <q-btn @click="submitImg" label="提交" color="primary"/>
-          </q-card-section>
+        <q-card-section class="row justify-between">
+          <q-btn @click="resetImg" label="重置"/>
+          <q-btn @click="submitImg" label="提交" color="primary"/>
+        </q-card-section>
       </q-card>
     </q-dialog>
 
@@ -449,6 +449,11 @@ async function loadImg() {
     if (res.code === "200") {
       const imgData = res.data.lists; // 获取imgs数据
 
+      // 解除禁用
+      if (currentPageImg.value === 1){
+        imgsDisable.value = false;
+      }
+
       // 分页
       pageCountImg.value = Math.ceil(res.data.total / pageSizeImg.value);
 
@@ -491,7 +496,7 @@ async function setImgs(data) {
   }
 }
 
-const imgsDisable = ref(false);
+const imgsDisable = ref(true);
 
 // 无限滚动
 async function onLoad(index, done) {
@@ -509,6 +514,7 @@ function imgClick(img) {
 
 }
 
+// 右键菜单显示
 const visible = ref(false);
 
 // 关闭右键菜单监听
@@ -554,6 +560,10 @@ const btnLoadingImg = ref(false);
 // 图片刷新按钮
 async function refreshBtnImg() {
   btnLoadingImg.value = true;
+  imgs.value = [];
+  currentPageImg.value = 1;
+  columnsAddArr.value = [];
+  imgsDisable.value = true;
   await loadImg();
   btnLoadingImg.value = false;
 }
@@ -665,11 +675,11 @@ function deleteBtnImg() {
     actions: [
       {
         label: '确定', color: 'yellow', handler: () => {
-          const deleteId = rightClickItem.value.id;
+          const id = rightClickItem.value.id;
           // 删除图片
           api.delete("/img", {
             data: {
-              "idList": deleteId
+              "id": id
             }
           }).then(() => {
             loadImg();
@@ -766,41 +776,13 @@ async function submitImg() {
     while (!uploadDone.value) {
       await sleep(233);
     }
+    CommSeccess("上传成功");
     // 上传后自动赋值给imgInfo了
   }
 
   // 不合法的imgInfo
   if (!imgInfo.value) {
     CommFail("图片不存在");
-    return;
-  }
-
-  uploadDone.value = false;
-  if (dialogText.value === '新增') {
-    if (!mdExists.value) {
-      CommFail("博客不存在");
-      return;
-    }
-    await mdUploader.value.upload();
-    while (!uploadDone.value) {
-      await sleep(233);
-    }
-  } else if (dialogText.value === '修改') {
-    await api.post("/blog/update", {
-      "id": blogId.value,
-      "imgId": imgInfo.value,
-      "title": titleInfo.value,
-      "detail": detailInfo.value
-    }).then(res => {
-      // 处理结果
-      CommSeccess("修改成功");
-      dialogShow.value = false;
-      loadBlogs();
-    }).catch(() => {
-      CommFail("修改失败");
-    })
-  } else {
-    CommFail("无法提交");
   }
 }
 

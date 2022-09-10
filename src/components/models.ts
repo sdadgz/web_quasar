@@ -1,5 +1,5 @@
 // 上传到服务器需要改的
-export const ServerName = 'http://localhost:8000';
+export const ServerName = 'https://sdadgz.cn:8000';
 
 // blogs页面分几列
 export const BlogsColumns = 4;
