@@ -18,3 +18,11 @@ export const TableLengthImg = 6;
 
 // 图片列数
 export const ImgsColumns = 4;
+
+// 图片选中状态
+export const ImgUnSelectedStatus = {transform: 'scale(1)'};
+export const ImgSelectedStatus = {transform: 'scale(.9)'};
+
+// 图片中心对勾
+export const RightIconShow = {transform: 'scale(1)'}
+export const RightIconUnShow = {transform: 'scale(0)'}

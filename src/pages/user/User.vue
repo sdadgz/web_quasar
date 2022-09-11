@@ -4,6 +4,7 @@
 
   <div class="q-pa-md q-gutter-sm">
 
+    <!--  头  -->
     <Header/>
 
     <q-card>
@@ -170,34 +171,38 @@
           label="新增"
         />
       </div>
-      <div class="row">
-        <div class="col" v-for="i in ImgsColumns">
-          <q-infinite-scroll v-if="i === 1" @load="onLoad" :offset="250" :disable="imgsDisable" :key="i">
-            <div v-for="img in imgs[i - 1]">
+      <q-infinite-scroll @load="onLoad" :offset="250" :disable="imgsDisable">
+        <div class="row">
+          <div class="col" v-for="i in ImgsColumns">
+            <div v-for="j in imgs[i - 1] ? imgs[i - 1].length : 0">
               <div class="q-pa-xs">
-                <q-card @click="imgClick(img)" @contextmenu.prevent="openMenu($event,img)">
-                  <q-img :src="img.url"/>
-                </q-card>
-              </div>
-            </div>
-            <template v-slot:loading>
-              <div class="row justify-center q-my-md">
-                <q-spinner-dots color="primary" size="40px"/>
-              </div>
-            </template>
-          </q-infinite-scroll>
-          <!--     待优化，重复代码     -->
-          <div v-else>
-            <div v-for="img in imgs[i - 1]">
-              <div class="q-pa-xs">
-                <q-card @contextmenu.prevent="openMenu($event,img)">
-                  <q-img :src="img.url"/>
+                <q-card class="my-animation" :style="imgStyles[i-1][j-1]"
+                        @click="setImgStyle(i-1,j-1)"
+                        @contextmenu.prevent="openMenu($event,imgs[i - 1][j - 1])"
+                >
+                  <q-img :src="imgs[i - 1][j - 1].url">
+                    <!--          选中图标          -->
+                    <q-icon
+                      :style="imgStyles[i-1][j-1].transform === ImgSelectedStatus.transform ? RightIconShow : RightIconUnShow"
+                      name="add_task" class="items-center full-height full-width my-animation" size="1000%"
+                      color="positive"
+                    />
+                    <!--          图片应用领域          -->
+                    <div class="absolute-bottom text-center" style="background-color: rgba(0,0,0,.3)">
+                      {{ imgs[i - 1][j - 1].field }}
+                    </div>
+                  </q-img>
                 </q-card>
               </div>
             </div>
           </div>
         </div>
-      </div>
+        <template v-slot:loading>
+          <div class="row justify-center q-my-md">
+            <q-spinner-dots color="primary" size="40px"/>
+          </div>
+        </template>
+      </q-infinite-scroll>
     </q-card>
 
     <!--  图片弹出对话框  -->
@@ -310,11 +315,13 @@ import {api} from "../../boot/axios";
 import {useRouter} from "vue-router";
 import {BlogColumns, ImgColumns} from "../../components/user/Table";
 import {
-  ImgsColumns,
+  ImgsColumns, ImgSelectedStatus, ImgUnSelectedStatus,
   ServerName,
   TableLength,
   TableLengthImg,
-  WaterFullOtherImg
+  WaterFullOtherImg,
+  RightIconShow,
+  RightIconUnShow
 } from "../../components/models";
 import {useQuasar} from "quasar";
 import {checkPicurl} from "../../components/img/img";
@@ -356,9 +363,35 @@ const imgExists = ref(false); // 图片是否存在
 const mdExists = ref(false); // 图片是否存在
 const blogId = ref(0); // 图片是否存在
 
+// 初始化函数
 function start() {
   loadBlogs();
   loadImg();
+}
+
+// 图片样式
+const imgStyles = ref([]);
+const selectedImgs = ref([]);
+
+// 图片选中状态
+function setImgStyle(i, j) {
+  // 点击的图片
+  const img = imgs.value[i][j];
+
+  if (imgStyles.value[i][j].transform === ImgUnSelectedStatus.transform) {
+    // 选中
+    selectedImgs.value.push(img);
+    imgStyles.value[i][j] = ImgSelectedStatus;
+  } else {
+    // 取消选中
+    imgStyles.value[i][j] = ImgUnSelectedStatus;
+    for (let k = 0; k < selectedImgs.value.length; k++) {
+      if (selectedImgs.value[k] === img) {
+        selectedImgs.value.splice(k, 1);
+      }
+    }
+  }
+  console.log(selectedImgs.value);
 }
 
 // 加载blogs
@@ -412,14 +445,11 @@ async function loadBlogs() {
 }
 
 // 图片变量
-const rowsImg = ref([]);
-const columnsImg = ref([]);
 const tableLoadingImg = ref(false);
 const currentPageImg = ref(1);
 const pageSizeImg = ref(TableLengthImg);
 const imgs = ref([]);
 const pageCountImg = ref(3);
-const paginationImg = ref({rowsPerPage: pageSizeImg.value}) // 表格显示的最大数量
 const columnsAddArr = ref([]); // 计算长度
 
 // 加载图片
@@ -449,16 +479,16 @@ async function loadImg() {
     if (res.code === "200") {
       const imgData = res.data.lists; // 获取imgs数据
 
-      // 解除禁用
-      if (currentPageImg.value === 1){
-        imgsDisable.value = false;
-      }
-
       // 分页
       pageCountImg.value = Math.ceil(res.data.total / pageSizeImg.value);
 
       // 设置瀑布流
       setImgs(imgData);
+
+      // 解除禁用
+      if (currentPageImg.value === 1) {
+        imgsDisable.value = false;
+      }
 
       // 状态结束
       // LoadingSucceed(loadNot);
@@ -471,6 +501,7 @@ async function loadImg() {
   })
 }
 
+// 设置图片数组
 async function setImgs(data) {
   for (let i = 0; i < data.length; i++) {
     let minIndex = 0;
@@ -493,10 +524,19 @@ async function setImgs(data) {
       imgs.value[minIndex] = [];
     }
     imgs.value[minIndex].push(data[i]);
+
+    // 图片仍进去了，图片的style设置一下
+    if (imgStyles.value.length < 1) { // 初始化
+      imgStyles.value = new Array(ImgsColumns);
+    }
+    if (!imgStyles.value[minIndex]) { // 初始化二维
+      imgStyles.value[minIndex] = [];
+    }
+    imgStyles.value[minIndex].push(ImgUnSelectedStatus);
   }
 }
 
-const imgsDisable = ref(true);
+const imgsDisable = ref(true); // 图片无限加载开关
 
 // 无限滚动
 async function onLoad(index, done) {
@@ -507,11 +547,6 @@ async function onLoad(index, done) {
   currentPageImg.value = currentPageImg.value + 1;
   await loadImg();
   done();
-}
-
-// 图片点击
-function imgClick(img) {
-
 }
 
 // 右键菜单显示
@@ -607,22 +642,10 @@ function updateBtn() {
   field.value = '博客首页';
 }
 
-const selectedImg = ref([]);
-
 // 图片修改按钮
 function updateBtnImg() {
   // 先重置
   resetImg();
-  // 选中是否合法
-  // if (selectedImg.value.length !== 1) {
-  //   CommWarn("请选择一个图片进行修改");
-  //   return;
-  // }
-  // 传值
-  // blogId.value = selected.value[0].id;
-  // titleInfo.value = selected.value[0].title;
-  // detailInfo.value = selected.value[0].detail;
-  // imgInfo.value = selected.value[0].imgId;
 
   imgInfo.value = rightClickItem.value.id;
 
@@ -701,7 +724,6 @@ function reset() {
   imgUseId.value = false;
   imgExists.value = false;
   uploadDone.value = false;
-  // field.value = 'undefined';
   if (imgUploader.value !== null) { // 可能为空
     imgUploader.value.reset();
   }
@@ -873,6 +895,7 @@ async function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+// 初始化
 start();
 
 </script>
@@ -882,6 +905,10 @@ start();
 .user-btn {
   margin: 0 10px;
   min-width: 100px;
+}
+
+.my-animation {
+  transition: .35s cubic-bezier(0.6, -1.23, 0.36, 2.4);
 }
 
 </style>
