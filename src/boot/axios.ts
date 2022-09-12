@@ -58,11 +58,11 @@ export default boot(({app}) => {
       if (res.data.code === '499') {
         CommFail('请重新登录');
         window.location.href = "/#/user/login";
-      }
-      if (res.data.code !== '200') {
+      } else if (res.data.code !== '200') {
         CommFail(res.data.msg);
+      } else {
+        return res.data;
       }
-      return res.data;
     }
   )
 

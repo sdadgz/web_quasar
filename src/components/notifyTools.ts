@@ -33,7 +33,7 @@ export function CommSeccess(message: any) {
     color: 'positive',
     message: message,
     position: 'top',
-    group: false,
+    group: message,
   })
 }
 
@@ -43,7 +43,7 @@ export function CommFail(message: any) {
     color: 'negative',
     message: message,
     position: 'top',
-    group: false,
+    group: message,
   })
 }
 
@@ -53,6 +53,6 @@ export function CommWarn(message: any) {
     type: 'warning',
     message: message,
     position: 'top',
-    group: false,
+    group: message,
   })
 }

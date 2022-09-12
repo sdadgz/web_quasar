@@ -170,6 +170,20 @@
           color="secondary"
           label="新增"
         />
+        <q-btn
+          class="user-btn"
+          icon="edit"
+          color="purple"
+          label="修改"
+          @click="updateBtnImgs"
+        />
+        <q-btn
+          class="user-btn"
+          icon="delete_forever"
+          color="red"
+          label="删除"
+          @click="deleteBtnImgs"
+        />
       </div>
       <q-infinite-scroll @load="onLoad" :offset="250" :disable="imgsDisable">
         <div class="row">
@@ -236,17 +250,19 @@
           <q-input v-model="field" label="图片应用领域"/>
         </q-card-section>
 
-        <!--    图片id输入框或上传器      -->
-        <q-card-section v-if="dialogTextImg !== '新增'">
+        <!--    图片id输入框      -->
+        <q-card-section v-if="dialogTextImg === '修改'">
           <q-input v-model="imgInfo" label="图片id" readonly/>
         </q-card-section>
 
-        <q-card-section v-else>
+        <!--    上传器    -->
+        <q-card-section v-if="dialogTextImg === '新增'">
           <q-uploader
             ref="imgUploader"
             label="上传图片"
             accept=".jpg, image/*"
-            :factory="imgUploadFn"
+            :factory="imgUploadsFn"
+            multiple
             hide-upload-btn
             @added="imgExists = true"
             @removed="imgExists = false"
@@ -255,6 +271,7 @@
           />
         </q-card-section>
 
+        <!--    底部按钮    -->
         <q-card-section class="row justify-between">
           <q-btn @click="resetImg" label="重置"/>
           <q-btn @click="submitImg" label="提交" color="primary"/>
@@ -332,6 +349,7 @@ const $router = useRouter();
 const $q = useQuasar();
 
 const imgUploadUrl = ref("/img/upload"); // 上传地址
+const imgUploadsUrl = ref("/img/uploads"); // 批量上传地址
 const mdUploadUrl = ref("/blog/upload"); // 上传地址
 
 const username = ref(localStorage.getItem("username")); // 用户名
@@ -391,7 +409,6 @@ function setImgStyle(i, j) {
       }
     }
   }
-  console.log(selectedImgs.value);
 }
 
 // 加载blogs
@@ -590,17 +607,19 @@ async function refreshBtn() {
   btnLoading.value = false;
 }
 
-const btnLoadingImg = ref(false);
+const btnLoadingImg = ref(false); // 图片加载按钮 动画
 
 // 图片刷新按钮
 async function refreshBtnImg() {
-  btnLoadingImg.value = true;
-  imgs.value = [];
-  currentPageImg.value = 1;
-  columnsAddArr.value = [];
-  imgsDisable.value = true;
-  await loadImg();
-  btnLoadingImg.value = false;
+  imgStyles.value = [];
+  selectedImgs.value = []; // 选中图片存储
+  btnLoadingImg.value = true; // 加载动画
+  imgs.value = []; // 图片存储
+  currentPageImg.value = 1; // 分页开始页
+  columnsAddArr.value = []; // 分页判断数组
+  imgsDisable.value = true; // 禁用无限加载
+  await loadImg(); // 加载
+  btnLoadingImg.value = false; // 加载完毕
 }
 
 // 新增按钮
@@ -654,6 +673,13 @@ function updateBtnImg() {
   field.value = '未定义';
 }
 
+// 批量修改按钮
+function updateBtnImgs() {
+  dialogTextImg.value = '批量修改';
+  dialogShowImg.value = true;
+  field.value = '未定义';
+}
+
 // 删除按钮
 function deleteBtn() {
   if (selected.value.length < 1) {
@@ -677,6 +703,7 @@ function deleteBtn() {
               "idList": idlist
             }
           }).then(() => {
+            selected.value = [];
             loadBlogs();
           })
         }
@@ -689,7 +716,7 @@ function deleteBtn() {
   })
 }
 
-// 图片删除按钮
+// 右键删除
 function deleteBtnImg() {
   $q.notify({
     message: '确定要删除所选项目吗？',
@@ -705,7 +732,49 @@ function deleteBtnImg() {
               "id": id
             }
           }).then(() => {
-            loadImg();
+            CommSeccess("删除成功");
+          }).catch(() => {
+            CommFail("删除失败");
+          }).then(() => {
+            refreshBtnImg();
+          })
+        }
+      },
+      {
+        label: '取消', color: 'white'
+      }
+    ]
+  })
+}
+
+// 图片删除按钮
+function deleteBtnImgs() {
+  $q.notify({
+    message: '确定要删除所选项目吗？',
+    type: 'negative',
+    position: 'top',
+    actions: [
+      {
+        label: '确定', color: 'yellow', handler: () => {
+          // 至少选择一个
+          if (selectedImgs.value.length < 1) {
+            CommWarn("至少选一个啊");
+            return;
+          }
+
+          selectedImgs.value.forEach((item) => {
+            // 删除图片
+            api.delete("/img", {
+              data: {
+                "id": item.id
+              }
+            }).then(() => {
+              CommSeccess("删除成功");
+            }).catch(() => {
+              CommFail("删除失败");
+            }).then(() => {
+              refreshBtnImg();
+            })
           })
         }
       },
@@ -770,6 +839,7 @@ async function submit() {
     while (!uploadDone.value) {
       await sleep(233);
     }
+    await loadBlogs();
   } else if (dialogText.value === '修改') {
     await api.post("/blog/update", {
       "id": blogId.value,
@@ -779,10 +849,11 @@ async function submit() {
     }).then(res => {
       // 处理结果
       CommSeccess("修改成功");
-      dialogShow.value = false;
-      loadBlogs();
     }).catch(() => {
       CommFail("修改失败");
+    }).then(() => {
+      dialogShow.value = false;
+      loadBlogs();
     })
   } else {
     CommFail("无法提交");
@@ -791,7 +862,8 @@ async function submit() {
 
 // 图片提交
 async function submitImg() {
-  if (!imgUseId.value && imgExists.value) {
+  // 新增
+  if (dialogTextImg.value === '新增' && imgExists.value) {
     // 上传图片
     uploadDone.value = false;
     await imgUploader.value.upload();
@@ -799,13 +871,63 @@ async function submitImg() {
       await sleep(233);
     }
     CommSeccess("上传成功");
+    await refreshBtnImg();
     // 上传后自动赋值给imgInfo了
-  }
+  } else
 
-  // 不合法的imgInfo
-  if (!imgInfo.value) {
-    CommFail("图片不存在");
+    // 修改
+  if (dialogTextImg.value === '修改') {
+    // 不合法的imgInfo
+    if (!imgInfo.value) {
+      CommFail("图片不存在");
+    }
+    await updateImg(rightClickItem.value.id, field.value);
+  } else
+
+    // 批量修改
+  if (dialogTextImg.value === '批量修改') {
+    if (selectedImgs.value.length < 1) {
+      CommWarn("至少选择一个图片");
+      return;
+    }
+    let idList = [];
+    selectedImgs.value.forEach((item) => {
+      idList.push(item.id);
+    })
+    // 上传图片，带刷新
+    updateImgs(idList, field.value);
+    await refreshBtnImg();
   }
+}
+
+// 修改图片
+function updateImg(id, f) {
+  api.put("/img/update", {
+    "id": id,
+    "field": f
+  }).then(() => {
+    CommSeccess("修改成功");
+  }).catch(() => {
+    CommFail("修改失败");
+  }).then(() => {
+    dialogShowImg.value = false;
+    refreshBtnImg();
+  })
+}
+
+// 修改图片s
+function updateImgs(idList, f) {
+  api.put("/img/update", {
+    "idList": idList,
+    "field": f
+  }).then(() => {
+    CommSeccess("修改成功");
+  }).catch(() => {
+    CommFail("修改失败");
+  }).then(() => {
+    dialogShowImg.value = false;
+    refreshBtnImg();
+  })
 }
 
 // 上传图片工厂函数
@@ -814,6 +936,25 @@ function imgUploadFn() {
     resolve({
       "url": ServerName + imgUploadUrl.value,
       "fieldName": "file",
+      "formFields": [
+        {
+          "name": "field",
+          "value": field.value
+        }],
+      "headers": [{
+        "name": "token",
+        "value": localStorage.getItem("token")
+      }]
+    })
+  })
+}
+
+// 上传图片工厂函数s
+function imgUploadsFn() {
+  return new Promise(resolve => {
+    resolve({
+      "url": ServerName + imgUploadsUrl.value,
+      "fieldName": "files",
       "formFields": [
         {
           "name": "field",

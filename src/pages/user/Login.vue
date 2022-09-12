@@ -107,7 +107,7 @@ function handlerLogin() {
       }
     })
   } else if (second.value === '注册' && regRule()) { // 注册
-    const a = register(usernameR.value);
+    register(usernameR.value);
   }
 }
 
@@ -139,15 +139,13 @@ async function register(val) {
     return res.data;
   });
   if (!nameE) {
-    const server = await api.post("/user", {
+    await api.post("/user", {
       "name": usernameR.value,
       "password": passwordR.value
     }).then(res => {
-      if (res.code === "200") {
         setUserInfo(res.data);
         CommSeccess("注册成功");
-      }
-    });
+    })
   } else {
     clearAll();
     CommFail("用户名已被占用");
