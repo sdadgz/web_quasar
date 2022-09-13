@@ -7,8 +7,7 @@
         </template>
         <CodeStyle :type="type" :text="textArr[index+i]"/>
       </div>
-
-    </div>
+    </div>w
   </div>
 </template>
 

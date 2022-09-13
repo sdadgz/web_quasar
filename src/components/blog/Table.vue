@@ -43,9 +43,6 @@ function start() {
     }
     dataRow.value.push(obj);
   }
-
-  console.log(columns.value);
-  console.log(dataRow.value);
 }
 
 </script>

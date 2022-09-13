@@ -91,11 +91,22 @@
     </template>
     <!--    表格-->
     <template v-else-if="whatType(index - 1) === 12">
-      <Table :index="index - 1" :textArr="textArr" :colm="tableC"/>
+      <Table :index="index - 1" :textArr="arrRef" :colm="tableC"/>
     </template>
     <!--    代码块-->
     <template v-else-if="whatType(index - 1) === 13">
-      <CodeField :index="index - 1" :textArr="textArr" :colm="tableC"/>
+      <!--      <CodeField :index="index-1" :textArr="textArr" :colm="tableC"/>-->
+      <div class="column _base code-field" style="border-radius: 6px">
+        <div v-for="i in tableC - 2">
+          <div class="row justify-start">
+            <template v-for="dontUse in spaseF(arrRef[index + i - 1])">
+              <span class="col-auto" style="width: 5px;"/>
+            </template>
+            <!--            <CodeStyle :type="arrRef[index-1].substring(3)" :text="arrRef[index + i - 1]"/>-->
+            <span class="col-auto">{{ arrRef[index + i - 1] }}</span>
+          </div>
+        </div>
+      </div>
     </template>
     <!--    缺省-->
     <template v-else>
@@ -112,6 +123,7 @@
 import {ref, watch} from "vue";
 import Special from "./Special.vue";
 import Table from "./Table.vue";
+import CodeStyle from "./CodeStyle.vue";
 import CodeField from "./CodeField.vue";
 
 const props = defineProps(['textArr']);
@@ -120,11 +132,26 @@ const arrRef = ref([]);
 const tableR = ref(0);
 const tableC = ref(0); // 与代码块列数
 const passIndex = ref(0);
-const blogIndexT = ref([]);
+const arrType = ref([]); // 类型数组
+
+function start() {
+
+}
+
+// 去递归-首位空格
+function spaseF(t) {
+  let add = 0;
+  while (t.startsWith(" ")) {
+    add++;
+    t = t.substring(1);
+  }
+  return add;
+}
 
 // 监控
 watch(() => props.textArr, () => {
   arrRef.value = props.textArr;
+  start();
 }, {immediate: true})
 
 // 获取表情索引
@@ -141,35 +168,30 @@ function passF(index) {
 
 // 什么类型的
 function whatType(index) {
-  const test = props.textArr[index];
+  const test = arrRef.value[index];
   // 标题
   if (test.startsWith("# ")) {
     return 0;
-  }
-  if (test.startsWith("## ")) {
+  } else if (test.startsWith("## ")) {
     return 1;
-  }
-  if (test.startsWith("### ")) {
+  } else if (test.startsWith("### ")) {
     return 2;
-  }
-  if (test.startsWith("#### ")) {
+  } else if (test.startsWith("#### ")) {
     return 3;
-  }
-  if (test.startsWith("##### ")) {
+  } else if (test.startsWith("##### ")) {
     return 4;
-  }
-  if (test.startsWith("###### ")) {
+  } else if (test.startsWith("###### ")) {
     return 5;
-  }
-  // 引用
+  } else
+    // 引用
   if (test.startsWith("> ")) {
     return 6;
-  }
-  // 分割线
+  } else
+    // 分割线
   if ('------' === test || '---' === test || '***' === test) {
     return 7;
-  }
-  // 图片
+  } else
+    // 图片
   if (test.startsWith("![")) {
     let temp = test.indexOf(']', 2);
     if (temp !== -1) {
@@ -181,8 +203,8 @@ function whatType(index) {
         }
       }
     }
-  }
-  // 超链接
+  } else
+    // 超链接
   if (test.startsWith("[")) {
     let temp = test.indexOf(']', 1);
     if (temp !== -1) {
@@ -194,21 +216,21 @@ function whatType(index) {
         }
       }
     }
-  }
-  // 列表
+  } else
+    // 列表
   if (test.startsWith("1. ")) {
     return 10;
-  }
+  } else
 
-  // 无序列表
+    // 无序列表
   if (test.startsWith("- ") || test.startsWith("* ")) {
     return 11;
-  }
-  // 表格
+  } else
+    // 表格
   if (test.startsWith("| ") && isTable(index)) {
     return 12;
-  }
-  // 代码块
+  } else
+    // 代码块
   if (test.startsWith("```")) {
     passIndex.value = index;
     tableC.value = codeF(index);
@@ -283,6 +305,10 @@ function notLine(tableStr, rows) {
 </script>
 
 <style scoped>
+
+.code-field {
+  background-color: rgba(255, 255, 255, .29);
+}
 
 a {
   text-decoration: none;

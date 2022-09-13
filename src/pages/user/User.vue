@@ -259,7 +259,7 @@
         <q-card-section v-if="dialogTextImg === '新增'">
           <q-uploader
             ref="imgUploader"
-            label="上传图片"
+            label="上传博客主页图片"
             accept=".jpg, image/*"
             :factory="imgUploadsFn"
             multiple
@@ -508,13 +508,8 @@ async function loadImg() {
       }
 
       // 状态结束
-      // LoadingSucceed(loadNot);
       tableLoadingImg.value = false;
-    } else {
-      // LoadingFail(loadNot);
     }
-  }).catch(() => {
-    // LoadingFail(loadNot);
   })
 }
 
