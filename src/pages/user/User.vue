@@ -7,6 +7,7 @@
     <!--  头  -->
     <Header/>
 
+    <!--  banner  -->
     <q-card>
       <q-img
         :src="backgroundImg"
@@ -44,6 +45,13 @@
           color="red"
           label="删除"
           @click="deleteBtn"
+        />
+        <q-btn
+          class="user-btn"
+          icon="arrow_outward"
+          color="secondary"
+          label="批量上传"
+          @click="mdsUploadBtn"
         />
       </div>
 
@@ -116,7 +124,7 @@
             <q-card-section v-else>
               <q-uploader
                 ref="imgUploader"
-                label="上传图片"
+                label="上传博客主页图片"
                 accept=".jpg, image/*"
                 :factory="imgUploadFn"
                 hide-upload-btn
@@ -149,6 +157,47 @@
 
 
         </q-scroll-area>
+      </q-card>
+    </q-dialog>
+
+    <!--  批量上传博客  -->
+    <q-dialog v-model="blogsUploadShow">
+      <q-card class="column" style="width: 460px;padding: 33px 50px">
+
+        <!--    弹窗标题      -->
+        <q-card-section class="row justify-between">
+          <div class="text-h6">
+            {{ blogsUploadText }}
+          </div>
+          <q-btn icon="close" flat round dense v-close-popup/>
+        </q-card-section>
+
+        <!--    简短提示    -->
+        <q-card-section>
+          批量上传默认随机首页图，在上传博客之前多上传点 <strong>博客首页</strong> 图片
+        </q-card-section>
+
+        <!--    上传器    -->
+        <q-card-section>
+          <q-uploader
+            ref="mdsUploader"
+            label="上传笔记"
+            accept=".md"
+            :factory="mdsUploadFn"
+            hide-upload-btn
+            @added="mdExists = true"
+            @removed="mdExists = false"
+            @finish="uploadDone = true"
+            @uploaded="mdUploadFinish"
+            multiple
+          />
+        </q-card-section>
+
+        <q-card-section class="row justify-between">
+          <q-btn @click="reset" label="重置"/>
+          <q-btn @click="submits" label="提交" color="primary"/>
+        </q-card-section>
+
       </q-card>
     </q-dialog>
 
@@ -222,8 +271,11 @@
     <!--  图片弹出对话框  -->
     <q-dialog v-model="dialogShowImg">
       <q-card class="column" style="width: 460px;padding: 33px 50px">
-        <q-card-section>
-          {{ dialogTextImg }}
+        <q-card-section class="row justify-between">
+          <div class="text-h6">
+            {{ dialogTextImg }}
+          </div>
+          <q-btn icon="close" flat round dense v-close-popup/>
         </q-card-section>
 
         <q-card-section>
@@ -233,8 +285,12 @@
                 <q-item-section>全局背景图片</q-item-section>
               </q-item>
 
-              <q-item clickable v-close-popup @click="field = '博客主页'">
-                <q-item-section>博客主页</q-item-section>
+              <q-item clickable v-close-popup @click="field = '首页横幅'">
+                <q-item-section>首页横幅</q-item-section>
+              </q-item>
+
+              <q-item clickable v-close-popup @click="field = '博客首页'">
+                <q-item-section>博客首页</q-item-section>
               </q-item>
 
               <q-item clickable v-close-popup @click="field = '博客内图片'">
@@ -259,7 +315,7 @@
         <q-card-section v-if="dialogTextImg === '新增'">
           <q-uploader
             ref="imgUploader"
-            label="上传博客主页图片"
+            label="上传图片"
             accept=".jpg, image/*"
             :factory="imgUploadsFn"
             multiple
@@ -385,6 +441,41 @@ const blogId = ref(0); // 图片是否存在
 function start() {
   loadBlogs();
   loadImg();
+}
+
+const blogsUploadShow = ref(false); // 批量上传弹出框
+const blogsUploadText = ref("批量增加"); // 弹出框标题
+const mdsUploader = ref(null); // 上传器
+const mdsUploadUrl = ref("/blog/uploads") // 批量上传地址
+
+// 博客批量上传按钮
+function mdsUploadBtn() {
+  reset();
+  blogsUploadShow.value = true;
+}
+
+// 批量上传提交
+async function submits() {
+  uploadDone.value = false;
+  await mdsUploader.value.upload();
+  while (!uploadDone.value) {
+    await sleep(233);
+  }
+  await loadBlogs();
+}
+
+// 批量提交工厂
+function mdsUploadFn() {
+  return new Promise(resolve => {
+    resolve({
+      "url": ServerName + mdsUploadUrl.value,
+      "fieldName": "files",
+      "headers": [{
+        "name": "token",
+        "value": localStorage.getItem("token")
+      }]
+    })
+  })
 }
 
 // 图片样式
@@ -793,6 +884,9 @@ function reset() {
   }
   if (mdUploader.value !== null) {
     mdUploader.value.reset();
+  }
+  if (mdsUploader.value !== null) {
+    mdsUploader.value.reset();
   }
 }
 

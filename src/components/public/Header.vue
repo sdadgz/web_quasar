@@ -11,8 +11,9 @@
     </q-avatar>
 
     <q-btn class="barBtn a" flat dense label="上传" style="margin-right: 1%" @click="gotoUser" icon="upgrade"/>
-    <q-btn class="barBtn a" flat dense label="退出登录" style="margin-right: 1%" @click="logout"/>
+    <q-btn class="barBtn a" icon="logout" flat dense label="退出登录" style="margin-right: 1%" @click="logout"/>
   </div>
+  <div style="position: fixed;z-index: -102"><p>一个没人访问的网站</p></div>
 </template>
 
 <script setup>
