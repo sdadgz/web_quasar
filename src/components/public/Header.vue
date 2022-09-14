@@ -27,6 +27,7 @@
 
 import {ref} from "vue";
 import {useRouter} from "vue-router";
+import {api} from "../../boot/axios";
 
 const $router = useRouter();
 
@@ -38,15 +39,35 @@ const banner = ref("https://sdadgz.cn/download/img/1.png");
 const bannerArr = ref([]);
 
 start();
+setUrl();
 
 // 获取banner
 async function getBanner() {
+  let urlUserName = username.value;
+  // 设置用户名
+  if (urlUserName === '未登录') {
+    urlUserName = 'sdadgz';
+  }
   // 获取banner
+  await api.get("/img/" + urlUserName + "/banner").then(res => {
+    bannerArr.value = res.data;
+  })
+}
 
-  // 获取默认banner
+async function setUrl() {
+  while (true) {
+    await sleep(233);
+    if (bannerArr.value.length > 0) {
+      const bound = bannerArr.value.length;
+      const rand = random(bound);
+      banner.value = bannerArr.value[rand].url;
+      await sleep(5 * 60 * 1000);
+    }
+  }
+}
 
-  // 循环替换banner
-
+function random(bound) {
+  return Math.floor(Math.random() * bound);
 }
 
 // 去用户主页
@@ -77,6 +98,8 @@ function start() {
     avatar.value = localAvatar;
     useIcon.value = false;
   }
+  // 设置背景图
+  getBanner();
 }
 
 // 登出
