@@ -7,13 +7,6 @@
     <!--  头  -->
     <Header/>
 
-    <!--  banner  -->
-    <q-card>
-      <q-img
-        :src="backgroundImg"
-      />
-    </q-card>
-
     <!--  博客表  -->
     <q-card style="background-color: rgba(255,255,255,.5)">
       <div style="padding: 10px">
@@ -232,6 +225,13 @@
           color="red"
           label="删除"
           @click="deleteBtnImgs"
+        />
+        <q-btn
+          class="user-btn"
+          icon="accessible_forward"
+          color="secondary"
+          :label="selectBtnStatus ? '全选' : '取消全选'"
+          @click="allSelect"
         />
       </div>
       <q-infinite-scroll @load="onLoad" :offset="250" :disable="imgsDisable">
@@ -452,6 +452,41 @@ const mdsUploadUrl = ref("/blog/uploads") // 批量上传地址
 function mdsUploadBtn() {
   reset();
   blogsUploadShow.value = true;
+}
+
+const selectBtnStatus = ref(true); // 是不是全选
+
+// 全选
+function allSelect() {
+  if (selectBtnStatus.value) {
+    // 全选
+    for (let i = 0; i < imgs.value.length; i++) {
+      for (let j = 0; j < imgs.value[i].length; j++) {
+        if (imgStyles.value[i][j].transform === ImgUnSelectedStatus.transform) { // 未选中
+          // 选择他
+          selectedImgs.value.push(imgs.value[i][j]);
+          imgStyles.value[i][j] = ImgSelectedStatus;
+        }
+      }
+    }
+    selectBtnStatus.value = false;
+  } else {
+    // 全不选
+    for (let i = 0; i < imgs.value.length; i++) {
+      for (let j = 0; j < imgs.value[i].length; j++) {
+        if (imgStyles.value[i][j].transform !== ImgUnSelectedStatus.transform) { // 选中
+          // 取消选中
+          imgStyles.value[i][j] = ImgUnSelectedStatus;
+          for (let k = 0; k < selectedImgs.value.length; k++) {
+            if (selectedImgs.value[k] === imgs.value[i][j]) {
+              selectedImgs.value.splice(k, 1);
+            }
+          }
+        }
+      }
+      selectBtnStatus.value = true;
+    }
+  }
 }
 
 // 批量上传提交

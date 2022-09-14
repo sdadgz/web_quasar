@@ -6,7 +6,8 @@
     <q-btn flat class="barBtn a" :label="username" @click="gotoUser"/>
 
 
-    <q-avatar  class="a" style="height: 46px;width: 46px;margin-right: 1%" @click="gotoUser" :icon="useIcon ? 'account_circle' : ''">
+    <q-avatar class="a" style="height: 46px;width: 46px;margin-right: 1%" @click="gotoUser"
+              :icon="useIcon ? 'account_circle' : ''">
       <img v-if="!useIcon" :src="avatar" alt="地址错误" style="position: absolute;top: 0"/>
     </q-avatar>
 
@@ -14,6 +15,12 @@
     <q-btn class="barBtn a" icon="logout" flat dense label="退出登录" style="margin-right: 1%" @click="logout"/>
   </div>
   <div style="position: fixed;z-index: -102"><p>一个没人访问的网站</p></div>
+  <!--  banner  -->
+  <q-card>
+    <q-img
+      :src="banner"
+    />
+  </q-card>
 </template>
 
 <script setup>
@@ -27,8 +34,22 @@ const username = ref("未登录");
 const avatar = ref();
 const useIcon = ref(true);
 
+const banner = ref("https://sdadgz.cn/download/img/1.png");
+const bannerArr = ref([]);
+
 start();
 
+// 获取banner
+async function getBanner() {
+  // 获取banner
+
+  // 获取默认banner
+
+  // 循环替换banner
+
+}
+
+// 去用户主页
 function gotoUser() {
   if (username.value !== "未登录") {
     $router.push("/user/" + username.value);
@@ -38,10 +59,12 @@ function gotoUser() {
 
 }
 
+// 欢迎回家
 function goHome() {
   $router.push("/");
 }
 
+// 初始化
 function start() {
   const localUsername = localStorage.getItem("username");
   const localAvatar = localStorage.getItem("avatar");
@@ -56,9 +79,15 @@ function start() {
   }
 }
 
+// 登出
 function logout() {
   localStorage.clear();
   $router.push("/user/login");
+}
+
+// 遇到问题睡大觉
+async function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 </script>

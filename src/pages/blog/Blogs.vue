@@ -5,11 +5,11 @@
 
     <Header/>
 
-    <q-card>
-      <q-img
-        :src="backgroundImg"
-      />
-    </q-card>
+<!--    <q-card>-->
+<!--      <q-img-->
+<!--        :src="backgroundImg"-->
+<!--      />-->
+<!--    </q-card>-->
 
     <q-btn class="shadow-1" color="primary" @click="loadBlogs" label="重加载"/>
 
