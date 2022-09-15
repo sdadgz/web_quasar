@@ -28,6 +28,8 @@
 import {ref} from "vue";
 import {useRouter} from "vue-router";
 import {api} from "../../boot/axios";
+import {sleep} from "../Common.js";
+import {random} from "../MathTool.js";
 
 const $router = useRouter();
 
@@ -61,13 +63,9 @@ async function setUrl() {
       const bound = bannerArr.value.length;
       const rand = random(bound);
       banner.value = bannerArr.value[rand].url;
-      await sleep(5 * 60 * 1000);
+      await sleep(3 * 60 * 1000);
     }
   }
-}
-
-function random(bound) {
-  return Math.floor(Math.random() * bound);
 }
 
 // 去用户主页
@@ -106,11 +104,6 @@ function start() {
 function logout() {
   localStorage.clear();
   $router.push("/user/login");
-}
-
-// 遇到问题睡大觉
-async function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 </script>

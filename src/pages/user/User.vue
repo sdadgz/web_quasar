@@ -1,6 +1,6 @@
 <template>
 
-  <q-img :src="backgroundImg" style="width: 101%;height: 101%;position: fixed;z-index: -1"/>
+  <BackgroundImg />
 
   <div class="q-pa-md q-gutter-sm">
 
@@ -397,7 +397,9 @@ import {
   RightIconUnShow
 } from "../../components/models";
 import {useQuasar} from "quasar";
-import {checkPicurl} from "../../components/img/img";
+import {checkPicurl} from "../../components/img/img.js";
+import BackgroundImg from "../../components/public/BackgroundImg.vue";
+import {sleep} from "../../components/Common.js";
 
 const backgroundImg = ref("https://sdadgz.cn/download/img/1.png");
 
@@ -461,6 +463,9 @@ function allSelect() {
   if (selectBtnStatus.value) {
     // 全选
     for (let i = 0; i < imgs.value.length; i++) {
+      if (imgs.value[i] === undefined) {
+        break;
+      }
       for (let j = 0; j < imgs.value[i].length; j++) {
         if (imgStyles.value[i][j].transform === ImgUnSelectedStatus.transform) { // 未选中
           // 选择他
@@ -473,6 +478,9 @@ function allSelect() {
   } else {
     // 全不选
     for (let i = 0; i < imgs.value.length; i++) {
+      if (imgs.value[i] === undefined) {
+        break;
+      }
       for (let j = 0; j < imgs.value[i].length; j++) {
         if (imgStyles.value[i][j].transform !== ImgUnSelectedStatus.transform) { // 选中
           // 取消选中
@@ -1153,11 +1161,6 @@ function mdUploadFinish(info) {
 // 已选几项
 function getSelectedString() {
   return selected.value.length === 0 ? '' : `已选择${selected.value.length}项`;
-}
-
-// 遇到问题睡大觉
-async function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 // 初始化

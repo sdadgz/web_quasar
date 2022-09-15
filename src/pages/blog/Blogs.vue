@@ -30,10 +30,11 @@ import "components/notifyTools"
 import BlogCard from "components/blog/BlogCard.vue";
 import {useRouter} from "vue-router";
 import Header from "components/public/Header.vue";
-import {checkPicurl} from "../../components/img/img";
+import {checkPicurl} from "../../components/img/img.js";
 import {api} from "../../boot/axios";
 import {LoadingFail, LoadingNotify, LoadingSucceed} from "../../components/notifyTools";
 import {BlogsColumns, WaterFullOther} from "../../components/models";
+import {sleep} from "../../components/Common.js";
 
 const $q = useQuasar();
 const $router = useRouter();
@@ -101,11 +102,6 @@ async function setBlogs(data) {
     // 扔进去
     blogs.value[minIndex].push(data[i]);
   }
-}
-
-// 遇到问题睡大觉
-async function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 </script>

@@ -23,7 +23,7 @@
       <q-card-section style="font-size: 2em">
         {{ blogTitle }}
       </q-card-section>
-      <q-img :src="backgroundImg" style="margin-bottom: 66px"/>
+      <q-img :src="blogBanner" style="margin-bottom: 66px"/>
       <!--      <BlogContent v-if="blogDone" :textArr="textArr"/>-->
 
       <template v-if="blogDone">
@@ -374,6 +374,7 @@ function notLine(tableStr, rows) {
 }
 
 const textType = ref([]);
+const blogBanner = ref("https://sdadgz.cn/download/img/1.png"); // 博客首页
 
 // 获取博客
 function getBlog() {
@@ -387,10 +388,7 @@ function getBlog() {
     textArr.value = str.split("\n");
     textType.value = [];
     passArr.value = [];
-    // textArr.value.forEach((str) => {
-    //   const type = strType(str);
-    //   textType.value.push(type);
-    // })
+    blogBanner.value = res.data.img.url;
     for (let i = 0; i < textArr.value.length; i++) {
       const type = whatType(i);
       textType.value.push(type);
