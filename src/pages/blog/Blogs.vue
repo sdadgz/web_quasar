@@ -1,5 +1,7 @@
 <template>
-  <q-img :src="backgroundImg" style="width: 101%;height: 101%;position: fixed;z-index: -1"/>
+
+  <!-- 背景图片 -->
+  <BackgroundImg />
 
   <div class="q-pa-md q-gutter-sm">
 
@@ -35,6 +37,7 @@ import {api} from "../../boot/axios";
 import {LoadingFail, LoadingNotify, LoadingSucceed} from "../../components/notifyTools";
 import {BlogsColumns, WaterFullOther} from "../../components/models";
 import {sleep} from "../../components/Common.js";
+import BackgroundImg from "../../components/public/BackgroundImg.vue";
 
 const $q = useQuasar();
 const $router = useRouter();

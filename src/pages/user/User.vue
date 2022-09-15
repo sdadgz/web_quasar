@@ -1,6 +1,6 @@
 <template>
 
-  <BackgroundImg />
+  <BackgroundImg/>
 
   <div class="q-pa-md q-gutter-sm">
 
@@ -1154,7 +1154,6 @@ function mdUploadFinish(info) {
   } else {
     // 处理
     CommSeccess("上传成功");
-    reset();
   }
 }
 

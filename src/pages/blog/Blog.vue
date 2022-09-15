@@ -1,5 +1,7 @@
 <template>
-  <q-img :src="backgroundImg" style="width: 101%;height: 101%;position: fixed;z-index: -1"/>
+
+  <!-- 背景图片 -->
+  <BackgroundImg />
 
   <div class="q-pa-md q-gutter-sm">
 
@@ -178,6 +180,7 @@ import {api} from "../../boot/axios";
 import {LoadingFail, LoadingNotify, LoadingSucceed} from "../../components/notifyTools";
 import Special from "../../components/blog/Special.vue";
 import Table from "../../components/blog/Table.vue";
+import BackgroundImg from "../../components/public/BackgroundImg.vue";
 
 // banner
 const backgroundImg = ref("https://sdadgz.cn/download/img/1.png");
