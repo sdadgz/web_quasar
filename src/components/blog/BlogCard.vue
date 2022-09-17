@@ -10,10 +10,15 @@
       <!--   图片   -->
       <q-card class="blog-img" @mouseover="onImg" @mouseout="outImg">
 
-        <div class="img-to-big">
-          <q-img v-if="blog.img != null"
-                 :src="blog.img.url"/>
-          <q-img v-else :src="backgroundImg"/>
+        <div class="img-to-big" v-if="blog.img != null">
+          <q-img
+            v-if="blog.img.reduceUrl != null"
+            :src="blog.img.reduceUrl"
+          />
+          <q-img
+            v-else-if="blog.img.url != null"
+            :src="blog.img.url"
+          />
           <div class="info-to-small" :class="{canSee: imgMagnify}">
             {{ blog.detail }}
           </div>

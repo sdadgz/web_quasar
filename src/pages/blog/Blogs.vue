@@ -1,17 +1,17 @@
 <template>
 
   <!-- 背景图片 -->
-  <BackgroundImg />
+  <BackgroundImg/>
 
   <div class="q-pa-md q-gutter-sm">
 
     <Header/>
 
-<!--    <q-card>-->
-<!--      <q-img-->
-<!--        :src="backgroundImg"-->
-<!--      />-->
-<!--    </q-card>-->
+    <!--    <q-card>-->
+    <!--      <q-img-->
+    <!--        :src="backgroundImg"-->
+    <!--      />-->
+    <!--    </q-card>-->
 
     <q-btn class="shadow-1" color="primary" @click="loadBlogs" label="重加载"/>
 
@@ -91,10 +91,12 @@ async function setBlogs(data) {
         minIndex = j;
       }
     }
+    // 设置url
+    let url = data[i].img.reduceUrl !== null ? data[i].img.reduceUrl : data[i].img.url;
     // 最小索引增加图片
-    let add = await checkPicurl(data[i].img.url);
-    while (add === undefined && data[i].img.url) {
-      add = await checkPicurl(data[i].img.url);
+    let add = await checkPicurl(url);
+    while (add === undefined && url) {
+      add = await checkPicurl(url);
       await sleep(1);
     }
     numArr[minIndex] += add + WaterFullOther;

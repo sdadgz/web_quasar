@@ -243,7 +243,8 @@
                         @click="setImgStyle(i-1,j-1)"
                         @contextmenu.prevent="openMenu($event,imgs[i - 1][j - 1])"
                 >
-                  <q-img :src="imgs[i - 1][j - 1].url">
+                  <q-img
+                    :src="imgs[i - 1][j - 1].reduceUrl !== null ? imgs[i - 1][j - 1].reduceUrl : imgs[i - 1][j - 1].url">
                     <!--          选中图标          -->
                     <q-icon
                       :style="imgStyles[i-1][j-1].transform === ImgSelectedStatus.transform ? RightIconShow : RightIconUnShow"
@@ -658,10 +659,12 @@ async function setImgs(data) {
       }
     }
 
-    // 加进去
-    let add = await checkPicurl(data[i].url);
-    while (add === undefined) {
-      add = await checkPicurl(data[i].url);
+    // 设置url
+    let url = data[i].reduceUrl !== null ? data[i].reduceUrl : data[i].url;
+    // 最小索引增加图片
+    let add = await checkPicurl(url);
+    while (add === undefined && url) {
+      add = await checkPicurl(url);
       await sleep(1);
     }
 
