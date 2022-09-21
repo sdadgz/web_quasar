@@ -345,8 +345,8 @@
         <q-card style="max-width: 250px;overflow: auto;background-color: #ec85a7" v-show="visible">
           <q-list bordered separator>
 
-            <q-item clickable v-ripple>
-              <q-item-section>{{ rightClickItem.field }}</q-item-section>
+            <q-item clickable v-ripple @click="picOrigin(rightClickItem)">
+              <q-item-section>查看原图</q-item-section>
             </q-item>
 
             <q-item v-if="rightClickItem.user">
@@ -444,6 +444,11 @@ const blogId = ref(0); // 图片是否存在
 function start() {
   loadBlogs();
   loadImg();
+}
+
+// 直接屎山，查看原图
+function picOrigin(img) {
+  window.open(img.url);
 }
 
 const blogsUploadShow = ref(false); // 批量上传弹出框
