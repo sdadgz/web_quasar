@@ -1,7 +1,4 @@
 <template>
-
-  <q-img :src="backgroundImg" style="width: 101%;height: 101%;position: fixed;z-index: -1"/>
-
   <div class="q-pa-md">
     <div class="column justify-center" style="height: 90vh;">
       <div class="col-auto row justify-center">

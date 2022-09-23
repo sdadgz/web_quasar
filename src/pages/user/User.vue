@@ -1,7 +1,5 @@
 <template>
 
-  <BackgroundImg/>
-
   <div class="q-pa-md q-gutter-sm">
 
     <!--  头  -->
@@ -398,9 +396,9 @@ import {
   RightIconUnShow
 } from "../../components/models";
 import {useQuasar} from "quasar";
-import {checkPicurl} from "../../components/img/img.js";
+import {checkPicurl} from "../../components/img/img";
 import BackgroundImg from "../../components/public/BackgroundImg.vue";
-import {sleep} from "../../components/Common.js";
+import {sleep} from "../../components/Common";
 
 const backgroundImg = ref("https://sdadgz.cn/download/img/1.png");
 

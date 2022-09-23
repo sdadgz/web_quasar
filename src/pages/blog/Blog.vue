@@ -1,8 +1,5 @@
 <template>
 
-  <!-- 背景图片 -->
-  <BackgroundImg />
-
   <div class="q-pa-md q-gutter-sm">
 
     <!--    左侧栏     -->

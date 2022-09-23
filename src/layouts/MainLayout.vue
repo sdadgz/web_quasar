@@ -2,10 +2,14 @@
   <q-layout view="lHh Lpr lFf">
 
     <q-page-container>
+      <!--   背景图片   -->
+      <BackgroundImg />
+
       <router-view/>
     </q-page-container>
 
     <q-footer reveal style="background-color: unset">
+      <!--   备案信息   -->
       <div class="row justify-center">
         <div class="col-auto justify-center">
           <a style="color: #1D1D1D;text-decoration: none" href="https://beian.miit.gov.cn/" target="_blank">京ICP备2022019075号-1</a>
@@ -16,11 +20,8 @@
   </q-layout>
 </template>
 
-<script setup lang="ts">
-import {defineComponent, ref} from 'vue';
-import EssentialLink from 'components/EssentialLink.vue';
-
-
+<script setup>
+import BackgroundImg from "components/public/BackgroundImg.vue";
 </script>
 
 <style>

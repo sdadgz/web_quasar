@@ -1,17 +1,24 @@
 <template>
   <div class="header row items-center justify-end">
 
+    <!--  主页  -->
     <q-btn flat class="barBtn a" label="home" @click="goHome" style="position: absolute;left: 5%" icon="home"/>
 
+    <!--  repository  -->
+    <q-btn flat class="barBtn a" label="repository" @click="gotoRepository"/>
+
+    <!--  用户名  -->
     <q-btn flat class="barBtn a" :label="username" @click="gotoUser"/>
 
-
+    <!--  头像  -->
     <q-avatar class="a" style="height: 46px;width: 46px;margin-right: 1%" @click="gotoUser"
               :icon="useIcon ? 'account_circle' : ''">
       <img v-if="!useIcon" :src="avatar" alt="地址错误" style="position: absolute;top: 0"/>
     </q-avatar>
 
+    <!--  上传  -->
     <q-btn class="barBtn a" flat dense label="上传" style="margin-right: 1%" @click="gotoUser" icon="upgrade"/>
+    <!--  登出  -->
     <q-btn class="barBtn a" icon="logout" flat dense label="退出登录" style="margin-right: 1%" @click="logout"/>
   </div>
   <div style="position: fixed;z-index: -102"><p>一个没人访问的网站</p></div>
@@ -42,6 +49,15 @@ const bannerArr = ref([]);
 
 start();
 setUrl();
+
+// 去私人仓库
+function gotoRepository(){
+  if (username.value !== "未登录") {
+    $router.push("/repository/" + username.value);
+  } else {
+    $router.push("/user/login");
+  }
+}
 
 // 获取banner
 async function getBanner() {
@@ -75,7 +91,6 @@ function gotoUser() {
   } else {
     $router.push("/user/login");
   }
-
 }
 
 // 欢迎回家
