@@ -4,6 +4,9 @@ export const ServerName = 'https://sdadgz.cn:8000';
 // blogs页面分几列
 export const BlogsColumns = 4;
 
+// 图片列数
+export const ImgsColumns = 4;
+
 // 瀑布流图片以外占位
 export const WaterFullOther = 0.6;
 
@@ -16,8 +19,8 @@ export const TableLength = 6;
 // 图片表格长度
 export const TableLengthImg = 6;
 
-// 图片列数
-export const ImgsColumns = 4;
+// 仓库分页长度
+export const FILE_PAGE_SIZE = 6;
 
 // 图片选中状态
 export const ImgUnSelectedStatus = {transform: 'scale(1)'};
