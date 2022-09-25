@@ -58,10 +58,11 @@ import {FILE_PAGE_SIZE, ServerName} from "../../components/models";
 import {ref} from "vue";
 import Header from "../../components/public/Header.vue";
 import {CommFail, CommSeccess} from "../../components/notifyTools";
-import {useRouter} from "vue-router";
+import {useRoute, useRouter} from "vue-router";
 import {api} from "../../boot/axios";
 
 const $router = useRouter();
+const $route = useRoute();
 
 // 弹窗
 const dialogShow = ref(false);
@@ -73,7 +74,7 @@ const uploadDone = ref(false);
 // 无限滚动
 const fileDisable = ref(false);
 const fileArr = ref([]);
-const username = ref(localStorage.getItem("username"));
+const username = ref($route.params.username);
 const pageSize = ref(FILE_PAGE_SIZE);
 const pageCount = ref(1);
 const scrollRef = ref(null);
