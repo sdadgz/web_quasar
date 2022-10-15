@@ -5,18 +5,29 @@
     <!--  头  -->
     <Header/>
 
-    <q-uploader
-      ref="uploader"
-      label="上传文件"
-      :factory="uploadFn"
-      @finish="uploadDone = true"
-      @uploaded="uploadFinish"
-      multiple
-    />
+    <div class="row q-pa-md q-gutter-md">
+      <!--   上传器   -->
+      <div class="col-auto">
+        <q-uploader
+          ref="uploader"
+          label="上传文件"
+          :factory="uploadFn"
+          @finish="uploadDone = true"
+          @uploaded="uploadFinish"
+          multiple
+        />
+      </div>
+
+      <!--   跳转至   -->
+      <div class="col-auto">
+        <q-btn label="跳转至sdadgz的仓库" color="blue" @click="()=>$router.push('/repository/sdadgz')"/>
+      </div>
+    </div>
+
 
     <q-infinite-scroll @load="onLoad" :offset="250" :disable="fileDisable" ref="scrollRef">
       <div v-if="fileArr.length === 0" style="text-align: center">
-        还没有上传的文件
+        向下滑动查看文件
       </div>
 
       <div class="q-pa-md">
@@ -55,7 +66,7 @@
 
 // 批量提交工厂
 import {FILE_PAGE_SIZE, ServerName} from "../../components/models";
-import {ref} from "vue";
+import {ref, watch} from "vue";
 import Header from "../../components/public/Header.vue";
 import {CommFail, CommSeccess} from "../../components/notifyTools";
 import {useRoute, useRouter} from "vue-router";
@@ -84,6 +95,7 @@ function refresh() {
   fileArr.value = [];
   fileDisable.value = false;
   scrollRef.value.reset();
+  username.value = $route.params.username;
 }
 
 // 下载文件
@@ -187,6 +199,10 @@ function uploadFinish(info) {
   // 刷新
   refresh();
 }
+
+watch(()=>$route.fullPath,()=>{
+  refresh();
+})
 
 </script>
 
