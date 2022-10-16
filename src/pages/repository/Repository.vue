@@ -32,14 +32,27 @@
 
       <div class="q-pa-md">
         <q-list bordered separator style="background-color: rgba(255,255,255,.3)">
-          <q-item clickable v-ripple v-for="file in fileArr">
-            <q-item-section @click="downloadHandler(file)" style="color: #018EE8">
+          <q-item class="row" clickable v-for="file in fileArr">
+            <!--      文件名      -->
+            <q-item-section class="col" @click="downloadHandler(file)" style="color: #018EE8">
               {{ file.originalFilename }}
             </q-item-section>
-            <q-item-section v-if="!file.isDelete" style="max-width: 250px">
+
+            <!--      日期      -->
+            <q-item-section class="col-auto" @click="downloadHandler(file)">
+              {{ setTime(file.createtime) }}
+            </q-item-section>
+
+            <!--      复制链接      -->
+            <q-item-section class="col-auto">
+              <q-btn label="点我复制分享链接" color="blue-14" @click="copyUrlHandler(file.url)"/>
+            </q-item-section>
+
+            <!--      恢复和删除      -->
+            <q-item-section class="col-auto" v-if="!file.isDelete">
               <q-btn color="red" icon="delete_forever" label="删除" @click="deleteHandler(file)"/>
             </q-item-section>
-            <q-item-section v-else style="max-width: 250px">
+            <q-item-section v-else class="col-auto">
               <q-btn color="secondary" icon="restore_page" label="恢复文件" @click="reHandler(file)"/>
             </q-item-section>
           </q-item>
@@ -71,9 +84,17 @@ import Header from "../../components/public/Header.vue";
 import {CommFail, CommSeccess} from "../../components/notifyTools";
 import {useRoute, useRouter} from "vue-router";
 import {api} from "../../boot/axios";
+import {setTime} from "../../components/TimeUtil";
 
 const $router = useRouter();
 const $route = useRoute();
+
+// 复制
+function copyUrlHandler(url) {
+  navigator.clipboard.writeText(url).then(() => {
+    CommSeccess("复制成功");
+  })
+}
 
 // 弹窗
 const dialogShow = ref(false);
@@ -200,7 +221,7 @@ function uploadFinish(info) {
   refresh();
 }
 
-watch(()=>$route.fullPath,()=>{
+watch(() => $route.fullPath, () => {
   refresh();
 })
 
