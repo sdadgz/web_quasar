@@ -45,7 +45,8 @@
 
             <!--      复制链接      -->
             <q-item-section class="col-auto">
-              <q-btn label="点我复制分享链接" color="blue-14" @click="copyUrlHandler(file.url)"/>
+              <q-btn label="点我复制分享链接" color="blue-14" @click="copyUrlHandler(file.url)"
+                     icon="content_copy"/>
             </q-item-section>
 
             <!--      恢复和删除      -->
@@ -177,7 +178,8 @@ async function onLoad(index, done) {
   }).then(res => {
 
     // 分页上限
-    pageCount.value = Math.ceil(res.data.total / pageSize.value) === 0 ? 1 : Math.ceil(res.data.total / pageSize.value);
+    pageCount.value =
+      Math.ceil(res.data.total / pageSize.value) === 0 ? 1 : Math.ceil(res.data.total / pageSize.value);
 
     // 仍里头
     fileArr.value.push(...res.data.lists);

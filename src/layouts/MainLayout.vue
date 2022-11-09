@@ -3,7 +3,7 @@
 
     <q-page-container>
       <!--   背景图片   -->
-      <BackgroundImg />
+      <BackgroundImg/>
 
       <router-view/>
     </q-page-container>
@@ -21,7 +21,9 @@
 </template>
 
 <script setup>
+
 import BackgroundImg from "components/public/BackgroundImg.vue";
+
 </script>
 
 <style>

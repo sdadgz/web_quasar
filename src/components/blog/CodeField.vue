@@ -1,5 +1,5 @@
 <template>
-  <div class="column _base" style="border-radius: 6px">
+  <div class="_base" style="border-radius: 6px">
     <div v-for="i in colm - 2">
       <div class="row justify-start">
         <template v-for="dontUse in spaseF(textArr[index+i])">
@@ -7,7 +7,7 @@
         </template>
         <CodeStyle :type="type" :text="textArr[index+i]"/>
       </div>
-    </div>w
+    </div>
   </div>
 </template>
 

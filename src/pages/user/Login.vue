@@ -3,30 +3,47 @@
     <div class="column justify-center" style="height: 90vh;">
       <div class="col-auto row justify-center">
         <q-card class="col-auto shadow-10" style="background-color: rgb(255,255,255);padding: 50px;width: 400px">
-          <q-card-section>{{ pageTitle }}</q-card-section>
+          <q-card-section class="row justify-between">
+            <strong>{{ pageTitle }}</strong>
+            <q-btn icon="close" dense rounded flat to="/"/>
+          </q-card-section>
 
+          <!--     用户名     -->
           <q-card-section>
-            <q-input
-              rounded
-              v-model="usernameR" label="用户名" :lazy-rules="true"
-              :rules="[(val) => (val.length > 0) || '输入值为空']"
+            <q-input rounded
+                     v-model="usernameR"
+                     label="用户名"
+                     :lazy-rules="true"
+                     :rules="[(val) => (val.length > 0) || '输入值为空']"
+                     ref="usernameRef"
+                     @keyup.enter="usernameHandler"
             />
           </q-card-section>
 
+          <!--     密码     -->
           <q-card-section>
-            <q-input
-              rounded v-model="passwordR" label="密码" lazy-rules
-              :rules="[(val) => (val && val.length > 0) || '输入值为空']"
-              type="password"
+            <q-input rounded
+                     ref="passwordRef"
+                     v-model="passwordR"
+                     label="密码"
+                     lazy-rules
+                     :rules="[(val) => (val && val.length > 0) || '输入值为空']"
+                     @keyup.enter="passwordHandler"
+                     type="password"
             />
           </q-card-section>
 
+          <!--     确认密码     -->
           <q-slide-transition>
             <q-card-section v-if="registerR">
-              <q-input
-                rounded v-model="conformR" label="确认密码" lazy-rules
-                :rules="[(val) => ( val && val === passwordR && val.length > 0) || '两次输入密码不一致']"
-                type="password"
+              <q-input rounded
+                       v-model="conformR"
+                       label="确认密码"
+                       ref="passwordConformRef"
+                       @keyup.enter="passwordConformHandler"
+                       lazy-rules
+                       :rules="[(val) => ( val && val === passwordR && val.length > 0) || '两次输入密码不一致']"
+                       type="password"
               />
             </q-card-section>
           </q-slide-transition>
@@ -42,6 +59,29 @@
     </div>
   </div>
 
+  <!-- 弹窗 -->
+  <q-dialog v-model="announcement" persistent>
+    <q-card>
+      <!--   头   -->
+      <q-card-section class="row items-center">
+        <q-avatar icon="campaign" text-color="primary" size="50px"/>
+        <span class="q-ml-sm text-h6">公告</span>
+      </q-card-section>
+
+      <!--   内容   -->
+      <q-card-section>
+        <div style="font-size: 16px;padding: 10px">
+          自11月9日起所有密码重置为123456，后台整改为储存加密后密码防止密码泄露。
+        </div>
+      </q-card-section>
+
+      <!--   脚   -->
+      <q-card-actions align="between" class="q-pa-md">
+        <q-checkbox v-model="checkbox" label="不再提示"/>
+        <q-btn flat label="关闭" color="primary" v-close-popup @click="dialogHandler"/>
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script setup>
@@ -51,9 +91,47 @@ import {useQuasar} from "quasar";
 import {api} from "../../boot/axios";
 import {CommFail, CommSeccess} from "../../components/notifyTools";
 import {useRouter} from "vue-router";
+import {TRUE} from "../../components/StringTool";
 
 const $q = useQuasar();
 const $router = useRouter();
+
+// 弹窗控制
+const announcement = ref(true);
+
+// 弹窗内复选框
+const checkbox = ref(false);
+
+// 关闭弹窗
+function dialogHandler() {
+  if (checkbox.value) {
+    localStorage.setItem("announcement", TRUE);
+  }
+}
+
+// ref
+const usernameRef = ref(null);
+const passwordRef = ref(null);
+const passwordConformRef = ref(null);
+
+// 用户名控制
+function usernameHandler() {
+  passwordRef.value.focus();
+}
+
+// 密码控制
+function passwordHandler() {
+  if (registerR.value) {
+    passwordConformRef.value.focus();
+  } else {
+    handlerLogin();
+  }
+}
+
+// 确认密码控制
+function passwordConformHandler() {
+  handlerLogin();
+}
 
 const backgroundImg = ref("https://sdadgz.cn/download/img/1.png");
 
@@ -65,9 +143,11 @@ const registerR = ref(false);
 const first = ref("注册");
 const second = ref("登录");
 
-start();
-
 function start() {
+  const anno = localStorage.getItem("announcement");
+  if (anno && anno === TRUE) {
+    announcement.value = false;
+  }
   const username = localStorage.getItem("username");
   if (username != null) {
     usernameR.value = username;
@@ -140,8 +220,8 @@ async function register(val) {
       "name": usernameR.value,
       "password": passwordR.value
     }).then(res => {
-        setUserInfo(res.data);
-        CommSeccess("注册成功");
+      setUserInfo(res.data);
+      CommSeccess("注册成功");
     })
   } else {
     clearAll();
@@ -149,6 +229,7 @@ async function register(val) {
   }
 }
 
+start();
 </script>
 
 

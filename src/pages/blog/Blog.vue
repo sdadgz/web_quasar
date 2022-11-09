@@ -125,7 +125,7 @@
           <!--    代码块-->
           <template v-else-if="textType[index - 1] === 13">
             <!--      <CodeField :index="index-1" :textArr="textArr" :colm="tableC"/>-->
-            <div class="column _base code-field" style="border-radius: 6px">
+            <div class="column _base code-field" style="border-radius: 6px;padding: 10px">
               <div v-for="i in passArr[index - 1] - 1">
                 <div class="row justify-start">
                   <template v-for="dontUse in spaseF(textArr[index + i - 1])">
