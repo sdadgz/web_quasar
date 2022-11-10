@@ -86,9 +86,13 @@ import {CommFail, CommSeccess} from "../../components/notifyTools";
 import {useRoute, useRouter} from "vue-router";
 import {api} from "../../boot/axios";
 import {setTime} from "../../components/TimeUtil";
+import {TITLE} from "../../components/StringTool";
+import {useMeta} from "quasar";
 
 const $router = useRouter();
 const $route = useRoute();
+
+const title = ref(TITLE);
 
 // 复制
 function copyUrlHandler(url) {
@@ -223,10 +227,17 @@ function uploadFinish(info) {
   refresh();
 }
 
+useMeta({
+  title: title.value,
+  titleTemplate: title => `${username.value}的个人仓库 | ${title}`,
+  meta: {
+    description: {name: 'description', content: `${username.value}的个人仓库`},
+  }
+})
+
 watch(() => $route.fullPath, () => {
   refresh();
 })
-
 </script>
 
 <style scoped>

@@ -1,8 +1,8 @@
 {
   "name": "vue-quasar",
   "version": "0.0.1",
-  "description": "website",
-  "productName": "Quasar App",
+  "description": "一个没人访问的网站。简介这东西我一直不在行，那就随便写点吧。",
+  "productName": "优菈天下第一",
   "author": "sdadgz <pengchengma5@gmail.com>",
   "private": true,
   "scripts": {

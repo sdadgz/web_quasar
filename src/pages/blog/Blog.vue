@@ -1,16 +1,10 @@
 <template>
-
   <div class="q-pa-md q-gutter-sm">
-
     <!--    左侧栏     -->
-    <q-scroll-area
-      style="position: fixed;width: 350px;height: 93%"
-      :visible="false"
-      :delay="233"
-    >
-      <q-card
-        style="width: 90%; background-color: rgba(255,255,255,.3)"
-      >
+    <q-scroll-area style="position: fixed;width: 350px;height: 93%"
+                   :visible="false"
+                   :delay="233">
+      <q-card style="width: 90%; background-color: rgba(255,255,255,.3)">
         <template v-for="item in blogIndex">
           <LeftIndex :blogIndex="item"/>
         </template>
@@ -178,6 +172,7 @@ import {LoadingFail, LoadingNotify, LoadingSucceed} from "../../components/notif
 import Special from "../../components/blog/Special.vue";
 import Table from "../../components/blog/Table.vue";
 import BackgroundImg from "../../components/public/BackgroundImg.vue";
+import {useMeta} from "quasar";
 
 // banner
 const backgroundImg = ref("https://sdadgz.cn/download/img/1.png");
@@ -471,6 +466,20 @@ function setChildren(res, deep, object) {
   }
   p.push(object);
 }
+
+// 设置meta
+function setMeta() {
+  useMeta({
+    titleTemplate: title => `${blogTitle.value} | by ${username.value} | ${title}`,
+    meta: {
+      description: {name: 'description', content: `${blogTitle.value} | by ${username.value}`},
+    }
+  })
+}
+
+watch(()=>blogTitle.value,()=>{
+  setMeta();
+},{immediate: true})
 
 </script>
 

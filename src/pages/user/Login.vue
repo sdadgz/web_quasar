@@ -87,14 +87,24 @@
 <script setup>
 
 import {ref} from "vue";
-import {useQuasar} from "quasar";
+import {useMeta, useQuasar} from "quasar";
 import {api} from "../../boot/axios";
 import {CommFail, CommSeccess} from "../../components/notifyTools";
 import {useRouter} from "vue-router";
-import {TRUE} from "../../components/StringTool";
+import {TITLE, TRUE} from "../../components/StringTool";
 
 const $q = useQuasar();
 const $router = useRouter();
+
+const title = ref(TITLE);
+
+useMeta({
+  title: title.value,
+  titleTemplate: title => `${title} | 登录页`,
+  meta: {
+    description: {name: 'description', content: `平平无奇的登录页`},
+  }
+})
 
 // 弹窗控制
 const announcement = ref(true);

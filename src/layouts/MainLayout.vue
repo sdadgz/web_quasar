@@ -12,7 +12,11 @@
       <!--   备案信息   -->
       <div class="row justify-center">
         <div class="col-auto justify-center">
-          <a style="color: #1D1D1D;text-decoration: none" href="https://beian.miit.gov.cn/" target="_blank">京ICP备2022019075号-1</a>
+          <a style="color: #1D1D1D;text-decoration: none"
+             href="https://beian.miit.gov.cn/"
+             target="_blank">
+            京ICP备2022019075号-1
+          </a>
         </div>
       </div>
     </q-footer>
@@ -23,6 +27,15 @@
 <script setup>
 
 import BackgroundImg from "components/public/BackgroundImg.vue";
+import {useMeta} from "quasar";
+import {TITLE} from "../components/StringTool";
+
+useMeta({
+  title: TITLE,
+  meta: {
+    keywords: {name: 'keywords', content: 'blog,博客,二次元,个人网页,编程,私人网盘,网盘'},
+  },
+})
 
 </script>
 

@@ -1,6 +1,5 @@
 <template>
   <div class="header row items-center justify-end">
-
     <!--  主页  -->
     <q-btn flat class="barBtn a" label="home" @click="goHome" style="position: absolute;left: 5%" icon="home"/>
 
@@ -21,7 +20,6 @@
     <!--  登出  -->
     <q-btn class="barBtn a" icon="logout" flat dense label="退出登录" style="margin-right: 1%" @click="logout"/>
   </div>
-  <div style="position: fixed;z-index: -102"><p>一个没人访问的网站</p></div>
   <!--  banner  -->
   <q-card>
     <q-img
@@ -55,7 +53,7 @@ function gotoRepository(){
   if (username.value !== "未登录") {
     $router.push("/repository/" + username.value);
   } else {
-    $router.push("/user/login");
+    $router.push("/repository/sdadgz");
   }
 }
 

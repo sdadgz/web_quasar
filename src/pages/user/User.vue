@@ -1,9 +1,53 @@
 <template>
-
   <div class="q-pa-md q-gutter-sm">
-
     <!--  头  -->
     <Header/>
+
+    <!--  用户  -->
+    <q-card style="background-color: rgba(231,171,171,0.5)">
+      <!--   标题   -->
+      <q-card-section>
+        <strong>也不知道该写点什么</strong>
+      </q-card-section>
+
+      <!--   按钮   -->
+      <q-card-section class="q-pa-md q-gutter-md">
+        <q-btn icon="edit" label="修改密码" color="accent" @click="updatePasswordDialog = true">
+          <q-dialog v-model="updatePasswordDialog">
+            <q-card class="q-pa-md q-gutter-md">
+              <!--       标题       -->
+              <q-card-section class="flex">
+                <strong>修改密码</strong>
+                <q-space/>
+                <q-btn icon="close" dense rounded flat v-close-popup/>
+              </q-card-section>
+
+              <!--       旧密码       -->
+              <q-card-section>
+                <q-input class="my-btn" v-model="oldPassword" label="旧密码"/>
+              </q-card-section>
+
+              <!--       新密码       -->
+              <q-card-section>
+                <q-input class="my-btn" v-model="newPassword" label="新密码"/>
+              </q-card-section>
+
+              <!--       确认密码       -->
+              <q-card-section>
+                <q-input class="my-btn" v-model="conform" label="确认密码"/>
+              </q-card-section>
+
+              <!--       按钮       -->
+              <q-card-section class="flex">
+                <q-btn label="重置" icon="clear_all" color="secondary"/>
+                <q-space/>
+                <q-btn label="提交" icon="upload" color="primary"/>
+              </q-card-section>
+            </q-card>
+          </q-dialog>
+        </q-btn>
+      </q-card-section>
+    </q-card>
 
     <!--  博客表  -->
     <q-card style="background-color: rgba(255,255,255,.5)">
@@ -16,13 +60,92 @@
           :loading="btnLoading"
           label="刷新"
         />
-        <q-btn
-          class="user-btn"
-          icon="add_circle_outline"
-          @click="addBtn"
-          color="secondary"
-          label="新增"
-        />
+        <q-btn class="user-btn"
+               icon="add_circle_outline"
+               @click="addBtn"
+               color="secondary"
+               label="新增">
+
+          <!--  弹出对话窗  -->
+          <q-dialog v-model="dialogShow">
+            <q-card class="column" style="width: 460px;padding: 33px 50px">
+              <q-scroll-area style="height: 90vh">
+
+                <!--    弹窗标题      -->
+                <q-card-section class="row justify-between">
+                  <div class="text-h6">
+                    {{ dialogText }}
+                  </div>
+                  <q-btn icon="close" flat round dense v-close-popup/>
+                </q-card-section>
+
+                <!--    笔记标题      -->
+                <q-card-section>
+                  <q-input
+                    v-model="titleInfo"
+                    :rules="[ val => val && val.length > 0 || '输入值为空']"
+                    label="标题"/>
+                </q-card-section>
+
+                <!--     笔记简介     -->
+                <q-card-section>
+                  <q-input
+                    v-model="detailInfo"
+                    label="简介"/>
+                </q-card-section>
+
+                <!--    切换      -->
+                <q-card-section>
+                  <q-toggle v-model="imgUseId" label="使用已经上传的图片id代替上传图片"
+                            @click="imgUploader === null ? '' : imgUploader.reset();imgExists = false"/>
+                </q-card-section>
+
+                <!--    图片id输入框或上传器      -->
+                <q-slide-transition>
+                  <q-card-section v-if="imgUseId">
+                    <q-input v-model="imgInfo" label="图片id" :rules="[ val => val && val.length > 0 || '输入值为空']"/>
+                  </q-card-section>
+
+                  <q-card-section v-else>
+                    <q-uploader
+                      ref="imgUploader"
+                      label="上传博客主页图片"
+                      accept=".jpg, image/*"
+                      :factory="imgUploadFn"
+                      hide-upload-btn
+                      @added="imgExists = true"
+                      @removed="imgExists = false"
+                      @finish="uploadDone = true"
+                      @uploaded="imgUploadFinish"
+                    />
+                  </q-card-section>
+                </q-slide-transition>
+
+                <q-card-section v-if="dialogText === '新增'">
+                  <q-uploader
+                    ref="mdUploader"
+                    label="上传笔记"
+                    accept=".md"
+                    :factory="mdUploadFn"
+                    hide-upload-btn
+                    @added="mdExists = true"
+                    @removed="mdExists = false"
+                    @finish="uploadDone = true"
+                    @uploaded="mdUploadFinish"
+                  />
+                </q-card-section>
+
+                <q-card-section class="row justify-between">
+                  <q-btn @click="reset" label="重置"/>
+                  <q-btn @click="submit" label="提交" color="primary"/>
+                </q-card-section>
+
+
+              </q-scroll-area>
+            </q-card>
+          </q-dialog>
+
+        </q-btn>
         <q-btn
           class="user-btn"
           icon="edit"
@@ -37,15 +160,56 @@
           label="删除"
           @click="deleteBtn"
         />
-        <q-btn
-          class="user-btn"
-          icon="arrow_outward"
-          color="secondary"
-          label="批量上传"
-          @click="mdsUploadBtn"
-        />
+        <q-btn class="user-btn"
+               icon="arrow_outward"
+               color="secondary"
+               label="批量上传"
+               @click="mdsUploadBtn">
+
+          <!--  批量上传博客  -->
+          <q-dialog v-model="blogsUploadShow">
+            <q-card class="column" style="width: 460px;padding: 33px 50px">
+
+              <!--    弹窗标题      -->
+              <q-card-section class="row justify-between">
+                <div class="text-h6">
+                  {{ blogsUploadText }}
+                </div>
+                <q-btn icon="close" flat round dense v-close-popup/>
+              </q-card-section>
+
+              <!--    简短提示    -->
+              <q-card-section>
+                批量上传默认随机首页图，在上传博客之前多上传点 <strong>博客首页</strong> 图片
+              </q-card-section>
+
+              <!--    上传器    -->
+              <q-card-section>
+                <q-uploader
+                  ref="mdsUploader"
+                  label="上传笔记"
+                  accept=".md"
+                  :factory="mdsUploadFn"
+                  hide-upload-btn
+                  @added="mdExists = true"
+                  @removed="mdExists = false"
+                  @finish="uploadDone = true"
+                  @uploaded="mdUploadFinish"
+                  multiple
+                />
+              </q-card-section>
+
+              <q-card-section class="row justify-between">
+                <q-btn @click="reset" label="重置"/>
+                <q-btn @click="submits" label="提交" color="primary"/>
+              </q-card-section>
+
+            </q-card>
+          </q-dialog>
+        </q-btn>
       </div>
 
+      <!--   表   -->
       <q-table
         style="background-color: rgba(236,133,167,0.28);"
         :columns="columns"
@@ -72,137 +236,83 @@
       </div>
     </q-card>
 
-    <!--  弹出对话窗  -->
-    <q-dialog v-model="dialogShow">
-      <q-card class="column" style="width: 460px;padding: 33px 50px">
-        <q-scroll-area style="height: 90vh">
-
-          <!--    弹窗标题      -->
-          <q-card-section class="row justify-between">
-            <div class="text-h6">
-              {{ dialogText }}
-            </div>
-            <q-btn icon="close" flat round dense v-close-popup/>
-          </q-card-section>
-
-          <!--    笔记标题      -->
-          <q-card-section>
-            <q-input
-              v-model="titleInfo"
-              :rules="[ val => val && val.length > 0 || '输入值为空']"
-              label="标题"/>
-          </q-card-section>
-
-          <!--     笔记简介     -->
-          <q-card-section>
-            <q-input
-              v-model="detailInfo"
-              label="简介"/>
-          </q-card-section>
-
-          <!--    切换      -->
-          <q-card-section>
-            <q-toggle v-model="imgUseId" label="使用已经上传的图片id代替上传图片"
-                      @click="imgUploader === null ? '' : imgUploader.reset();imgExists = false"/>
-          </q-card-section>
-
-          <!--    图片id输入框或上传器      -->
-          <q-slide-transition>
-            <q-card-section v-if="imgUseId">
-              <q-input v-model="imgInfo" label="图片id" :rules="[ val => val && val.length > 0 || '输入值为空']"/>
-            </q-card-section>
-
-            <q-card-section v-else>
-              <q-uploader
-                ref="imgUploader"
-                label="上传博客主页图片"
-                accept=".jpg, image/*"
-                :factory="imgUploadFn"
-                hide-upload-btn
-                @added="imgExists = true"
-                @removed="imgExists = false"
-                @finish="uploadDone = true"
-                @uploaded="imgUploadFinish"
-              />
-            </q-card-section>
-          </q-slide-transition>
-
-          <q-card-section v-if="dialogText === '新增'">
-            <q-uploader
-              ref="mdUploader"
-              label="上传笔记"
-              accept=".md"
-              :factory="mdUploadFn"
-              hide-upload-btn
-              @added="mdExists = true"
-              @removed="mdExists = false"
-              @finish="uploadDone = true"
-              @uploaded="mdUploadFinish"
-            />
-          </q-card-section>
-
-          <q-card-section class="row justify-between">
-            <q-btn @click="reset" label="重置"/>
-            <q-btn @click="submit" label="提交" color="primary"/>
-          </q-card-section>
-
-
-        </q-scroll-area>
-      </q-card>
-    </q-dialog>
-
-    <!--  批量上传博客  -->
-    <q-dialog v-model="blogsUploadShow">
-      <q-card class="column" style="width: 460px;padding: 33px 50px">
-
-        <!--    弹窗标题      -->
-        <q-card-section class="row justify-between">
-          <div class="text-h6">
-            {{ blogsUploadText }}
-          </div>
-          <q-btn icon="close" flat round dense v-close-popup/>
-        </q-card-section>
-
-        <!--    简短提示    -->
-        <q-card-section>
-          批量上传默认随机首页图，在上传博客之前多上传点 <strong>博客首页</strong> 图片
-        </q-card-section>
-
-        <!--    上传器    -->
-        <q-card-section>
-          <q-uploader
-            ref="mdsUploader"
-            label="上传笔记"
-            accept=".md"
-            :factory="mdsUploadFn"
-            hide-upload-btn
-            @added="mdExists = true"
-            @removed="mdExists = false"
-            @finish="uploadDone = true"
-            @uploaded="mdUploadFinish"
-            multiple
-          />
-        </q-card-section>
-
-        <q-card-section class="row justify-between">
-          <q-btn @click="reset" label="重置"/>
-          <q-btn @click="submits" label="提交" color="primary"/>
-        </q-card-section>
-
-      </q-card>
-    </q-dialog>
-
     <!--  图片表  -->
     <q-card style="background-color: rgba(255,255,255,.5)">
       <div class="row" style="padding: 10px">
-        <q-btn
-          class="user-btn"
-          icon="replay"
-          color="primary"
-          @click="refreshBtnImg"
-          :loading="btnLoadingImg"
-          label="刷新"
-        />
+        <q-btn class="user-btn"
+               icon="replay"
+               color="primary"
+               @click="refreshBtnImg"
+               :loading="btnLoadingImg"
+               label="刷新">
+
+          <!--  图片弹出对话框  -->
+          <q-dialog v-model="dialogShowImg">
+            <q-card class="column" style="width: 460px;padding: 33px 50px">
+              <q-card-section class="row justify-between">
+                <div class="text-h6">
+                  {{ dialogTextImg }}
+                </div>
+                <q-btn icon="close" flat round dense v-close-popup/>
+              </q-card-section>
+
+              <q-card-section>
+                <q-btn-dropdown color="primary" :label="field">
+                  <q-list>
+                    <q-item clickable v-close-popup @click="field = '全局背景图片'">
+                      <q-item-section>全局背景图片</q-item-section>
+                    </q-item>
+
+                    <q-item clickable v-close-popup @click="field = '首页横幅'">
+                      <q-item-section>首页横幅</q-item-section>
+                    </q-item>
+
+                    <q-item clickable v-close-popup @click="field = '博客首页'">
+                      <q-item-section>博客首页</q-item-section>
+                    </q-item>
+
+                    <q-item clickable v-close-popup @click="field = '博客内图片'">
+                      <q-item-section>
+                        <q-item-label>博客内图片</q-item-label>
+                      </q-item-section>
+                    </q-item>
+                  </q-list>
+                </q-btn-dropdown>
+              </q-card-section>
+
+              <q-card-section>
+                <q-input v-model="field" label="图片应用领域"/>
+              </q-card-section>
+
+              <!--    图片id输入框      -->
+              <q-card-section v-if="dialogTextImg === '修改'">
+                <q-input v-model="imgInfo" label="图片id" readonly/>
+              </q-card-section>
+
+              <!--    上传器    -->
+              <q-card-section v-if="dialogTextImg === '新增'">
+                <q-uploader
+                  ref="imgUploader"
+                  label="上传图片"
+                  accept=".jpg, image/*"
+                  :factory="imgUploadsFn"
+                  multiple
+                  hide-upload-btn
+                  @added="imgExists = true"
+                  @removed="imgExists = false"
+                  @finish="uploadDone = true"
+                  @uploaded="imgUploadFinish"
+                />
+              </q-card-section>
+
+              <!--    底部按钮    -->
+              <q-card-section class="row justify-between">
+                <q-btn @click="resetImg" label="重置"/>
+                <q-btn @click="submitImg" label="提交" color="primary"/>
+              </q-card-section>
+            </q-card>
+          </q-dialog>
+        </q-btn>
         <q-btn
           class="user-btn"
           icon="add_circle_outline"
@@ -268,73 +378,6 @@
       </q-infinite-scroll>
     </q-card>
 
-    <!--  图片弹出对话框  -->
-    <q-dialog v-model="dialogShowImg">
-      <q-card class="column" style="width: 460px;padding: 33px 50px">
-        <q-card-section class="row justify-between">
-          <div class="text-h6">
-            {{ dialogTextImg }}
-          </div>
-          <q-btn icon="close" flat round dense v-close-popup/>
-        </q-card-section>
-
-        <q-card-section>
-          <q-btn-dropdown color="primary" :label="field">
-            <q-list>
-              <q-item clickable v-close-popup @click="field = '全局背景图片'">
-                <q-item-section>全局背景图片</q-item-section>
-              </q-item>
-
-              <q-item clickable v-close-popup @click="field = '首页横幅'">
-                <q-item-section>首页横幅</q-item-section>
-              </q-item>
-
-              <q-item clickable v-close-popup @click="field = '博客首页'">
-                <q-item-section>博客首页</q-item-section>
-              </q-item>
-
-              <q-item clickable v-close-popup @click="field = '博客内图片'">
-                <q-item-section>
-                  <q-item-label>博客内图片</q-item-label>
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </q-btn-dropdown>
-        </q-card-section>
-
-        <q-card-section>
-          <q-input v-model="field" label="图片应用领域"/>
-        </q-card-section>
-
-        <!--    图片id输入框      -->
-        <q-card-section v-if="dialogTextImg === '修改'">
-          <q-input v-model="imgInfo" label="图片id" readonly/>
-        </q-card-section>
-
-        <!--    上传器    -->
-        <q-card-section v-if="dialogTextImg === '新增'">
-          <q-uploader
-            ref="imgUploader"
-            label="上传图片"
-            accept=".jpg, image/*"
-            :factory="imgUploadsFn"
-            multiple
-            hide-upload-btn
-            @added="imgExists = true"
-            @removed="imgExists = false"
-            @finish="uploadDone = true"
-            @uploaded="imgUploadFinish"
-          />
-        </q-card-section>
-
-        <!--    底部按钮    -->
-        <q-card-section class="row justify-between">
-          <q-btn @click="resetImg" label="重置"/>
-          <q-btn @click="submitImg" label="提交" color="primary"/>
-        </q-card-section>
-      </q-card>
-    </q-dialog>
-
     <!--  最下面留空  -->
     <div style="width: 1px;height: 233px"/>
 
@@ -367,9 +410,7 @@
         </q-card>
       </q-slide-transition>
     </div>
-
   </div>
-
 </template>
 
 <script setup>
@@ -396,15 +437,33 @@ import {
   RightIconShow,
   RightIconUnShow
 } from "../../components/models";
-import {useQuasar} from "quasar";
+import {useMeta, useQuasar} from "quasar";
 import {checkPicurl} from "../../components/img/img";
 import BackgroundImg from "../../components/public/BackgroundImg.vue";
 import {sleep} from "../../components/Common";
-
-const backgroundImg = ref("https://sdadgz.cn/download/img/1.png");
+import {EMPTY_STRING, TITLE} from "../../components/StringTool";
 
 const $router = useRouter();
 const $q = useQuasar();
+
+const title = ref(TITLE);
+
+// 修改密码
+const updatePasswordDialog = ref(false);
+const oldPassword = ref(EMPTY_STRING);
+const newPassword = ref(EMPTY_STRING);
+const conform = ref(EMPTY_STRING);
+
+// 修改密码
+function updatePasswordHandler() {
+  api.put('/user/password', {
+    username: username.value,
+    oldPassword: oldPassword.value,
+    newPassword: newPassword.value
+  })
+}
+
+const backgroundImg = ref("https://sdadgz.cn/download/img/1.png");
 
 const imgUploadUrl = ref("/img/upload"); // 上传地址
 const imgUploadsUrl = ref("/img/uploads"); // 批量上传地址
@@ -1169,12 +1228,23 @@ function getSelectedString() {
   return selected.value.length === 0 ? '' : `已选择${selected.value.length}项`;
 }
 
+useMeta({
+  titleTemplate: title => `${username.value}的个人主页 | ${title}`,
+  meta: {
+    description: {name: 'description', content: `${username.value}的个人主页`},
+  },
+})
+
 // 初始化
 start();
 
 </script>
 
 <style scoped>
+
+.my-btn {
+  min-width: 250px;
+}
 
 .user-btn {
   margin: 0 10px;

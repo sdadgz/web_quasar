@@ -4,12 +4,6 @@
 
     <Header/>
 
-    <!--    <q-card>-->
-    <!--      <q-img-->
-    <!--        :src="backgroundImg"-->
-    <!--      />-->
-    <!--    </q-card>-->
-
     <q-btn class="shadow-1" color="primary" @click="loadBlogs" label="重加载"/>
 
     <div class="row">
@@ -23,7 +17,7 @@
 </template>
 
 <script setup>
-import {useQuasar} from 'quasar';
+import {useMeta, useQuasar} from 'quasar';
 import {ref} from "vue";
 import "components/notifyTools"
 import BlogCard from "components/blog/BlogCard.vue";
@@ -35,6 +29,7 @@ import {LoadingFail, LoadingNotify, LoadingSucceed} from "../../components/notif
 import {BlogsColumns, WaterFullOther} from "../../components/models";
 import {sleep} from "../../components/Common.js";
 import BackgroundImg from "../../components/public/BackgroundImg.vue";
+import {DEFAULT_USERNAME, TITLE} from "../../components/StringTool";
 
 const $q = useQuasar();
 const $router = useRouter();
@@ -43,24 +38,24 @@ const $router = useRouter();
 const backgroundImg = ref("https://sdadgz.cn/download/img/1.png");
 
 const blogs = ref([]);
-
-loadBlogs();
+const username = ref(DEFAULT_USERNAME);
 
 async function loadBlogs() {
   const loadNot = LoadingNotify();
-  let username = $router.currentRoute.value.params.username;
+  let username1 = $router.currentRoute.value.params.username;
 
   // 是不是访问根目录
-  if (username === undefined) {
-    username = "sdadgz";
+  if (username1 === undefined) {
     const fromLocal = localStorage.getItem("username");
     if (fromLocal !== null) {
-      username = fromLocal;
+      username.value = fromLocal;
     }
   }
 
+  username1 = username.value
+
   // 获取数据
-  await api.get("/blog/" + username + "/blogs").then(res => {
+  await api.get("/blog/" + username1 + "/blogs").then(res => {
     if (res.code === "200") {
       LoadingSucceed(loadNot);
       // blogs.value = res.data;
@@ -106,6 +101,14 @@ async function setBlogs(data) {
   }
 }
 
+useMeta({
+  titleTemplate: title => `${username.value}的博客 | ${title}`,
+  meta: {
+    description: {name: 'description', content: `${username.value}的博客`},
+  }
+})
+
+loadBlogs();
 </script>
 
 <style scoped>
