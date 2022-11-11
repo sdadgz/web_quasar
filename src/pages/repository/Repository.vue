@@ -40,7 +40,7 @@
 
             <!--      日期      -->
             <q-item-section class="col-auto" @click="downloadHandler(file)">
-              {{ setTime(file.createtime) }}
+              {{ setTime(file.createTime) }}
             </q-item-section>
 
             <!--      复制链接      -->

@@ -27,9 +27,9 @@
 
       </q-card>
 
-      <q-card-section>
+      <q-card-section>`
         <div class="text-h6">{{ blog.user.name }}</div>
-        <div class="text-h6">{{ blog.createtime }}</div>
+        <div class="text-h6">{{ blog.createTime }}</div>
       </q-card-section>
     </q-card>
   </div>

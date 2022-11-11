@@ -100,7 +100,7 @@
               target="_blank"
             >
               {{
-                textArr[index - 1].substring(textArr[index - 1].indexOf('[') + 1, textArr[index - 1].lastIndexOf(']'))
+              textArr[index - 1].substring(textArr[index - 1].indexOf('[') + 1, textArr[index - 1].lastIndexOf(']'))
               }}
             </a>
           </template>
@@ -477,10 +477,9 @@ function setMeta() {
   })
 }
 
-watch(()=>blogTitle.value,()=>{
+watch(() => blogTitle.value, () => {
   setMeta();
-},{immediate: true})
-
+}, {immediate: true})
 </script>
 
 <style scoped>

@@ -52,14 +52,12 @@
     <!--  博客表  -->
     <q-card style="background-color: rgba(255,255,255,.5)">
       <div style="padding: 10px">
-        <q-btn
-          class="user-btn"
-          icon="replay"
-          color="primary"
-          @click="refreshBtn"
-          :loading="btnLoading"
-          label="刷新"
-        />
+        <q-btn class="user-btn"
+               icon="replay"
+               color="primary"
+               @click="refreshBtn"
+               :loading="btnLoading"
+               label="刷新"/>
         <q-btn class="user-btn"
                icon="add_circle_outline"
                @click="addBtn"
@@ -81,58 +79,54 @@
 
                 <!--    笔记标题      -->
                 <q-card-section>
-                  <q-input
-                    v-model="titleInfo"
-                    :rules="[ val => val && val.length > 0 || '输入值为空']"
-                    label="标题"/>
+                  <q-input v-model="titleInfo"
+                           :rules="[ val => val && val.length > 0 || '输入值为空']"
+                           label="标题"/>
                 </q-card-section>
 
                 <!--     笔记简介     -->
                 <q-card-section>
-                  <q-input
-                    v-model="detailInfo"
-                    label="简介"/>
+                  <q-input v-model="detailInfo" label="简介"/>
                 </q-card-section>
 
                 <!--    切换      -->
                 <q-card-section>
-                  <q-toggle v-model="imgUseId" label="使用已经上传的图片id代替上传图片"
+                  <q-toggle v-model="imgUseId"
+                            label="使用已经上传的图片id代替上传图片"
                             @click="imgUploader === null ? '' : imgUploader.reset();imgExists = false"/>
                 </q-card-section>
 
                 <!--    图片id输入框或上传器      -->
                 <q-slide-transition>
                   <q-card-section v-if="imgUseId">
-                    <q-input v-model="imgInfo" label="图片id" :rules="[ val => val && val.length > 0 || '输入值为空']"/>
+                    <q-input v-model="imgInfo"
+                             label="图片id"
+                             :rules="[ val => val && val.length > 0 || '输入值为空']"/>
                   </q-card-section>
 
                   <q-card-section v-else>
-                    <q-uploader
-                      ref="imgUploader"
-                      label="上传博客主页图片"
-                      accept=".jpg, image/*"
-                      :factory="imgUploadFn"
-                      hide-upload-btn
-                      @added="imgExists = true"
-                      @removed="imgExists = false"
-                      @finish="uploadDone = true"
-                      @uploaded="imgUploadFinish"
-                    />
+                    <q-uploader ref="imgUploader"
+                                label="上传博客主页图片"
+                                accept=".jpg, image/*"
+                                :factory="imgUploadFn"
+                                hide-upload-btn
+                                @added="imgExists = true"
+                                @removed="imgExists = false"
+                                @finish="uploadDone = true"
+                                @uploaded="imgUploadFinish"/>
                   </q-card-section>
                 </q-slide-transition>
 
                 <q-card-section v-if="dialogText === '新增'">
-                  <q-uploader
-                    ref="mdUploader"
-                    label="上传笔记"
-                    accept=".md"
-                    :factory="mdUploadFn"
-                    hide-upload-btn
-                    @added="mdExists = true"
-                    @removed="mdExists = false"
-                    @finish="uploadDone = true"
-                    @uploaded="mdUploadFinish"
-                  />
+                  <q-uploader ref="mdUploader"
+                              label="上传笔记"
+                              accept=".md"
+                              :factory="mdUploadFn"
+                              hide-upload-btn
+                              @added="mdExists = true"
+                              @removed="mdExists = false"
+                              @finish="uploadDone = true"
+                              @uploaded="mdUploadFinish"/>
                 </q-card-section>
 
                 <q-card-section class="row justify-between">
@@ -144,7 +138,6 @@
               </q-scroll-area>
             </q-card>
           </q-dialog>
-
         </q-btn>
         <q-btn
           class="user-btn"
@@ -238,17 +231,25 @@
 
     <!--  图片表  -->
     <q-card style="background-color: rgba(255,255,255,.5)">
+      <!--   一堆按钮   -->
       <div class="row" style="padding: 10px">
         <q-btn class="user-btn"
                icon="replay"
                color="primary"
                @click="refreshBtnImg"
                :loading="btnLoadingImg"
-               label="刷新">
+               label="刷新"/>
+        <q-btn
+          class="user-btn"
+          icon="add_circle_outline"
+          @click="addBtnImg"
+          color="secondary"
+          label="新增">
 
           <!--  图片弹出对话框  -->
           <q-dialog v-model="dialogShowImg">
             <q-card class="column" style="width: 460px;padding: 33px 50px">
+              <!--      标题        -->
               <q-card-section class="row justify-between">
                 <div class="text-h6">
                   {{ dialogTextImg }}
@@ -280,6 +281,7 @@
                 </q-btn-dropdown>
               </q-card-section>
 
+              <!--       图片应用领域       -->
               <q-card-section>
                 <q-input v-model="field" label="图片应用领域"/>
               </q-card-section>
@@ -291,18 +293,16 @@
 
               <!--    上传器    -->
               <q-card-section v-if="dialogTextImg === '新增'">
-                <q-uploader
-                  ref="imgUploader"
-                  label="上传图片"
-                  accept=".jpg, image/*"
-                  :factory="imgUploadsFn"
-                  multiple
-                  hide-upload-btn
-                  @added="imgExists = true"
-                  @removed="imgExists = false"
-                  @finish="uploadDone = true"
-                  @uploaded="imgUploadFinish"
-                />
+                <q-uploader ref="imgUploader"
+                            label="上传图片"
+                            accept=".jpg, image/*"
+                            :factory="imgUploadsFn"
+                            multiple
+                            hide-upload-btn
+                            @added="imgExists = true"
+                            @removed="imgExists = false"
+                            @finish="uploadDone = true"
+                            @uploaded="imgUploadFinish"/>
               </q-card-section>
 
               <!--    底部按钮    -->
@@ -313,13 +313,6 @@
             </q-card>
           </q-dialog>
         </q-btn>
-        <q-btn
-          class="user-btn"
-          icon="add_circle_outline"
-          @click="addBtnImg"
-          color="secondary"
-          label="新增"
-        />
         <q-btn
           class="user-btn"
           icon="edit"
@@ -342,6 +335,7 @@
           @click="allSelect"
         />
       </div>
+      <!--   无线加载   -->
       <q-infinite-scroll @load="onLoad" :offset="250" :disable="imgsDisable">
         <div class="row">
           <div class="col" v-for="i in ImgsColumns">
@@ -442,6 +436,7 @@ import {checkPicurl} from "../../components/img/img";
 import BackgroundImg from "../../components/public/BackgroundImg.vue";
 import {sleep} from "../../components/Common";
 import {EMPTY_STRING, TITLE} from "../../components/StringTool";
+import {toLocalDatetime} from "../../components/TimeUtil";
 
 const $router = useRouter();
 const $q = useQuasar();
@@ -572,11 +567,19 @@ async function submits() {
 }
 
 // 批量提交工厂
-function mdsUploadFn() {
+function mdsUploadFn(files) {
+  const lastModified = files[0].lastModified;
+  const createTime = toLocalDatetime(lastModified / 1000);
   return new Promise(resolve => {
     resolve({
       "url": ServerName + mdsUploadUrl.value,
       "fieldName": "files",
+      formFields: [
+        {
+          name: "createTime",
+          value: createTime
+        },
+      ],
       "headers": [{
         "name": "token",
         "value": localStorage.getItem("token")
@@ -1129,7 +1132,9 @@ function updateImgs(idList, f) {
 }
 
 // 上传图片工厂函数
-function imgUploadFn() {
+function imgUploadFn(files) {
+  const lastModified = files[0].lastModified;
+  const createTime = toLocalDatetime(lastModified / 1000);
   return new Promise(resolve => {
     resolve({
       "url": ServerName + imgUploadUrl.value,
@@ -1138,7 +1143,12 @@ function imgUploadFn() {
         {
           "name": "field",
           "value": field.value
-        }],
+        },
+        {
+          name: "createTime",
+          value: createTime
+        }
+      ],
       "headers": [{
         "name": "token",
         "value": localStorage.getItem("token")
@@ -1148,7 +1158,9 @@ function imgUploadFn() {
 }
 
 // 上传图片工厂函数s
-function imgUploadsFn() {
+function imgUploadsFn(files) {
+  const lastModified = files[0].lastModified;
+  const createTime = toLocalDatetime(lastModified / 1000);
   return new Promise(resolve => {
     resolve({
       "url": ServerName + imgUploadsUrl.value,
@@ -1157,7 +1169,12 @@ function imgUploadsFn() {
         {
           "name": "field",
           "value": field.value
-        }],
+        },
+        {
+          name: "createTime",
+          value: createTime
+        }
+      ],
       "headers": [{
         "name": "token",
         "value": localStorage.getItem("token")
@@ -1167,7 +1184,9 @@ function imgUploadsFn() {
 }
 
 // 上传笔记工厂函数
-function mdUploadFn() {
+function mdUploadFn(files) {
+  const lastModified = files[0].lastModified;
+  const createTime = toLocalDatetime(lastModified / 1000);
   return new Promise(resolve => {
     resolve({
       "url": ServerName + mdUploadUrl.value,
@@ -1184,7 +1203,12 @@ function mdUploadFn() {
         {
           "name": "detail",
           "value": detailInfo.value
-        }],
+        },
+        {
+          name: "createTime",
+          value: createTime
+        }
+      ],
       "headers": [{
         "name": "token",
         "value": localStorage.getItem("token")
@@ -1237,7 +1261,6 @@ useMeta({
 
 // 初始化
 start();
-
 </script>
 
 <style scoped>
