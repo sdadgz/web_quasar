@@ -1,11 +1,13 @@
 <template>
-
   <div class="q-pa-md q-gutter-sm">
 
+    <!--  头  -->
     <Header/>
 
+    <!--  按钮  -->
     <q-btn class="shadow-1" color="primary" @click="loadBlogs" label="重加载"/>
 
+    <!--  博客  -->
     <div class="row">
       <div class="col" v-for="i in BlogsColumns">
         <div v-for="blog in blogs[i - 1]">

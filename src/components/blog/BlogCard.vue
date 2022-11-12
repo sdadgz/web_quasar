@@ -1,37 +1,31 @@
 <template>
   <div class="q-pa-md">
-    <q-card class="blog-card" v-intersection.once="cardIn" @click="toBlog">
+    <q-intersection transition="slide-up" transition-duration="1648" once>
+      <q-card class="blog-card" @click="toBlog">
 
-      <!--  标题    -->
-      <q-card-section>
-        <div class="text-h6">{{ blog.title }}</div>
-      </q-card-section>
+        <!--  标题    -->
+        <q-card-section>
+          <div class="text-h6">{{ blog.title }}</div>
+        </q-card-section>
 
-      <!--   图片   -->
-      <q-card class="blog-img" @mouseover="onImg" @mouseout="outImg">
-
-        <div class="img-to-big" v-if="blog.img != null">
-          <q-img
-            v-if="blog.img.reduceUrl != null"
-            :src="blog.img.reduceUrl"
-          />
-          <q-img
-            v-else-if="blog.img.url != null"
-            :src="blog.img.url"
-          />
-          <div class="info-to-small" :class="{canSee: imgMagnify}">
-            {{ blog.detail }}
+        <!--   图片   -->
+        <q-card class="blog-img" @mouseover="onImg" @mouseout="outImg">
+          <div class="img-to-big" v-if="blog.img != null">
+            <q-img v-if="blog.img.reduceUrl != null" :src="blog.img.reduceUrl"/>
+            <q-img v-else-if="blog.img.url != null" :src="blog.img.url"/>
+            <div class="info-to-small" :class="{canSee: imgMagnify}">
+              {{ blog.detail }}
+            </div>
           </div>
-        </div>
+        </q-card>
 
-
+        <!--    落款    -->
+        <q-card-section>`
+          <div class="text-h6">{{ blog.user.name }}</div>
+          <div class="text-h6">{{ blog.createTime }}</div>
+        </q-card-section>
       </q-card>
-
-      <q-card-section>`
-        <div class="text-h6">{{ blog.user.name }}</div>
-        <div class="text-h6">{{ blog.createTime }}</div>
-      </q-card-section>
-    </q-card>
+    </q-intersection>
   </div>
 </template>
 
@@ -49,10 +43,6 @@ function toBlog() {
   const username = props.blog.user.name;
   const title = props.blog.title;
   $router.push("/blog/" + username + "/blog/" + title);
-}
-
-function cardIn(entry: any) {
-  console.log("这里差个动画没做BlogCard.vue::051");
 }
 
 // 鼠标放在图片上

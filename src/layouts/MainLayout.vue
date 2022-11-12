@@ -33,7 +33,7 @@ import {TITLE} from "../components/StringTool";
 useMeta({
   title: TITLE,
   meta: {
-    keywords: {name: 'keywords', content: 'blog,博客,二次元,个人网页,编程,私人网盘,网盘'},
+    keywords: {name: 'keywords', content: 'blog,博客,二次元,个人网页,编程,私人网盘,网盘，原神,崩坏3，网盘，崩坏,三脚猫的功夫'},
   },
 })
 
