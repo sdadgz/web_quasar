@@ -19,29 +19,50 @@
               <q-card-section class="flex">
                 <strong>修改密码</strong>
                 <q-space/>
-                <q-btn icon="close" dense rounded flat v-close-popup/>
+                <q-btn
+                  icon="close"
+                  dense
+                  rounded
+                  flat
+                  v-close-popup
+                />
               </q-card-section>
 
               <!--       旧密码       -->
               <q-card-section>
-                <q-input class="my-btn" v-model="oldPassword" label="旧密码"/>
+                <q-input
+                  class="my-btn"
+                  label="旧密码"
+                  type="password"
+                  v-model="oldPassword"
+                />
               </q-card-section>
 
               <!--       新密码       -->
               <q-card-section>
-                <q-input class="my-btn" v-model="newPassword" label="新密码"/>
+                <q-input
+                  class="my-btn"
+                  label="新密码"
+                  type="password"
+                  v-model="newPassword"
+                />
               </q-card-section>
 
               <!--       确认密码       -->
               <q-card-section>
-                <q-input class="my-btn" v-model="conform" label="确认密码"/>
+                <q-input
+                  class="my-btn"
+                  label="确认密码"
+                  type="password"
+                  v-model="conform"
+                />
               </q-card-section>
 
               <!--       按钮       -->
               <q-card-section class="flex">
                 <q-btn label="重置" icon="clear_all" color="secondary"/>
                 <q-space/>
-                <q-btn label="提交" icon="upload" color="primary"/>
+                <q-btn label="提交" icon="upload" color="primary" @click="updatePasswordHandler"/>
               </q-card-section>
             </q-card>
           </q-dialog>
@@ -530,6 +551,7 @@ import BackgroundImg from "../../components/public/BackgroundImg.vue";
 import {sleep} from "../../components/Common";
 import {EMPTY_STRING, TITLE} from "../../components/StringTool";
 import {toLocalDatetime} from "../../components/TimeUtil";
+import {apiThen} from "../../components/Tools";
 
 // 手机端无限滚动
 const mobileImgDisable = ref(true);
@@ -558,12 +580,15 @@ const oldPassword = ref(EMPTY_STRING);
 const newPassword = ref(EMPTY_STRING);
 const conform = ref(EMPTY_STRING);
 
-// TODO 修改密码
+// 修改密码
 function updatePasswordHandler() {
-  api.put('/user/password', {
+  apiThen(api.put('/user/password', {
     username: username.value,
     oldPassword: oldPassword.value,
     newPassword: newPassword.value
+  })).then(res => {
+    localStorage.clear();
+    $router.push('/user/login');
   })
 }
 
