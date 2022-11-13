@@ -1,5 +1,5 @@
 <template>
-  <div class="q-pa-md cursor-pointer">
+  <div class="cursor-pointer q-pa-sm">
     <q-intersection transition="slide-up" transition-duration="1648" once>
       <q-card class="blog-card" @click="toBlog">
 

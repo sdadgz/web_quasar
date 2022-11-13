@@ -4,14 +4,41 @@
     <!--  头  -->
     <Header/>
 
-    <!--  博客  -->
-    <q-infinite-scroll :offset="1080" @load="onLoad" :disable="disable">
+    <!--  电脑独享博客  -->
+    <q-infinite-scroll
+      class="desktop-only"
+      :offset="1080"
+      @load="onLoad"
+      :disable="disable"
+    >
       <div class="row">
         <div class="col" v-for="i in BlogsColumns">
           <div v-for="blog in blogs[i - 1]">
             <BlogCard :blog="blog" :backgroundImg="backgroundImg"/>
           </div>
         </div>
+      </div>
+
+      <!--   底下那个旋转器   -->
+      <template v-slot:loading>
+        <div class="row justify-center q-my-md">
+          <q-spinner-dots color="primary" size="40px"/>
+        </div>
+      </template>
+    </q-infinite-scroll>
+
+    <!--  手机独享博客  -->
+    <q-infinite-scroll
+      class="mobile-only"
+      :offset="666"
+      @load="onLoad"
+      :disable="mobileDisable"
+    >
+      <div
+        style="margin-top: 10px;"
+        v-for="blog in mobileBlogs"
+      >
+        <BlogCard :blog="blog" :backgroundImg="backgroundImg"/>
       </div>
 
       <!--   底下那个旋转器   -->
@@ -39,6 +66,11 @@ import {BlogsColumns, WaterFullOther} from "../../components/models";
 import {sleep} from "../../components/Common.js";
 import BackgroundImg from "../../components/public/BackgroundImg.vue";
 import {DEFAULT_USERNAME, PAGE_SIZE, SPLIT, START_PAGE, TITLE} from "../../components/StringTool";
+
+// 手机端博客
+const mobileBlogs = ref([]);
+// 手机端无线滚动
+const mobileDisable = ref(true);
 
 const $q = useQuasar();
 const $router = useRouter();
@@ -79,11 +111,17 @@ async function loadBlogs() {
     if (res.code === "200") {
       data = res.data.lists;
       if (data.length < 1) {
-        disable.value = true;
+        turnOff();
       }
     }
   })
   await setBlogs(data);
+}
+
+// 到头了，不加载啦
+function turnOff() {
+  disable.value = true;
+  mobileDisable.value = true;
 }
 
 // 瀑布流数数的那个
@@ -100,11 +138,20 @@ function initBlogs() {
   disable.value = false;
 }
 
+// 手机端初始化blogs
+function initMobileBlogs() {
+  // 手机端初始化blogs
+  mobileBlogs.value = [];
+  // 无线滚动
+  mobileDisable.value = false;
+}
+
 // 无限滚动控制开关
-const disable = ref(false);
+const disable = ref(true);
 
 // 无限滚动加载
 async function onLoad(index, done) {
+  console.log(index);
   currentPage.value = index;
   await loadBlogs();
   done();
@@ -136,6 +183,7 @@ async function setBlogs(data) {
     }
     // 扔进去
     blogs.value[minIndex].push(data[i]);
+    mobileBlogs.value.push(data[i]);
   }
 }
 
@@ -148,7 +196,11 @@ useMeta({
 })
 
 function start() {
-  initBlogs();
+  if ($q.platform.is.desktop) {
+    initBlogs();
+  } else {
+    initMobileBlogs();
+  }
 }
 
 start();

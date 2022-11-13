@@ -1,30 +1,68 @@
 <template>
   <div class="header row items-center justify-end">
     <!--  主页  -->
-    <q-btn flat class="barBtn a" label="home" @click="goHome" style="position: absolute;left: 5%" icon="home"/>
+    <q-btn
+      flat class="barBtn a"
+      label="home"
+      @click="goHome"
+      style="position: absolute;left: 5%"
+      icon="home"
+    />
 
     <!--  repository  -->
-    <q-btn flat class="barBtn a" label="repository" @click="gotoRepository"/>
+    <q-btn
+      flat
+      class="barBtn a"
+      label="repository"
+      @click="gotoRepository"
+    />
 
     <!--  用户名  -->
-    <q-btn flat class="barBtn a" :label="username" @click="gotoUser"/>
+    <q-btn
+      flat
+      class="barBtn a desktop-only"
+      :label="username"
+      @click="gotoUser"
+    />
 
     <!--  头像  -->
-    <q-avatar class="a" style="height: 46px;width: 46px;margin-right: 1%" @click="gotoUser"
-              :icon="useIcon ? 'account_circle' : ''">
-      <img v-if="!useIcon" :src="avatar" alt="地址错误" style="position: absolute;top: 0"/>
+    <q-avatar
+      class="a"
+      style="height: 46px;width: 46px;margin-right: 1%"
+      @click="gotoUser"
+      :icon="useIcon ? 'account_circle' : ''"
+    >
+      <img
+        v-if="!useIcon"
+        :src="avatar"
+        alt="地址错误"
+        style="position: absolute;top: 0"
+      />
     </q-avatar>
 
     <!--  上传  -->
-    <q-btn class="barBtn a" flat dense label="上传" style="margin-right: 1%" @click="gotoUser" icon="upgrade"/>
+    <q-btn
+      class="barBtn a desktop-only"
+      flat
+      dense
+      label="上传"
+      style="margin-right: 1%" @click="gotoUser" icon="upgrade"
+    />
     <!--  登出  -->
-    <q-btn class="barBtn a" icon="logout" flat dense label="退出登录" style="margin-right: 1%" @click="logout"/>
+    <q-btn
+      class="barBtn a"
+      icon="logout"
+      flat
+      dense
+      label="退出登录"
+      style="margin-right: 1%"
+      @click="logout"
+    />
   </div>
+
   <!--  banner  -->
   <q-card>
-    <q-img
-      :src="banner"
-    />
+    <q-img :src="banner"/>
   </q-card>
 </template>
 
@@ -49,7 +87,7 @@ start();
 setUrl();
 
 // 去私人仓库
-function gotoRepository(){
+function gotoRepository() {
   if (username.value !== "未登录") {
     $router.push("/repository/" + username.value);
   } else {

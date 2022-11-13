@@ -1,9 +1,9 @@
 <template>
-  <div class="q-pa-md q-gutter-sm">
+  <div class="q-pa-md q-gutter-lg">
     <!--  头  -->
     <Header/>
 
-    <!--  用户  -->
+    <!--  用户其他  -->
     <q-card style="background-color: rgba(231,171,171,0.5)">
       <!--   标题   -->
       <q-card-section>
@@ -51,7 +51,7 @@
 
     <!--  博客表  -->
     <q-card style="background-color: rgba(255,255,255,.5)">
-      <div style="padding: 10px">
+      <q-card-section class="q-gutter-md q-pa-md">
         <q-btn class="user-btn"
                icon="replay"
                color="primary"
@@ -63,7 +63,6 @@
                @click="addBtn"
                color="secondary"
                label="新增">
-
           <!--  弹出对话窗  -->
           <q-dialog v-model="dialogShow">
             <q-card class="column" style="width: 460px;padding: 33px 50px">
@@ -139,20 +138,16 @@
             </q-card>
           </q-dialog>
         </q-btn>
-        <q-btn
-          class="user-btn"
-          icon="edit"
-          color="purple"
-          label="修改"
-          @click="updateBtn"
-        />
-        <q-btn
-          class="user-btn"
-          icon="delete_forever"
-          color="red"
-          label="删除"
-          @click="deleteBtn"
-        />
+        <q-btn class="user-btn"
+               icon="edit"
+               color="purple"
+               label="修改"
+               @click="updateBtn"/>
+        <q-btn class="user-btn"
+               icon="delete_forever"
+               color="red"
+               label="删除"
+               @click="deleteBtn"/>
         <q-btn class="user-btn"
                icon="arrow_outward"
                color="secondary"
@@ -200,60 +195,70 @@
             </q-card>
           </q-dialog>
         </q-btn>
-      </div>
+      </q-card-section>
 
       <!--   表   -->
-      <q-table
-        style="background-color: rgba(236,133,167,0.28);"
-        :columns="columns"
-        :rows="rows"
-        row-key="id"
-        hide-pagination
-        selection="multiple"
-        v-model:selected="selected"
-        :selected-rows-label="getSelectedString"
-        :loading="tableLoading"
-        :pagination="pagination"
-      >
-      </q-table>
+      <q-card-section>
+        <q-table style="background-color: rgba(236,133,167,0.28);"
+                 :columns="columns"
+                 :rows="rows"
+                 row-key="id"
+                 hide-pagination
+                 selection="multiple"
+                 v-model:selected="selected"
+                 :selected-rows-label="getSelectedString"
+                 :loading="tableLoading"
+                 :pagination="pagination"/>
+      </q-card-section>
 
       <!--   分页   -->
-      <div class="q-pa-lg flex flex-center">
-        <q-pagination
-          v-model="currentPage"
-          :max="pageCount"
-          direction-links
-          @click="loadBlogs"
-          style="min-width: 2em"
-        />
-      </div>
+      <q-card-section class="q-pa-lg flex flex-center">
+        <q-pagination v-model="currentPage"
+                      :max="pageCount"
+                      direction-links
+                      @click="loadBlogs"
+                      style="min-width: 2em"/>
+      </q-card-section>
     </q-card>
 
     <!--  图片表  -->
     <q-card style="background-color: rgba(255,255,255,.5)">
       <!--   一堆按钮   -->
-      <div class="row" style="padding: 10px">
-        <q-btn class="user-btn"
-               icon="replay"
-               color="primary"
-               @click="refreshBtnImg"
-               :loading="btnLoadingImg"
-               label="刷新"/>
-        <q-btn class="user-btn"
-               icon="add_circle_outline"
-               @click="addBtnImg"
-               color="secondary"
-               label="新增">
+      <q-card-section class="q-pa-md q-gutter-md">
+        <q-btn
+          class="user-btn"
+          icon="replay"
+          color="primary"
+          @click="refreshBtnImg"
+          :loading="btnLoadingImg"
+          label="刷新"
+        />
+        <q-btn
+          class="user-btn"
+          icon="add_circle_outline"
+          @click="addBtnImg"
+          color="secondary"
+          label="新增"
+        >
 
           <!--  图片弹出对话框  -->
           <q-dialog v-model="dialogShowImg">
-            <q-card class="column" style="width: 460px;padding: 33px 50px">
+            <q-card
+              class="column"
+              style="width: 460px;padding: 33px 50px"
+            >
               <!--      标题        -->
               <q-card-section class="row justify-between">
                 <div class="text-h6">
                   {{ dialogTextImg }}
                 </div>
-                <q-btn icon="close" flat round dense v-close-popup/>
+                <q-btn
+                  icon="close"
+                  flat
+                  round
+                  dense
+                  v-close-popup
+                />
               </q-card-section>
 
               <!--       下拉按钮       -->
@@ -334,46 +339,130 @@
           :label="selectBtnStatus ? '全选' : '取消全选'"
           @click="allSelect"
         />
-      </div>
+      </q-card-section>
+
       <!--   无线加载   -->
-      <q-infinite-scroll @load="onLoad" :offset="1080" :disable="imgsDisable">
-        <div class="row">
-          <div class="col" v-for="i in ImgsColumns">
-            <div v-for="j in imgs[i - 1] ? imgs[i - 1].length : 0">
-              <q-intersection class="q-pa-xs"
-                              once
-                              transition="slide-up"
-                              :transition-duration="1648">
-                <q-card class="my-animation"
-                        :style="imgStyles[i-1][j-1]"
-                        @click="setImgStyle(i-1,j-1)"
-                        @contextmenu.prevent="openMenu($event,imgs[i - 1][j - 1])">
-                  <q-img :src="imgs[i - 1][j - 1].reduceUrl !== null ?
-                   imgs[i - 1][j - 1].reduceUrl : imgs[i - 1][j - 1].url">
-                    <!--          选中图标          -->
-                    <q-icon name="add_task"
-                            :style="imgStyles[i-1][j-1].transform === ImgSelectedStatus.transform ?
+      <q-card-section>
+        <!--    电脑独享    -->
+        <q-infinite-scroll
+          class="desktop-only"
+          @load="onLoad"
+          :offset="1080"
+          :disable="imgsDisable"
+        >
+          <div class="row">
+            <div
+              class="col"
+              v-for="i in ImgsColumns"
+            >
+              <div v-for="j in imgs[i - 1] ? imgs[i - 1].length : 0">
+                <q-intersection
+                  class="q-pa-xs"
+                  once
+                  transition="slide-up"
+                  :transition-duration="1648"
+                >
+                  <q-card
+                    class="my-animation"
+                    :style="imgStyles[i-1][j-1]"
+                    @click="setImgStyle(i - 1, j - 1)"
+                    @contextmenu.prevent="openMenu($event,imgs[i - 1][j - 1])"
+                  >
+                    <q-img
+                      :src="imgs[i - 1][j - 1].reduceUrl !== null ?
+                       imgs[i - 1][j - 1].reduceUrl : imgs[i - 1][j - 1].url"
+                    >
+                      <!--          选中图标          -->
+                      <q-icon
+                        name="add_task"
+                        :style="imgStyles[i-1][j-1].transform === ImgSelectedStatus.transform ?
                              RightIconShow : RightIconUnShow"
-                            class="items-center full-height full-width my-animation"
-                            size="1000%"
-                            color="positive"/>
+                        class="items-center full-height full-width my-animation"
+                        size="1000%"
+                        color="positive"
+                      />
+                      <!--          图片应用领域          -->
+                      <div
+                        class="absolute-bottom text-center"
+                        style="background-color: rgba(0,0,0,.3)"
+                      >
+                        {{ imgs[i - 1][j - 1].field }}
+                      </div>
+                    </q-img>
+                  </q-card>
+                </q-intersection>
+              </div>
+            </div>
+          </div>
+
+          <!--     底部加载     -->
+          <template v-slot:loading>
+            <div class="row justify-center q-my-md">
+              <q-spinner-dots color="primary" size="40px"/>
+            </div>
+          </template>
+        </q-infinite-scroll>
+
+        <!--    手机端独享    -->
+        <q-infinite-scroll
+          class="mobile-only"
+          ref="mobileInfiniteScrollRef"
+          @load="onLoad"
+          :offset="1080"
+          :disable="mobileImgDisable"
+        >
+
+          <div class="row">
+            <div
+              class="col-all"
+              v-for="j in mobileImgs.length"
+            >
+              <q-intersection
+                class="q-pa-xs"
+                once
+                transition="slide-up"
+                :transition-duration="1648"
+              >
+                <q-card
+                  class="my-animation"
+                  :style="mobileImgStyle[j - 1]"
+                  @click="setMobileImgStyle(j - 1)"
+                  @contextmenu.prevent="openMenu($event, mobileImgs[j - 1])"
+                >
+                  <q-img
+                    :src="mobileImgs[j - 1].reduceUrl !== null ?
+                       mobileImgs[j - 1].reduceUrl : mobileImgs[j - 1].url"
+                  >
+                    <!--          选中图标          -->
+                    <q-icon
+                      name="add_task"
+                      :style="mobileImgStyle[j - 1].transform === ImgSelectedStatus.transform ?
+                             RightIconShow : RightIconUnShow"
+                      class="items-center full-height full-width my-animation"
+                      size="1000%"
+                      color="positive"
+                    />
                     <!--          图片应用领域          -->
-                    <div class="absolute-bottom text-center" style="background-color: rgba(0,0,0,.3)">
-                      {{ imgs[i - 1][j - 1].field }}
+                    <div
+                      class="absolute-bottom text-center"
+                      style="background-color: rgba(0,0,0,.3)"
+                    >
+                      {{ mobileImgs[j - 1].field }}
                     </div>
                   </q-img>
                 </q-card>
               </q-intersection>
             </div>
           </div>
-        </div>
 
-        <template v-slot:loading>
-          <div class="row justify-center q-my-md">
-            <q-spinner-dots color="primary" size="40px"/>
-          </div>
-        </template>
-      </q-infinite-scroll>
+          <!--     底部加载     -->
+          <template v-slot:loading>
+            <div class="row justify-center q-my-md">
+              <q-spinner-dots color="primary" size="40px"/>
+            </div>
+          </template>
+        </q-infinite-scroll>
+      </q-card-section>
     </q-card>
 
     <!--  最下面留空  -->
@@ -442,6 +531,22 @@ import {sleep} from "../../components/Common";
 import {EMPTY_STRING, TITLE} from "../../components/StringTool";
 import {toLocalDatetime} from "../../components/TimeUtil";
 
+// 手机端无限滚动
+const mobileImgDisable = ref(true);
+// 手机端存储imgs列表
+const mobileImgs = ref([]);
+// 手机端春初imgs样式
+const mobileImgStyle = ref([]);
+// 手机无限滚动ref
+const mobileInfiniteScrollRef = ref(null);
+
+// 重置手机端img
+function resetMobileImgs() {
+  mobileImgDisable.value = true;
+  mobileImgs.value = [];
+  mobileImgStyle.value = [];
+}
+
 const $router = useRouter();
 const $q = useQuasar();
 
@@ -453,7 +558,7 @@ const oldPassword = ref(EMPTY_STRING);
 const newPassword = ref(EMPTY_STRING);
 const conform = ref(EMPTY_STRING);
 
-// 修改密码
+// TODO 修改密码
 function updatePasswordHandler() {
   api.put('/user/password', {
     username: username.value,
@@ -500,7 +605,12 @@ const blogId = ref(0); // 图片是否存在
 // 初始化函数
 function start() {
   loadBlogs();
-  loadImg();
+  if ($q.platform.is.desktop) {
+    loadImg();
+  } else {
+    currentPageImg.value = 0;
+    mobileImgDisable.value = false;
+  }
 }
 
 // 直接屎山，查看原图
@@ -523,40 +633,68 @@ const selectBtnStatus = ref(true); // 是不是全选
 
 // 全选
 function allSelect() {
-  if (selectBtnStatus.value) {
-    // 全选
-    for (let i = 0; i < imgs.value.length; i++) {
-      if (imgs.value[i] === undefined) {
-        break;
-      }
-      for (let j = 0; j < imgs.value[i].length; j++) {
-        if (imgStyles.value[i][j].transform === ImgUnSelectedStatus.transform) { // 未选中
-          // 选择他
-          selectedImgs.value.push(imgs.value[i][j]);
-          imgStyles.value[i][j] = ImgSelectedStatus;
+  if ($q.platform.is.desktop) {
+    if (selectBtnStatus.value) {
+      // 全选
+      for (let i = 0; i < imgs.value.length; i++) {
+        if (imgs.value[i] === undefined) {
+          break;
+        }
+        for (let j = 0; j < imgs.value[i].length; j++) {
+          // 未选中
+          if (imgStyles.value[i][j].transform === ImgUnSelectedStatus.transform) {
+            // 选择他
+            selectedImgs.value.push(imgs.value[i][j]);
+            imgStyles.value[i][j] = ImgSelectedStatus;
+          }
         }
       }
-    }
-    selectBtnStatus.value = false;
-  } else {
-    // 全不选
-    for (let i = 0; i < imgs.value.length; i++) {
-      if (imgs.value[i] === undefined) {
-        break;
+      selectBtnStatus.value = false;
+    } else {
+      // 全不选
+      for (let i = 0; i < imgs.value.length; i++) {
+        if (imgs.value[i] === undefined) {
+          break;
+        }
+        for (let j = 0; j < imgs.value[i].length; j++) {
+          // 选中
+          if (imgStyles.value[i][j].transform !== ImgUnSelectedStatus.transform) {
+            // 取消选中
+            imgStyles.value[i][j] = ImgUnSelectedStatus;
+            for (let k = 0; k < selectedImgs.value.length; k++) {
+              if (selectedImgs.value[k] === imgs.value[i][j]) {
+                selectedImgs.value.splice(k, 1);
+              }
+            }
+          }
+        }
+        selectBtnStatus.value = true;
       }
-      for (let j = 0; j < imgs.value[i].length; j++) {
-        if (imgStyles.value[i][j].transform !== ImgUnSelectedStatus.transform) { // 选中
-          // 取消选中
-          imgStyles.value[i][j] = ImgUnSelectedStatus;
+    }
+  } else {
+    if (selectBtnStatus.value) {
+      // 全选
+      for (let i = 0; i < mobileImgStyle.value.length; i++) {
+        // 没选择？妈的选了你
+        if (mobileImgStyle.value[i].transform === ImgUnSelectedStatus.transform) {
+          mobileImgStyle.value[i] = ImgSelectedStatus;
+          selectedImgs.value.push(mobileImgs.value[i]);
+        }
+      }
+    } else {
+      // 取消全选
+      for (let i = 0; i < mobileImgStyle.value.length; i++) {
+        if (mobileImgStyle.value[i].transform === ImgSelectedStatus.transform) {
+          mobileImgStyle.value[i] = ImgUnSelectedStatus;
           for (let k = 0; k < selectedImgs.value.length; k++) {
-            if (selectedImgs.value[k] === imgs.value[i][j]) {
+            if (selectedImgs.value[k] === mobileImgs.value[i]) {
               selectedImgs.value.splice(k, 1);
             }
           }
         }
       }
-      selectBtnStatus.value = true;
     }
+    selectBtnStatus.value = !selectBtnStatus.value;
   }
 }
 
@@ -608,6 +746,26 @@ function setImgStyle(i, j) {
   } else {
     // 取消选中
     imgStyles.value[i][j] = ImgUnSelectedStatus;
+    for (let k = 0; k < selectedImgs.value.length; k++) {
+      if (selectedImgs.value[k] === img) {
+        selectedImgs.value.splice(k, 1);
+      }
+    }
+  }
+}
+
+// 手机端设置图片选中状态
+function setMobileImgStyle(i) {
+  // 点击的图片
+  const img = mobileImgs.value[i];
+
+  if (mobileImgStyle.value[i].transform === ImgUnSelectedStatus.transform) {
+    // 选中
+    selectedImgs.value.push(img);
+    mobileImgStyle.value[i] = ImgSelectedStatus;
+  } else {
+    // 取消选中
+    mobileImgStyle.value[i] = ImgUnSelectedStatus;
     for (let k = 0; k < selectedImgs.value.length; k++) {
       if (selectedImgs.value[k] === img) {
         selectedImgs.value.splice(k, 1);
@@ -708,7 +866,7 @@ async function loadImg() {
       pageCountImg.value = Math.ceil(res.data.total / pageSizeImg.value);
 
       // 解除禁用
-      if (currentPageImg.value === 1) {
+      if (currentPageImg.value === 1 && $q.platform.is.desktop) {
         imgsDisable.value = false;
       }
 
@@ -736,20 +894,27 @@ async function setImgs(data) {
     // 最小索引增加图片
     let add = await checkPic(url);
 
+    // 图片扔进去
     columnsAddArr.value[minIndex] += add + WaterFullOtherImg;
     if (imgs.value[minIndex] === undefined) {
       imgs.value[minIndex] = [];
     }
     imgs.value[minIndex].push(data[i]);
 
-    // 图片仍进去了，图片的style设置一下
-    if (imgStyles.value.length < 1) { // 初始化
+    // 图片的style扔进去
+    if (imgStyles.value.length < 1) {
+      // 初始化
       imgStyles.value = new Array(ImgsColumns);
     }
-    if (!imgStyles.value[minIndex]) { // 初始化二维
+    if (!imgStyles.value[minIndex]) {
+      // 初始化二维
       imgStyles.value[minIndex] = [];
     }
     imgStyles.value[minIndex].push(ImgUnSelectedStatus);
+
+    // 手机端
+    mobileImgs.value.push(data[i]);
+    mobileImgStyle.value.push(ImgUnSelectedStatus);
   }
 }
 
@@ -759,9 +924,14 @@ const imgsDisable = ref(true); // 图片无限加载开关
 async function onLoad(index, done) {
   if (currentPageImg.value > pageCountImg.value) {
     imgsDisable.value = true;
+    mobileImgDisable.value = true;
     return;
   }
-  currentPageImg.value = currentPageImg.value + 1;
+  if ($q.platform.is.desktop) {
+    currentPageImg.value = currentPageImg.value + 1;
+  } else {
+    currentPageImg.value = index;
+  }
   await loadImg();
   done();
 }
@@ -811,15 +981,28 @@ const btnLoadingImg = ref(false); // 图片加载按钮 动画
 
 // 图片刷新按钮
 async function refreshBtnImg() {
+  // 加载动画
+  btnLoadingImg.value = true;
+  // 图片
   imgStyles.value = [];
-  selectedImgs.value = []; // 选中图片存储
-  btnLoadingImg.value = true; // 加载动画
-  imgs.value = []; // 图片存储
-  currentPageImg.value = 1; // 分页开始页
-  columnsAddArr.value = []; // 分页判断数组
-  imgsDisable.value = true; // 禁用无限加载
-  await loadImg(); // 加载
-  btnLoadingImg.value = false; // 加载完毕
+  selectedImgs.value = [];
+  imgs.value = [];
+  // 分页开始页
+  currentPageImg.value = 1;
+  // 分页判断数组
+  columnsAddArr.value = [];
+  // 禁用无限加载
+  imgsDisable.value = true;
+  // 加载
+  if ($q.platform.is.desktop) {
+    await loadImg();
+  } else {
+    resetMobileImgs();
+    mobileInfiniteScrollRef.value.reset();
+    mobileImgDisable.value = false;
+  }
+  // 加载完毕
+  btnLoadingImg.value = false;
 }
 
 // 新增按钮
@@ -1272,8 +1455,6 @@ start();
 }
 
 .user-btn {
-  margin: 0 10px;
-  min-width: 100px;
 }
 
 .my-animation {
