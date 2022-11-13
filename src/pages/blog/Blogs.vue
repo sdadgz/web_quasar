@@ -8,17 +8,27 @@
     <q-btn class="shadow-1" color="primary" @click="loadBlogs" label="重加载"/>
 
     <!--  博客  -->
-    <div class="row">
-      <div class="col" v-for="i in BlogsColumns">
-        <div v-for="blog in blogs[i - 1]">
-          <BlogCard :blog="blog" :backgroundImg="backgroundImg"/>
+    <q-infinite-scroll :offset="1080" @load="onLoad" :disable="disable">
+      <div class="row">
+        <div class="col" v-for="i in BlogsColumns">
+          <div v-for="blog in blogs[i - 1]">
+            <BlogCard :blog="blog" :backgroundImg="backgroundImg"/>
+          </div>
         </div>
       </div>
-    </div>
+
+      <!--   底下那个旋转器   -->
+      <template v-slot:loading>
+        <div class="row justify-center q-my-md">
+          <q-spinner-dots color="primary" size="40px"/>
+        </div>
+      </template>
+    </q-infinite-scroll>
   </div>
 </template>
 
 <script setup>
+
 import {useMeta, useQuasar} from 'quasar';
 import {ref} from "vue";
 import "components/notifyTools"
@@ -31,7 +41,7 @@ import {LoadingFail, LoadingNotify, LoadingSucceed} from "../../components/notif
 import {BlogsColumns, WaterFullOther} from "../../components/models";
 import {sleep} from "../../components/Common.js";
 import BackgroundImg from "../../components/public/BackgroundImg.vue";
-import {DEFAULT_USERNAME, TITLE} from "../../components/StringTool";
+import {DEFAULT_USERNAME, PAGE_SIZE, START_PAGE, TITLE} from "../../components/StringTool";
 
 const $q = useQuasar();
 const $router = useRouter();
@@ -42,12 +52,18 @@ const backgroundImg = ref("https://sdadgz.cn/download/img/1.png");
 const blogs = ref([]);
 const username = ref(DEFAULT_USERNAME);
 
+// 博客分页
+const currentPage = ref(START_PAGE);
+const pageSize = ref(PAGE_SIZE);
+
+// 加载blogs
 async function loadBlogs() {
   const loadNot = LoadingNotify();
   let username1 = $router.currentRoute.value.params.username;
 
-  // 是不是访问根目录
+  // url判断名字
   if (username1 === undefined) {
+    // url没东西，用本地存贮的名字
     const fromLocal = localStorage.getItem("username");
     if (fromLocal !== null) {
       username.value = fromLocal;
@@ -57,13 +73,19 @@ async function loadBlogs() {
   username1 = username.value
 
   // 获取数据
-  await api.get("/blog/" + username1 + "/blogs").then(res => {
+  await api.get("/blog/" + username1 + "/blogs", {
+    params: {
+      currentPage: currentPage.value,
+      pageSize: pageSize.value
+    }
+  }).then(res => {
     if (res.code === "200") {
       LoadingSucceed(loadNot);
-      // blogs.value = res.data;
-
-      blogs.value = new Array(BlogsColumns);
-      setBlogs(res.data);
+      const data = res.data;
+      if (data.length < 1) {
+        disable.value = true;
+      }
+      setBlogs(data);
     } else {
       LoadingFail(loadNot);
     }
@@ -72,16 +94,40 @@ async function loadBlogs() {
   })
 }
 
+// 瀑布流数数的那个
+const numArr = ref([]);
+
+// 初始化blogs
+function initBlogs() {
+  // 初始化blogs
+  blogs.value = new Array(BlogsColumns);
+  // 初始化瀑布流控制数组
+  numArr.value = new Array(BlogsColumns);
+  numArr.value.fill(0);
+  // 无限滚动
+  disable.value = false;
+}
+
+// 无限滚动控制开关
+const disable = ref(false);
+
+// 无限滚动加载
+async function onLoad(index, done) {
+  currentPage.value = index;
+  await loadBlogs();
+  done();
+}
+
+// 设置blogs
 async function setBlogs(data) {
-  // 创建长度参考数组
-  let numArr = new Array(BlogsColumns);
-  numArr.fill(0);
+  console.log(data);
+  console.log(numArr.value);
   // 遍历数据
   for (let i = 0; i < data.length; i++) {
     let minIndex = 0;
     // 找出最小索引
-    for (let j = 1; j < numArr.length; j++) {
-      if (numArr[j] < numArr[minIndex]) {
+    for (let j = 1; j < numArr.value.length; j++) {
+      if (numArr.value[j] < numArr.value[minIndex]) {
         minIndex = j;
       }
     }
@@ -93,7 +139,8 @@ async function setBlogs(data) {
       add = await checkPicurl(url);
       await sleep(1);
     }
-    numArr[minIndex] += add + WaterFullOther;
+    console.log(add);
+    numArr.value[minIndex] += add + WaterFullOther;
     // 初始化
     if (blogs.value[minIndex] === undefined) {
       blogs.value[minIndex] = [];
@@ -103,6 +150,7 @@ async function setBlogs(data) {
   }
 }
 
+// meta
 useMeta({
   titleTemplate: title => `${username.value}的博客 | ${title}`,
   meta: {
@@ -110,7 +158,11 @@ useMeta({
   }
 })
 
-loadBlogs();
+function start() {
+  initBlogs();
+}
+
+start();
 </script>
 
 <style scoped>

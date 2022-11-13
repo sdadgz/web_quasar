@@ -25,7 +25,7 @@
     </div>
 
 
-    <q-infinite-scroll @load="onLoad" :offset="250" :disable="fileDisable" ref="scrollRef">
+    <q-infinite-scroll @load="onLoad" :offset="1080" :disable="fileDisable" ref="scrollRef">
       <div v-if="fileArr.length === 0" style="text-align: center">
         向下滑动查看文件
       </div>

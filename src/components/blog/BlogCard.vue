@@ -20,7 +20,7 @@
         </q-card>
 
         <!--    落款    -->
-        <q-card-section>`
+        <q-card-section>
           <div class="text-h6">{{ blog.user.name }}</div>
           <div class="text-h6">{{ blog.createTime }}</div>
         </q-card-section>

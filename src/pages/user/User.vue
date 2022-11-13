@@ -336,7 +336,7 @@
         />
       </div>
       <!--   无线加载   -->
-      <q-infinite-scroll @load="onLoad" :offset="250" :disable="imgsDisable">
+      <q-infinite-scroll @load="onLoad" :offset="1080" :disable="imgsDisable">
         <div class="row">
           <div class="col" v-for="i in ImgsColumns">
             <div v-for="j in imgs[i - 1] ? imgs[i - 1].length : 0">
