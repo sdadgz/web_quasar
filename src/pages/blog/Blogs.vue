@@ -32,7 +32,7 @@ import "components/notifyTools"
 import BlogCard from "components/blog/BlogCard.vue";
 import {useRouter} from "vue-router";
 import Header from "components/public/Header.vue";
-import {checkPicurl} from "../../components/img/img.js";
+import {checkPic} from "../../components/img/img.js";
 import {api} from "../../boot/axios";
 import {LoadingFail, LoadingNotify, LoadingSucceed} from "../../components/notifyTools";
 import {BlogsColumns, WaterFullOther} from "../../components/models";
@@ -105,11 +105,9 @@ const disable = ref(false);
 
 // 无限滚动加载
 async function onLoad(index, done) {
-  console.log('index：' + index);
   currentPage.value = index;
   await loadBlogs();
   done();
-  console.log('done' + index);
 }
 
 // 设置blogs
@@ -126,7 +124,7 @@ async function setBlogs(data) {
     // 设置url
     let url = data[i].img.reduceUrl !== null ? data[i].img.reduceUrl : data[i].img.url;
     // 最小索引增加图片
-    let add = await checkPicurl(url);
+    let add = await checkPic(url);
     // while (add === undefined && url || add === 0) {
     //   add = await checkPicurl(url);
     //   await sleep(50);

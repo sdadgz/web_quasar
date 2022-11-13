@@ -1,13 +1,13 @@
-import {CommWarn} from "components/notifyTools";
 import {sleep} from "components/Common";
 
-export async function checkPicurl(url) {
+export async function checkPic(url) {
   let height;
   let width;
 
   const img = await new Image();
-  img.onload = function () {
-  };
+  if (!img.complete) {
+    img.onload;
+  }
   img.src = url;
   img.onerror = function () {
     // CommWarn("警告：错误的图片地址");
@@ -19,6 +19,5 @@ export async function checkPicurl(url) {
   }
   height = img.height;
   width = img.width;
-  console.log(height);
   return height / width;
 }

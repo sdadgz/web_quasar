@@ -239,12 +239,11 @@
                @click="refreshBtnImg"
                :loading="btnLoadingImg"
                label="刷新"/>
-        <q-btn
-          class="user-btn"
-          icon="add_circle_outline"
-          @click="addBtnImg"
-          color="secondary"
-          label="新增">
+        <q-btn class="user-btn"
+               icon="add_circle_outline"
+               @click="addBtnImg"
+               color="secondary"
+               label="新增">
 
           <!--  图片弹出对话框  -->
           <q-dialog v-model="dialogShowImg">
@@ -257,6 +256,7 @@
                 <q-btn icon="close" flat round dense v-close-popup/>
               </q-card-section>
 
+              <!--       下拉按钮       -->
               <q-card-section>
                 <q-btn-dropdown color="primary" :label="field">
                   <q-list>
@@ -340,26 +340,30 @@
         <div class="row">
           <div class="col" v-for="i in ImgsColumns">
             <div v-for="j in imgs[i - 1] ? imgs[i - 1].length : 0">
-              <div class="q-pa-xs">
-                <q-card class="my-animation" :style="imgStyles[i-1][j-1]"
+              <q-intersection class="q-pa-xs"
+                              once
+                              transition="slide-up"
+                              :transition-duration="1648">
+                <q-card class="my-animation"
+                        :style="imgStyles[i-1][j-1]"
                         @click="setImgStyle(i-1,j-1)"
-                        @contextmenu.prevent="openMenu($event,imgs[i - 1][j - 1])"
-                >
-                  <q-img
-                    :src="imgs[i - 1][j - 1].reduceUrl !== null ? imgs[i - 1][j - 1].reduceUrl : imgs[i - 1][j - 1].url">
+                        @contextmenu.prevent="openMenu($event,imgs[i - 1][j - 1])">
+                  <q-img :src="imgs[i - 1][j - 1].reduceUrl !== null ?
+                   imgs[i - 1][j - 1].reduceUrl : imgs[i - 1][j - 1].url">
                     <!--          选中图标          -->
-                    <q-icon
-                      :style="imgStyles[i-1][j-1].transform === ImgSelectedStatus.transform ? RightIconShow : RightIconUnShow"
-                      name="add_task" class="items-center full-height full-width my-animation" size="1000%"
-                      color="positive"
-                    />
+                    <q-icon name="add_task"
+                            :style="imgStyles[i-1][j-1].transform === ImgSelectedStatus.transform ?
+                             RightIconShow : RightIconUnShow"
+                            class="items-center full-height full-width my-animation"
+                            size="1000%"
+                            color="positive"/>
                     <!--          图片应用领域          -->
                     <div class="absolute-bottom text-center" style="background-color: rgba(0,0,0,.3)">
                       {{ imgs[i - 1][j - 1].field }}
                     </div>
                   </q-img>
                 </q-card>
-              </div>
+              </q-intersection>
             </div>
           </div>
         </div>
@@ -432,7 +436,7 @@ import {
   RightIconUnShow
 } from "../../components/models";
 import {useMeta, useQuasar} from "quasar";
-import {checkPicurl} from "../../components/img/img";
+import {checkPic} from "../../components/img/img";
 import BackgroundImg from "../../components/public/BackgroundImg.vue";
 import {sleep} from "../../components/Common";
 import {EMPTY_STRING, TITLE} from "../../components/StringTool";
@@ -639,7 +643,9 @@ async function loadBlogs() {
       for (let i = 0; i < blogs.value.length; i++) {
         let obj = {};
         for (let j = 0; j < BlogColumns.length; j++) {
-          Object.assign(obj, {[`${BlogColumns[j].field}`]: eval("blogs.value[i]." + `${BlogColumns[j].field}`)});
+          Object.assign(obj, {
+            [`${BlogColumns[j].field}`]: eval("blogs.value[i]." + `${BlogColumns[j].field}`)
+          });
         }
         // 增加id去重
         Object.assign(obj, {"id": blogs.value[i].id});
@@ -672,6 +678,7 @@ const columnsAddArr = ref([]); // 计算长度
 
 // 加载图片
 async function loadImg() {
+  let imgData;
   tableLoadingImg.value = true;
   // 未初始化
   if (imgs.value.length < 1) {
@@ -695,13 +702,10 @@ async function loadImg() {
     }
   }).then(res => {
     if (res.code === "200") {
-      const imgData = res.data.lists; // 获取imgs数据
+      imgData = res.data.lists; // 获取imgs数据
 
       // 分页
       pageCountImg.value = Math.ceil(res.data.total / pageSizeImg.value);
-
-      // 设置瀑布流
-      setImgs(imgData);
 
       // 解除禁用
       if (currentPageImg.value === 1) {
@@ -712,6 +716,8 @@ async function loadImg() {
       tableLoadingImg.value = false;
     }
   })
+  // 设置瀑布流
+  await setImgs(imgData);
 }
 
 // 设置图片数组
@@ -728,11 +734,7 @@ async function setImgs(data) {
     // 设置url
     let url = data[i].reduceUrl !== null ? data[i].reduceUrl : data[i].url;
     // 最小索引增加图片
-    let add = await checkPicurl(url);
-    while (add === undefined && url) {
-      add = await checkPicurl(url);
-      await sleep(1);
-    }
+    let add = await checkPic(url);
 
     columnsAddArr.value[minIndex] += add + WaterFullOtherImg;
     if (imgs.value[minIndex] === undefined) {
