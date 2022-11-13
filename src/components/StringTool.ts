@@ -1,5 +1,6 @@
 export const TRUE = "true";
 export const EMPTY_STRING = '';
+export const SPLIT = ' ';
 
 export const TITLE = "优菈天下第一";
 

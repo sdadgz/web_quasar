@@ -8,7 +8,7 @@ export const BlogsColumns = 4;
 export const ImgsColumns = 4;
 
 // 瀑布流图片以外占位
-export const WaterFullOther = 0.6;
+export const WaterFullOther = 0.388;
 
 // 瀑布流图片以外占位
 export const WaterFullOtherImg = 0.0;

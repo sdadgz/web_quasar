@@ -4,9 +4,6 @@
     <!--  头  -->
     <Header/>
 
-    <!--  按钮  -->
-    <q-btn class="shadow-1" color="primary" @click="loadBlogs" label="重加载"/>
-
     <!--  博客  -->
     <q-infinite-scroll :offset="1080" @load="onLoad" :disable="disable">
       <div class="row">
@@ -41,7 +38,7 @@ import {LoadingFail, LoadingNotify, LoadingSucceed} from "../../components/notif
 import {BlogsColumns, WaterFullOther} from "../../components/models";
 import {sleep} from "../../components/Common.js";
 import BackgroundImg from "../../components/public/BackgroundImg.vue";
-import {DEFAULT_USERNAME, PAGE_SIZE, START_PAGE, TITLE} from "../../components/StringTool";
+import {DEFAULT_USERNAME, PAGE_SIZE, SPLIT, START_PAGE, TITLE} from "../../components/StringTool";
 
 const $q = useQuasar();
 const $router = useRouter();
@@ -58,8 +55,8 @@ const pageSize = ref(PAGE_SIZE);
 
 // 加载blogs
 async function loadBlogs() {
-  const loadNot = LoadingNotify();
   let username1 = $router.currentRoute.value.params.username;
+  let data;
 
   // url判断名字
   if (username1 === undefined) {
@@ -80,18 +77,13 @@ async function loadBlogs() {
     }
   }).then(res => {
     if (res.code === "200") {
-      LoadingSucceed(loadNot);
-      const data = res.data;
+      data = res.data.lists;
       if (data.length < 1) {
         disable.value = true;
       }
-      setBlogs(data);
-    } else {
-      LoadingFail(loadNot);
     }
-  }).catch(() => {
-    LoadingFail(loadNot);
   })
+  await setBlogs(data);
 }
 
 // 瀑布流数数的那个
@@ -113,15 +105,15 @@ const disable = ref(false);
 
 // 无限滚动加载
 async function onLoad(index, done) {
+  console.log('index：' + index);
   currentPage.value = index;
   await loadBlogs();
   done();
+  console.log('done' + index);
 }
 
 // 设置blogs
 async function setBlogs(data) {
-  console.log(data);
-  console.log(numArr.value);
   // 遍历数据
   for (let i = 0; i < data.length; i++) {
     let minIndex = 0;
@@ -135,11 +127,10 @@ async function setBlogs(data) {
     let url = data[i].img.reduceUrl !== null ? data[i].img.reduceUrl : data[i].img.url;
     // 最小索引增加图片
     let add = await checkPicurl(url);
-    while (add === undefined && url) {
-      add = await checkPicurl(url);
-      await sleep(1);
-    }
-    console.log(add);
+    // while (add === undefined && url || add === 0) {
+    //   add = await checkPicurl(url);
+    //   await sleep(50);
+    // }
     numArr.value[minIndex] += add + WaterFullOther;
     // 初始化
     if (blogs.value[minIndex] === undefined) {
