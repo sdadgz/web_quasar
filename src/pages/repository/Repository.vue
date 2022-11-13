@@ -1,5 +1,4 @@
 <template>
-
   <div class="q-pa-md q-gutter-sm">
 
     <!--  头  -->
@@ -24,56 +23,100 @@
       </div>
     </div>
 
-
-    <q-infinite-scroll @load="onLoad" :offset="1080" :disable="fileDisable" ref="scrollRef">
-      <div v-if="fileArr.length === 0" style="text-align: center">
+    <q-infinite-scroll
+      ref="scrollRef"
+      :offset="1080"
+      :disable="fileDisable"
+      @load="onLoad"
+    >
+      <!--   空提示   -->
+      <div
+        style="text-align: center"
+        v-if="fileArr.length === 0"
+      >
         向下滑动查看文件
       </div>
 
       <div class="q-pa-md">
-        <q-list bordered separator style="background-color: rgba(255,255,255,.3)">
-          <q-item class="row" clickable v-for="file in fileArr">
+        <q-list
+          style="background-color: rgba(255,255,255,.3)"
+          bordered
+          separator
+        >
+          <q-item
+            class="row"
+            v-for="file in fileArr"
+            clickable
+          >
             <!--      文件名      -->
-            <q-item-section class="col" @click="downloadHandler(file)" style="color: #018EE8">
+            <q-item-section
+              class="col"
+              style="color: #018EE8"
+              @click="downloadHandler(file)"
+            >
               {{ file.originalFilename }}
             </q-item-section>
 
             <!--      日期      -->
-            <q-item-section class="col-auto" @click="downloadHandler(file)">
+            <q-item-section
+              class="col-auto desktop-only"
+              @click="downloadHandler(file)"
+            >
               {{ setTime(file.createTime) }}
             </q-item-section>
 
             <!--      复制链接      -->
             <q-item-section class="col-auto">
-              <q-btn label="点我复制分享链接" color="blue-14" @click="copyUrlHandler(file.url)"
-                     icon="content_copy"/>
+              <q-btn
+                label="分享链接"
+                color="blue-14"
+                icon="content_copy"
+                @click="copyUrlHandler(file.url)"
+              />
             </q-item-section>
 
             <!--      恢复和删除      -->
-            <q-item-section class="col-auto" v-if="!file.isDelete">
-              <q-btn color="red" icon="delete_forever" label="删除" @click="deleteHandler(file)"/>
+            <q-item-section
+              class="col-auto"
+              v-if="!file.isDelete"
+            >
+              <q-btn
+                color="red"
+                icon="delete_forever"
+                label="删除"
+                @click="deleteHandler(file)"
+              />
             </q-item-section>
-            <q-item-section v-else class="col-auto">
-              <q-btn color="secondary" icon="restore_page" label="恢复文件" @click="reHandler(file)"/>
+            <q-item-section
+              class="col-auto"
+              v-else
+            >
+              <q-btn
+                color="secondary"
+                icon="restore_page"
+                label="恢复文件"
+                @click="reHandler(file)"
+              />
             </q-item-section>
           </q-item>
         </q-list>
 
-        <div v-if="fileDisable" style="text-align: center;margin-top: 233px">
+        <div
+          style="text-align: center;margin-top: 233px"
+          v-if="fileDisable"
+        >
           没有更多了
         </div>
-
       </div>
+
+      <!--   底部加载   -->
       <template v-slot:loading>
         <div class="row justify-center q-my-md">
           <q-spinner-dots color="primary" size="40px"/>
         </div>
       </template>
     </q-infinite-scroll>
-
   </div>
-
-
 </template>
 
 <script setup>

@@ -61,7 +61,7 @@
   </div>
 
   <!--  banner  -->
-  <q-card>
+  <q-card v-if="showBanner">
     <q-img :src="banner"/>
   </q-card>
 </template>
@@ -73,6 +73,9 @@ import {useRouter} from "vue-router";
 import {api} from "../../boot/axios";
 import {sleep} from "../Common.js";
 import {random} from "../MathTool.js";
+
+const props = defineProps(['closeBanner']);
+const showBanner = ref(!props.closeBanner);
 
 const $router = useRouter();
 

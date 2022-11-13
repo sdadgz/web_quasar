@@ -1,5 +1,6 @@
 <template>
-  <div class="q-pa-md q-gutter-sm">
+  <!-- 桌面独享 -->
+  <div class="q-pa-md q-gutter-sm desktop-only">
     <!--    左侧栏     -->
     <q-scroll-area style="position: fixed;width: 350px;height: 93%"
                    :visible="false"
@@ -100,7 +101,7 @@
               target="_blank"
             >
               {{
-              textArr[index - 1].substring(textArr[index - 1].indexOf('[') + 1, textArr[index - 1].lastIndexOf(']'))
+                textArr[index - 1].substring(textArr[index - 1].indexOf('[') + 1, textArr[index - 1].lastIndexOf(']'))
               }}
             </a>
           </template>
@@ -157,7 +158,147 @@
         <img v-if="!useIcon" :src="avatar" alt="地址错误" style="position: absolute;top: 0"/>
       </q-avatar>
     </div>
+  </div>
 
+  <!-- 手机独享 -->
+  <div class="q-pa-md q-gutter-md">
+    <!--  头  -->
+    <Header :close-banner="true"/>
+
+    <!--   博客    -->
+    <q-card
+      class="shadow-10"
+      style="background-color: rgba(255,255,255,.3)"
+    >
+      <q-card-section style="font-size: 2em">
+        {{ blogTitle }}
+      </q-card-section>
+      <q-img :src="blogBanner" style="margin-bottom: 66px"/>
+      <!--      <BlogContent v-if="blogDone" :textArr="textArr"/>-->
+
+      <template v-if="blogDone">
+        <template v-for="index in textArr.length">
+          <!--    标题-->
+          <template v-if="/*passF(index - 1)*/textType[index - 1] === -2"></template>
+          <template v-else-if="textType[index - 1] === 0">
+            <div
+              :id="getIndex(textArr[index - 1].substring(2))"
+              class="_h blog-h1"
+            >
+              <Special :text="textArr[index - 1].substring(2)"/>
+            </div>
+          </template>
+          <template v-else-if="textType[index - 1] === 1">
+            <div
+              class="_h blog-h2"
+              :id="getIndex(textArr[index - 1].substring(3))"
+            >
+              <Special :text="textArr[index - 1].substring(3)"/>
+            </div>
+          </template>
+          <template v-else-if="textType[index - 1] === 2">
+            <div
+              class="_h blog-h3"
+              :id="getIndex(textArr[index - 1].substring(4))"
+            >
+              <Special :text="textArr[index - 1].substring(4)"/>
+            </div>
+          </template>
+          <template v-else-if="textType[index - 1] === 3">
+            <div
+              class="_h blog-h4"
+              :id="getIndex(textArr[index - 1].substring(5))"
+            >
+              <Special :text="textArr[index - 1].substring(5)"/>
+            </div>
+          </template>
+          <template v-else-if="textType[index - 1] === 4">
+            <div
+              class="_h blog-h5"
+              :id="getIndex(textArr[index - 1].substring(6))"
+            >
+              <Special :text="textArr[index - 1].substring(6)"/>
+            </div>
+          </template>
+          <template v-else-if="textType[index - 1] === 5">
+            <div
+              class="_h blog-h6"
+              :id="getIndex(textArr[index - 1].substring(7))"
+            >
+              <Special :text="textArr[index - 1].substring(7)"/>
+            </div>
+          </template>
+
+          <!--    引用-->
+          <template v-else-if="textType[index - 1] === 6">
+            <div class="_base _cite">
+              {{ textArr[index - 1].substring(2) }}
+            </div>
+          </template>
+          <!--    分割线-->
+          <template v-else-if="textType[index - 1] === 7">
+            <div class="_base _h" style="border-color: #ec85a7;border-width: 2px;height: 20px"></div>
+          </template>
+          <!--    图片-->
+          <template v-else-if="textType[index - 1] === 8">
+            <div style="overflow: hidden">
+              <q-img
+                class="img-to-big"
+                :src="textArr[index - 1].substring(textArr[index - 1].indexOf('(') + 1,textArr[index - 1].lastIndexOf(')'))"
+                :alt="textArr[index - 1].substring(textArr[index - 1].indexOf('[') + 1,textArr[index - 1].lastIndexOf(']'))"
+              />
+            </div>
+          </template>
+          <!--    超链接-->
+          <template v-else-if="textType[index - 1] === 9">
+            <a
+              class="_base blog-link"
+              :href="textArr[index - 1].substring(textArr[index - 1].indexOf('(') + 1,textArr[index - 1].lastIndexOf(')'))"
+              target="_blank"
+            >
+              {{
+                textArr[index - 1].substring(textArr[index - 1].indexOf('[') + 1, textArr[index - 1].lastIndexOf(']'))
+              }}
+            </a>
+          </template>
+          <!--    列表-->
+          <template v-else-if="textType[index - 1] === 10">
+            <Special :text="textArr[index - 1]"/>
+          </template>
+          <!--    无序列表-->
+          <template v-else-if="textType[index - 1] === 11">
+            <Special :text="textArr[index - 1]"/>
+          </template>
+          <!--    表格-->
+          <template v-else-if="textType[index - 1] === 12">
+            <Table :index="index - 1" :textArr="textArr" :colm="passArr[index - 1]"/>
+          </template>
+          <!--    代码块-->
+          <template v-else-if="textType[index - 1] === 13">
+            <!--      <CodeField :index="index-1" :textArr="textArr" :colm="tableC"/>-->
+            <div class="column _base code-field" style="border-radius: 6px;padding: 10px">
+              <div v-for="i in passArr[index - 1] - 1">
+                <div class="row justify-start">
+                  <template v-for="dontUse in spaseF(textArr[index + i - 1])">
+                    <span class="col-auto" style="width: 5px;"/>
+                  </template>
+                  <!--            <CodeStyle :type="textArr[index-1].substring(3)" :text="textArr[index + i - 1]"/>-->
+                  <span class="col-auto">{{ textArr[index + i - 1] }}</span>
+                </div>
+              </div>
+            </div>
+          </template>
+          <!--    缺省-->
+          <template v-else>
+            <div class="_base">
+              <Special :text="textArr[index - 1]"/>
+            </div>
+          </template>
+
+        </template>
+      </template>
+
+    </q-card>
   </div>
 </template>
 
@@ -173,6 +314,7 @@ import Special from "../../components/blog/Special.vue";
 import Table from "../../components/blog/Table.vue";
 import BackgroundImg from "../../components/public/BackgroundImg.vue";
 import {useMeta} from "quasar";
+import Header from "../../components/public/Header.vue";
 
 // banner
 const backgroundImg = ref("https://sdadgz.cn/download/img/1.png");
