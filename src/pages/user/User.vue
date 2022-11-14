@@ -12,7 +12,13 @@
 
       <!--   按钮   -->
       <q-card-section class="q-pa-md q-gutter-md">
-        <q-btn icon="edit" label="修改密码" color="accent" @click="updatePasswordDialog = true">
+        <!--   修改密码     -->
+        <q-btn
+          icon="edit"
+          label="修改密码"
+          color="accent"
+          @click="updatePasswordDialog = true"
+        >
           <q-dialog v-model="updatePasswordDialog">
             <q-card class="q-pa-md q-gutter-md">
               <!--       标题       -->
@@ -63,6 +69,62 @@
                 <q-btn label="重置" icon="clear_all" color="secondary"/>
                 <q-space/>
                 <q-btn label="提交" icon="upload" color="primary" @click="updatePasswordHandler"/>
+              </q-card-section>
+            </q-card>
+          </q-dialog>
+        </q-btn>
+
+        <!--    上传头像    -->
+        <q-btn
+          color="primary"
+          label="上传头像"
+          icon="upload"
+          @click="uploadAvatarDialog = true;field = '头像'"
+        >
+          <q-dialog v-model="uploadAvatarDialog">
+            <q-card class="q-pa-md q-gutter-md">
+              <!--       标题       -->
+              <q-card-section class="flex">
+                <strong>上传头像</strong>
+                <q-space/>
+                <q-btn
+                  icon="close"
+                  flat
+                  rounded
+                  dense
+                />
+              </q-card-section>
+
+              <!--       上传器       -->
+              <q-card-section>
+                <q-uploader
+                  ref="imgUploader"
+                  label="上传图片"
+                  accept="image/*"
+                  hide-upload-btn
+                  :factory="imgUploadsFn"
+                  @added="imgExists = true"
+                  @removed="imgExists = false"
+                  @finish="uploadDone = true"
+                  @uploaded="imgUploadFinish"
+                />
+              </q-card-section>
+
+              <!--       按钮       -->
+              <q-card-section class="flex">
+                <q-btn
+                  color="secondary"
+                  icon="clear_all"
+                  label="重置"
+                  @click="imgUploader.reset()"
+                />
+                <q-space/>
+                <q-btn
+                  color="primary"
+                  icon="upload"
+                  label="上传"
+                  @click="submitImg"
+                />
               </q-card-section>
             </q-card>
           </q-dialog>
@@ -257,11 +319,10 @@
         <q-btn
           class="user-btn"
           icon="add_circle_outline"
-          @click="addBtnImg"
-          color="secondary"
           label="新增"
+          color="secondary"
+          @click="addBtnImg"
         >
-
           <!--  图片弹出对话框  -->
           <q-dialog v-model="dialogShowImg">
             <q-card
@@ -319,16 +380,18 @@
 
               <!--    上传器    -->
               <q-card-section v-if="dialogTextImg === '新增'">
-                <q-uploader ref="imgUploader"
-                            label="上传图片"
-                            accept=".jpg, image/*"
-                            :factory="imgUploadsFn"
-                            multiple
-                            hide-upload-btn
-                            @added="imgExists = true"
-                            @removed="imgExists = false"
-                            @finish="uploadDone = true"
-                            @uploaded="imgUploadFinish"/>
+                <q-uploader
+                  ref="imgUploader"
+                  label="上传图片"
+                  accept="image/*"
+                  multiple
+                  hide-upload-btn
+                  :factory="imgUploadsFn"
+                  @added="imgExists = true"
+                  @removed="imgExists = false"
+                  @finish="uploadDone = true"
+                  @uploaded="imgUploadFinish"
+                />
               </q-card-section>
 
               <!--    底部按钮    -->
@@ -552,6 +615,9 @@ import {sleep} from "../../components/Common";
 import {EMPTY_STRING, TITLE} from "../../components/StringTool";
 import {toLocalDatetime} from "../../components/TimeUtil";
 import {apiThen} from "../../components/Tools";
+
+// 上传头像弹窗
+const uploadAvatarDialog = ref(false);
 
 // 手机端无限滚动
 const mobileImgDisable = ref(true);
@@ -1284,19 +1350,15 @@ async function submitImg() {
     CommSeccess("上传成功");
     await refreshBtnImg();
     // 上传后自动赋值给imgInfo了
-  } else
-
+  } else if (dialogTextImg.value === '修改') {
     // 修改
-  if (dialogTextImg.value === '修改') {
     // 不合法的imgInfo
     if (!imgInfo.value) {
       CommFail("图片不存在");
     }
     await updateImg(rightClickItem.value.id, field.value);
-  } else
-
+  } else if (dialogTextImg.value === '批量修改') {
     // 批量修改
-  if (dialogTextImg.value === '批量修改') {
     if (selectedImgs.value.length < 1) {
       CommWarn("至少选择一个图片");
       return;
@@ -1308,6 +1370,14 @@ async function submitImg() {
     // 上传图片，带刷新
     updateImgs(idList, field.value);
     await refreshBtnImg();
+  } else {
+    // 其他上传
+    uploadDone.value = false;
+    await imgUploader.value.upload();
+    while (!uploadDone.value) {
+      await sleep(233);
+    }
+    CommSeccess("上传成功");
   }
 }
 

@@ -161,7 +161,7 @@
   </div>
 
   <!-- 手机独享 -->
-  <div class="q-pa-md q-gutter-md">
+  <div class="q-pa-md q-gutter-md mobile-only">
     <!--  头  -->
     <Header :close-banner="true"/>
 

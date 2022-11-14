@@ -151,7 +151,6 @@ const disable = ref(true);
 
 // 无限滚动加载
 async function onLoad(index, done) {
-  console.log(index);
   currentPage.value = index;
   await loadBlogs();
   done();
