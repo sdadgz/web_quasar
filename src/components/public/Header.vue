@@ -9,6 +9,14 @@
       icon="home"
     />
 
+    <!--  去静态资源下载页  -->
+    <q-btn
+      flat
+      class="barBtn a"
+      label="download"
+      @click="gotoDownload"
+    />
+
     <!--  repository  -->
     <q-btn
       flat
@@ -73,6 +81,12 @@ import {useRouter} from "vue-router";
 import {api} from "../../boot/axios";
 import {sleep} from "../Common.js";
 import {random} from "../MathTool.js";
+
+// 去静态资源下载页
+function gotoDownload(){
+  // dom
+  window.location.href = '/download';
+}
 
 const props = defineProps(['closeBanner']);
 const showBanner = ref(!props.closeBanner);
