@@ -68,7 +68,7 @@
             <!--      复制链接      -->
             <q-item-section class="col-auto">
               <q-btn
-                label="分享链接"
+                :label="$q.platform.is.desktop ? '点我复制分享链接' : ''"
                 color="blue-14"
                 icon="content_copy"
                 @click="copyUrlHandler(file.url)"
@@ -77,7 +77,7 @@
 
             <!--      恢复和删除      -->
             <q-item-section
-              class="col-auto"
+              class="col-auto desktop-only"
               v-if="!file.isDelete"
             >
               <q-btn
@@ -88,7 +88,7 @@
               />
             </q-item-section>
             <q-item-section
-              class="col-auto"
+              class="col-auto desktop-only"
               v-else
             >
               <q-btn

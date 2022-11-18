@@ -92,6 +92,7 @@
                   flat
                   rounded
                   dense
+                  v-close-popup
                 />
               </q-card-section>
 
@@ -187,15 +188,17 @@
                   </q-card-section>
 
                   <q-card-section v-else>
-                    <q-uploader ref="imgUploader"
-                                label="上传博客主页图片"
-                                accept=".jpg, image/*"
-                                :factory="imgUploadFn"
-                                hide-upload-btn
-                                @added="imgExists = true"
-                                @removed="imgExists = false"
-                                @finish="uploadDone = true"
-                                @uploaded="imgUploadFinish"/>
+                    <q-uploader
+                      ref="imgUploader"
+                      label="上传博客主页图片"
+                      accept=".jpg, image/*"
+                      hide-upload-btn
+                      :factory="imgUploadFn"
+                      @added="imgExists = true"
+                      @removed="imgExists = false"
+                      @finish="uploadDone = true"
+                      @uploaded="imgUploadFinish"
+                    />
                   </q-card-section>
                 </q-slide-transition>
 
@@ -1371,14 +1374,26 @@ async function submitImg() {
     updateImgs(idList, field.value);
     await refreshBtnImg();
   } else {
-    // 其他上传
+    // 其他上传 - 头像
     uploadDone.value = false;
     await imgUploader.value.upload();
     while (!uploadDone.value) {
       await sleep(233);
     }
     CommSeccess("上传成功");
+    await uploadAvatarHandler();
   }
+}
+
+// 上传头像
+async function uploadAvatarHandler() {
+  await apiThen(api.put('/user/avatar', null, {
+    params: {
+      imgId: imgInfo.value
+    }
+  })).then(res => {
+    console.log(res.data);
+  })
 }
 
 // 修改图片
@@ -1508,7 +1523,7 @@ function imgUploadFinish(info) {
     dialogShow.value = false;
   } else {
     // 正常处理
-    imgInfo.value = res.data.id;
+    imgInfo.value = res.data[0].id;
   }
 }
 
