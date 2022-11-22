@@ -136,20 +136,27 @@
     <!--  博客表  -->
     <q-card style="background-color: rgba(255,255,255,.5)">
       <q-card-section class="q-gutter-md q-pa-md">
-        <q-btn class="user-btn"
-               icon="replay"
-               color="primary"
-               @click="refreshBtn"
-               :loading="btnLoading"
-               label="刷新"/>
-        <q-btn class="user-btn"
-               icon="add_circle_outline"
-               @click="addBtn"
-               color="secondary"
-               label="新增">
+        <q-btn
+          class="user-btn"
+          icon="replay"
+          color="primary"
+          @click="refreshBtn"
+          :loading="btnLoading"
+          label="刷新"
+        />
+        <q-btn
+          class="user-btn"
+          icon="add_circle_outline"
+          @click="addBtn"
+          color="secondary"
+          label="新增"
+        >
           <!--  弹出对话窗  -->
           <q-dialog v-model="dialogShow">
-            <q-card class="column" style="width: 460px;padding: 33px 50px">
+            <q-card
+              class="column"
+              style="width: 460px;padding: 33px 50px"
+            >
               <q-scroll-area style="height: 90vh">
 
                 <!--    弹窗标题      -->
@@ -285,25 +292,29 @@
 
       <!--   表   -->
       <q-card-section>
-        <q-table style="background-color: rgba(236,133,167,0.28);"
-                 :columns="columns"
-                 :rows="rows"
-                 row-key="id"
-                 hide-pagination
-                 selection="multiple"
-                 v-model:selected="selected"
-                 :selected-rows-label="getSelectedString"
-                 :loading="tableLoading"
-                 :pagination="pagination"/>
+        <q-table
+          style="background-color: rgba(236,133,167,0.28);"
+          :columns="columns"
+          :rows="rows"
+          row-key="id"
+          hide-pagination
+          selection="multiple"
+          v-model:selected="selected"
+          :selected-rows-label="getSelectedString"
+          :loading="tableLoading"
+          :pagination="pagination"
+        />
       </q-card-section>
 
       <!--   分页   -->
       <q-card-section class="q-pa-lg flex flex-center">
-        <q-pagination v-model="currentPage"
-                      :max="pageCount"
-                      direction-links
-                      @click="loadBlogs"
-                      style="min-width: 2em"/>
+        <q-pagination
+          v-model="currentPage"
+          :max="pageCount"
+          direction-links
+          @click="loadBlogs"
+          style="min-width: 2em"
+        />
       </q-card-section>
     </q-card>
 
@@ -871,7 +882,6 @@ function setMobileImgStyle(i) {
 // 加载blogs
 async function loadBlogs() {
   const loadNot = LoadingNotify();
-  rows.value = [];
   columns.value = [];
   tableLoading.value = true;
 
@@ -888,6 +898,7 @@ async function loadBlogs() {
     }
   }).then(res => {
     if (res.code === "200") {
+      rows.value = [];
       blogs.value = res.data.lists;
       columns.value = BlogColumns; // 从本地获取表名
 
