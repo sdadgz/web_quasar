@@ -7,7 +7,9 @@ export const notNull = ref([(val) => (val && val.length > 0) || '输入值为空
 // 常用api返回通知
 export async function apiThen(api: Promise<any>) {
   return await api.then(res => {
-    CommSeccess("操作成功");
+    if (res.code && res.code === "200") {
+      CommSeccess("操作成功");
+    }
     return res;
   }).catch(res => {
     CommFail("操作失败");

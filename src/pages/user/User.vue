@@ -1410,7 +1410,7 @@ async function uploadAvatarHandler() {
 // 修改图片
 function updateImg(id, f) {
   api.put("/img/update", {
-    "id": id,
+    "idList": [id],
     "field": f
   }).then(() => {
     CommSeccess("修改成功");
