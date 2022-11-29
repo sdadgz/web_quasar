@@ -517,10 +517,14 @@ const blogBanner = ref("https://sdadgz.cn/download/img/1.png"); // 博客首页
 function getBlog() {
   const not = LoadingNotify();
   // 获取url参数
-  const username = $router.currentRoute.value.params.username;
+  const apiUsername = $router.currentRoute.value.params.username;
   const title = $router.currentRoute.value.params.title;
-  api.get("/blog/" + username + "/blog/" + title).then(res => {
+  api.get("/blog/" + apiUsername + "/blog/" + title).then(res => {
     LoadingSucceed(not);
+    // 名字
+    username.value = apiUsername;
+
+    // 文章md转html
     const str = res.data.text;
     textArr.value = str.split("\n");
     textType.value = [];
@@ -621,7 +625,7 @@ function setMeta() {
 
 watch(() => blogTitle.value, () => {
   setMeta();
-}, {immediate: true})
+})
 </script>
 
 <style scoped>

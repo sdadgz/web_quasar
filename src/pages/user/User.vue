@@ -1383,7 +1383,6 @@ async function submitImg() {
     })
     // 上传图片，带刷新
     updateImgs(idList, field.value);
-    await refreshBtnImg();
   } else {
     // 其他上传 - 头像
     uploadDone.value = false;
