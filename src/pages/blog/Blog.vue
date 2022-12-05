@@ -304,7 +304,7 @@
 
 <script setup>
 
-import {ref, watch} from "vue";
+import {onMounted, ref, watch} from "vue";
 import LeftIndex from "../../components/blog/LeftIndex.vue";
 import BlogContent from "../../components/blog/BlogContent.vue";
 import {useRouter} from "vue-router";
@@ -329,9 +329,6 @@ const useIcon = ref(false);
 const username = ref(localStorage.getItem("username"));
 
 const blogDone = ref(false);
-
-getBlog();
-setUserInfo();
 
 // 去递归-首位空格
 function spaseF(t) {
@@ -626,6 +623,13 @@ function setMeta() {
 watch(() => blogTitle.value, () => {
   setMeta();
 })
+
+function start(){
+  getBlog();
+  setUserInfo();
+}
+
+start();
 </script>
 
 <style scoped>
