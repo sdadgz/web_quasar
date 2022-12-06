@@ -31,7 +31,7 @@ export function CommSeccess(message?: any) {
   Notify.create({
     icon: 'done',
     color: 'positive',
-    message: message ? message : '操作成功',
+    message: message || '操作成功',
     position: 'top',
     group: message,
   })
@@ -41,7 +41,7 @@ export function CommFail(message?: any) {
   Notify.create({
     icon: 'error',
     color: 'negative',
-    message: message ? message : '操作失败',
+    message: message || '操作失败',
     position: 'top',
     group: message,
   })
@@ -51,7 +51,7 @@ export function CommWarn(message: any) {
   Notify.create({
     icon: 'error',
     type: 'warning',
-    message: message,
+    message: message || '出现问题了',
     position: 'top',
     group: message,
   })

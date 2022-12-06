@@ -9,6 +9,8 @@ export async function apiThen(api: Promise<any>) {
   return await api.then(res => {
     if (res.code && res.code === "200") {
       CommSeccess("操作成功");
+    } else {
+      CommFail(res.msg);
     }
     return res;
   }).catch(res => {

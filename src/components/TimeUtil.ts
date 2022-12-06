@@ -1,3 +1,6 @@
+// 一天有多少秒
+export const SECOND_PER_DAY = 24 * 60 * 60;
+
 // 设置时间
 export function setTime(time: string, type?: string): string {
   if (type === undefined) {
@@ -28,4 +31,22 @@ export function toLocalDatetime(timestamp) {
   const m = (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) + ':';
   const s = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds();
   return Y + M + D + h + m + s;
+}
+
+// 获取时间戳，单位s
+export function getTimeNow(offset?: number): number {
+  return Date.now() / 1000 - (offset || 0);
+}
+
+// 时间是否过期，默认3天
+export function isTimeout(createTime: number, expireSecond?: number): boolean {
+  // 默认过期时间
+  if (!expireSecond) {
+    expireSecond = SECOND_PER_DAY * 3;
+  }
+
+  // 向左偏移了n秒的时间，大于原时间过期
+  const timeOffset: number = getTimeNow(expireSecond);
+
+  return timeOffset > createTime;
 }

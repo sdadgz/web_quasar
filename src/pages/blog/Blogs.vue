@@ -87,28 +87,27 @@ const pageSize = ref(PAGE_SIZE);
 
 // 加载blogs
 async function loadBlogs() {
-  let username1 = $router.currentRoute.value.params.username;
+  const urlUsername = $router.currentRoute.value.params.username;
   let data;
 
-  // url判断名字
-  if (username1 === undefined) {
+  // url 中的 username 判定
+  if (urlUsername) {
+    // url有地址，扔进去
+    username.value = urlUsername.toString();
+  } else {
     // url没东西，用本地存贮的名字
     const fromLocal = localStorage.getItem("username");
-    if (fromLocal !== null) {
-      username.value = fromLocal;
-    }
+    username.value = fromLocal || DEFAULT_USERNAME;
   }
 
-  username1 = username.value
-
   // 获取数据
-  await api.get("/blog/" + username1 + "/blogs", {
+  await api.get("/blog/" + username.value + "/blogs", {
     params: {
       currentPage: currentPage.value,
       pageSize: pageSize.value
     }
   }).then(res => {
-    if (res.code === "200") {
+    if (res && res.code === "200") {
       data = res.data.lists;
       if (data.length < 1) {
         turnOff();
