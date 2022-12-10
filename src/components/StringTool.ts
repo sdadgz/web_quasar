@@ -15,3 +15,6 @@ export const TOKEN = "token";
 
 // 通常时间记录
 export const GENERAL_TIME = "time";
+
+// redis 分隔符
+export const REDIS_SPLIT = ":";

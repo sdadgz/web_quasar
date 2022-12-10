@@ -17,6 +17,12 @@ declare module "axios" {
     msg: any;
     data: T;
     // 这里追加你的参数
+    country: string;
+    province: string;
+    city: string;
+    area: string;
+    isp: string;
+    net: string;
   }
 }
 
@@ -55,11 +61,12 @@ export default boot(({app}) => {
   // 响应拦截器
   api.interceptors.response.use(
     res => {
-      if (res.data.code === '499') {
+      // 自定义判断
+      if (res.data.code == '499') {
         CommFail('请重新登录');
         CommFail(res.msg);
         window.location.href = "/#/user/login";
-      } else if (res.data.code !== '200') {
+      } else if (res.data.code != '200') {
         CommFail(res.data.msg);
       } else {
         return res.data;
