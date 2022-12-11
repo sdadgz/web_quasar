@@ -1,12 +1,13 @@
 <template>
-  <span>来自{{ field }}的ip：{{ disposeIp }} 访问了{{ count }}次接口</span>
+  <span class="text-weight-bold text-primary">来自{{ field }}的ip：{{ disposeIp }} 访问了{{ count }}次接口</span>
 </template>
 
 <script setup lang="ts">
 
-import {ref} from "vue";
+import {ref, watch} from "vue";
 import {EMPTY_STRING, REDIS_SPLIT} from "components/StringTool";
 import {api} from "boot/axios";
+import {getIp} from "components/Tools";
 
 const props = defineProps(['ip', 'count']);
 
@@ -14,11 +15,10 @@ const disposeIp = ref(EMPTY_STRING);
 const field = ref(EMPTY_STRING);
 
 // 父组件传ip 冒号分割，最后一个位置放ip
-function getIp() {
+function getRealIp() {
   let tempIp = props.ip;
   // 获得到ip
-  const split = tempIp.split(REDIS_SPLIT);
-  disposeIp.value = split[split.length - 1];
+  disposeIp.value = getIp(tempIp);
   getField(disposeIp.value);
 }
 
@@ -37,7 +37,7 @@ function getField(ip: string) {
     const isp = res.isp;
     const net = res.net;
     // 去重
-    if (province === city){
+    if (province === city) {
       city = EMPTY_STRING;
     }
     field.value = country + province + city + area + isp + net;
@@ -45,8 +45,12 @@ function getField(ip: string) {
 }
 
 function start() {
-  getIp();
+  getRealIp();
 }
+
+watch(() => props, () => {
+  start();
+}, {deep: true})
 
 start();
 </script>

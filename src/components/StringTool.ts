@@ -1,6 +1,7 @@
 export const TRUE = "true";
 export const EMPTY_STRING = '';
 export const SPLIT = ' ';
+export const ZERO = 0;
 
 export const TITLE = "优菈天下第一";
 
@@ -18,3 +19,9 @@ export const GENERAL_TIME = "time";
 
 // redis 分隔符
 export const REDIS_SPLIT = ":";
+
+// 根据ip获取的地域信息json
+export const REGIONAL_ARR = ['country', 'province', 'city', 'area', 'isp', 'net'];
+
+// ip详情最多显示ip
+export const IP_LIST_MAX = 10;
