@@ -17,12 +17,12 @@ declare module "axios" {
     msg: any;
     data: T;
     // 这里追加你的参数
-    country: string;
-    province: string;
-    city: string;
-    area: string;
-    isp: string;
-    net: string;
+    country: string; // 国家
+    province: string; // 省份
+    city: string; // 城市
+    area: string; //
+    isp: string; // 运行商
+    net: string; // 网络
   }
 }
 

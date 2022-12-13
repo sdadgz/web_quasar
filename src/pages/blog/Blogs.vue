@@ -4,6 +4,17 @@
     <!--  头  -->
     <Header/>
 
+    <!--  杂物  -->
+    <q-card style="background-color: rgba(250,160,160,0.34)">
+      <q-card-section>
+        <strong>不用说话，点一下知道你是哪里人，猜对了v我8w</strong>
+      </q-card-section>
+      <q-separator/>
+      <q-card-section>
+        <q-btn label="点我开始测试" color="primary" @click="ipHandler"/>
+      </q-card-section>
+    </q-card>
+
     <!--  电脑独享博客  -->
     <q-infinite-scroll
       class="desktop-only"
@@ -61,11 +72,35 @@ import {useRouter} from "vue-router";
 import Header from "components/public/Header.vue";
 import {checkPic} from "../../components/img/img.js";
 import {api} from "../../boot/axios";
-import {LoadingFail, LoadingNotify, LoadingSucceed} from "../../components/notifyTools";
+import {CommSeccess, LoadingFail, LoadingNotify, LoadingSucceed} from "../../components/notifyTools";
 import {BlogsColumns, WaterFullOther} from "../../components/models";
 import {sleep} from "../../components/Common.js";
 import BackgroundImg from "../../components/public/BackgroundImg.vue";
 import {DEFAULT_USERNAME, PAGE_SIZE, SPLIT, START_PAGE, TITLE} from "../../components/StringTool";
+import {getRegionalByIp} from "../../components/Tools";
+
+// 屎山太烂了，后期不可能维护了，直接重构吧
+
+// 获取ip按钮
+function ipHandler() {
+  api.get('/ip').then(res => {
+    const ip = res.data;
+    getRegionalByIp(ip).then(res => {
+      // 中国特殊
+      if (res.country === '中国') {
+        CommSeccess('你是' + (res.city || res.province || ipAllInfo(res)) + '人');
+      } else {
+        // 其他地区
+        CommSeccess(ipAllInfo(res));
+      }
+    })
+  })
+}
+
+// 展示全部
+function ipAllInfo(res) {
+  return res.country + res.province + res.city + res.area;
+}
 
 // 手机端博客
 const mobileBlogs = ref([]);
