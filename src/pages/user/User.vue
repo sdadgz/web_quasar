@@ -164,34 +164,49 @@
                   <div class="text-h6">
                     {{ dialogText }}
                   </div>
-                  <q-btn icon="close" flat round dense v-close-popup/>
+                  <q-btn
+                    icon="close"
+                    flat
+                    round
+                    dense
+                    v-close-popup
+                  />
                 </q-card-section>
 
                 <!--    笔记标题      -->
                 <q-card-section>
-                  <q-input v-model="titleInfo"
-                           :rules="[ val => val && val.length > 0 || '输入值为空']"
-                           label="标题"/>
+                  <q-input
+                    v-model="titleInfo"
+                    :rules="[ val => val && val.length > 0 || '输入值为空']"
+                    label="标题"
+                  />
                 </q-card-section>
 
                 <!--     笔记简介     -->
                 <q-card-section>
-                  <q-input v-model="detailInfo" label="简介"/>
+                  <q-input
+                    v-model="detailInfo"
+                    label="简介"
+                  />
                 </q-card-section>
 
                 <!--    切换      -->
                 <q-card-section>
-                  <q-toggle v-model="imgUseId"
-                            label="使用已经上传的图片id代替上传图片"
-                            @click="imgUploader === null ? '' : imgUploader.reset();imgExists = false"/>
+                  <q-toggle
+                    v-model="imgUseId"
+                    label="使用已经上传的图片id代替上传图片"
+                    @click="imgUploader === null ? '' : imgUploader.reset();imgExists = false"
+                  />
                 </q-card-section>
 
                 <!--    图片id输入框或上传器      -->
                 <q-slide-transition>
                   <q-card-section v-if="imgUseId">
-                    <q-input v-model="imgInfo"
-                             label="图片id"
-                             :rules="[ val => val && val.length > 0 || '输入值为空']"/>
+                    <q-input
+                      v-model="imgInfo"
+                      label="图片id"
+                      :rules="[ val => val && val.length > 0 || '输入值为空']"
+                    />
                   </q-card-section>
 
                   <q-card-section v-else>
@@ -210,15 +225,17 @@
                 </q-slide-transition>
 
                 <q-card-section v-if="dialogText === '新增'">
-                  <q-uploader ref="mdUploader"
-                              label="上传笔记"
-                              accept=".md"
-                              :factory="mdUploadFn"
-                              hide-upload-btn
-                              @added="mdExists = true"
-                              @removed="mdExists = false"
-                              @finish="uploadDone = true"
-                              @uploaded="mdUploadFinish"/>
+                  <q-uploader
+                    ref="mdUploader"
+                    label="上传笔记"
+                    accept=".md"
+                    :factory="mdUploadFn"
+                    hide-upload-btn
+                    @added="mdExists = true"
+                    @removed="mdExists = false"
+                    @finish="uploadDone = true"
+                    @uploaded="mdUploadFinish"
+                  />
                 </q-card-section>
 
                 <q-card-section class="row justify-between">
@@ -1401,9 +1418,7 @@ async function uploadAvatarHandler() {
     params: {
       imgId: imgInfo.value
     }
-  })).then(res => {
-    console.log(res.data);
-  })
+  }))
 }
 
 // 修改图片
