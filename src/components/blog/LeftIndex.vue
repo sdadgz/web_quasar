@@ -1,5 +1,4 @@
 <template>
-
   <q-expansion-item v-if="blogIndex.children != null" :label="blogIndex.title">
     <template v-for="item in blogIndex.children">
       <LeftIndex :blogIndex="item"/>
