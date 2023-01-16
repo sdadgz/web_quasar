@@ -88,7 +88,7 @@ function ipHandler() {
     getRegionalByIp(ip).then(res => {
       // 中国特殊
       if (res.country === '中国') {
-        CommSeccess('你是' + (res.city || res.province || ipAllInfo(res)) + '人');
+        CommSeccess('来自' + (res.area || res.city || res.province || ipAllInfo(res)) + '~');
       } else {
         // 其他地区
         CommSeccess(ipAllInfo(res));

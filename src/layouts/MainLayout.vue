@@ -73,7 +73,6 @@ function tokenTimeout() {
       refreshTokenApi();
     }
   }
-
 }
 
 function start() {
