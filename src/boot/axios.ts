@@ -48,21 +48,19 @@ export default boot(({app}) => {
 
 
   // 请求拦截器
-  api.interceptors.request.use(
-    (config) => {
+  api.interceptors.request.use((config) => {
       config.headers.token = localStorage.getItem('token');
       return config
-    },
-    err => {
+    }, err => {
       return Promise.reject(err)
     }
   )
 
   // 响应拦截器
-  api.interceptors.response.use(
-    res => {
+  api.interceptors.response.use(res => {
       // 自定义判断
       if (res.data.code == '499') {
+        localStorage.clear();
         CommFail('请重新登录');
         CommFail(res.msg);
         window.location.href = "/#/user/login";

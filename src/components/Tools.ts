@@ -6,6 +6,12 @@ import {laCalendar} from "@quasar/extras/line-awesome";
 
 export const notNull = ref([(val) => (val && val.length > 0) || '输入值为空']);
 
+// 是否是数字
+export function isInteger(x: string){
+  const reg = /^[0-9]*$/
+  return reg.test(x) && x.length > 0;
+}
+
 // 常用api返回通知
 export async function apiThen(api: Promise<any>) {
   return await api.then(res => {

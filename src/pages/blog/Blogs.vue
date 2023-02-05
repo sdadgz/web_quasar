@@ -5,15 +5,44 @@
     <Header/>
 
     <!--  杂物  -->
-    <q-card style="background-color: rgba(250,160,160,0.34)">
-      <q-card-section>
-        <strong>不用说话，点一下知道你是哪里人，猜对了v我8w</strong>
-      </q-card-section>
-      <q-separator/>
-      <q-card-section>
-        <q-btn label="点我开始测试" color="primary" @click="ipHandler"/>
-      </q-card-section>
-    </q-card>
+    <div class="row q-gutter-md q-pa-sm">
+      <q-card class="col-auto" style="background-color: rgba(250,160,160,0.34)">
+        <q-card-section>
+          <strong>不用说话，点一下知道你是哪里人，猜对了v我8w</strong>
+        </q-card-section>
+        <q-separator/>
+        <q-card-section>
+          <q-btn label="点我开始测试" color="primary" @click="ipHandler"/>
+        </q-card-section>
+      </q-card>
+
+      <q-card class="col-auto" style="background-color: rgba(250,160,160,0.34)">
+        <q-card-section>
+          <strong>小玩具，要不试试输个数字呗</strong>
+        </q-card-section>
+        <q-separator/>
+        <q-card-section>
+          <q-input
+            v-model="input_114514"
+            type="number"
+            lazy-rules
+            :rules="notNull"
+            label="这里这里"
+            @keyup.enter="handler_114514"
+          />
+        </q-card-section>
+        <q-card-section>
+          <strong style="word-break: break-word">{{ text_114514 }}</strong>
+        </q-card-section>
+        <q-card-section>
+          <q-btn
+            label="这个不是按钮"
+            color="primary"
+            @click="handler_114514"
+          />
+        </q-card-section>
+      </q-card>
+    </div>
 
     <!--  电脑独享博客  -->
     <q-infinite-scroll
@@ -72,14 +101,32 @@ import {useRouter} from "vue-router";
 import Header from "components/public/Header.vue";
 import {checkPic} from "../../components/img/img.js";
 import {api} from "../../boot/axios";
-import {CommSeccess, LoadingFail, LoadingNotify, LoadingSucceed} from "../../components/notifyTools";
+import {CommSeccess} from "../../components/notifyTools";
 import {BlogsColumns, WaterFullOther} from "../../components/models";
-import {sleep} from "../../components/Common.js";
-import BackgroundImg from "../../components/public/BackgroundImg.vue";
-import {DEFAULT_USERNAME, PAGE_SIZE, SPLIT, START_PAGE, TITLE} from "../../components/StringTool";
-import {getRegionalByIp} from "../../components/Tools";
+import {DEFAULT_USERNAME, PAGE_SIZE, START_PAGE} from "../../components/StringTool";
+import {getRegionalByIp, isInteger, notNull} from "../../components/Tools";
 
 // 屎山太烂了，后期不可能维护了，直接重构吧
+
+// 114514输入框
+const input_114514 = ref(null);
+const target_114514 = ref(114514);
+const text_114514 = ref("欸嘿");
+
+// 点击了114514的按钮
+function handler_114514() {
+  text_114514.value = "加载中。。。";
+  if (isInteger(input_114514.value)) {
+    api.get('/toy/114514', {
+      params: {
+        src: input_114514.value,
+        target_114514: target_114514.value
+      }
+    }).then(res => {
+      text_114514.value = res.data;
+    })
+  }
+}
 
 // 获取ip按钮
 function ipHandler() {
