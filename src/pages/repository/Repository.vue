@@ -125,7 +125,7 @@
 import {FILE_PAGE_SIZE, ServerName} from "../../components/models";
 import {ref, watch} from "vue";
 import Header from "../../components/public/Header.vue";
-import {CommFail, CommSeccess} from "../../components/notifyTools";
+import {CommFail, CommSuccess} from "../../components/notifyTools";
 import {useRoute, useRouter} from "vue-router";
 import {api} from "../../boot/axios";
 import {setTime} from "../../components/TimeUtil";
@@ -140,7 +140,7 @@ const title = ref(TITLE);
 // 复制
 function copyUrlHandler(url) {
   navigator.clipboard.writeText(url).then(() => {
-    CommSeccess("复制成功");
+    CommSuccess("复制成功");
   })
 }
 
@@ -178,7 +178,7 @@ async function reHandler(file) {
     "id": file.id,
     "isDelete": false
   }).then(res => {
-    CommSeccess("修改成功");
+    CommSuccess("修改成功");
   }).catch(res => {
     CommFail("修改失败");
   })
@@ -195,7 +195,7 @@ async function deleteHandler(file) {
     }
   }).then(res => {
     if (res.code === "200") {
-      CommSeccess("删除成功");
+      CommSuccess("删除成功");
     } else {
       CommFail("删除失败");
     }
@@ -263,7 +263,7 @@ function uploadFinish(info) {
   } else {
     // 正常处理
     // imgInfo.value = res.data.id;
-    CommSeccess("上传成功");
+    CommSuccess("上传成功");
   }
 
   // 刷新

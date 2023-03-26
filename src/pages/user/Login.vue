@@ -10,13 +10,14 @@
 
           <!--     用户名     -->
           <q-card-section>
-            <q-input rounded
-                     v-model="usernameR"
-                     label="用户名"
-                     :lazy-rules="true"
-                     :rules="[(val) => (val.length > 0) || '输入值为空']"
-                     ref="usernameRef"
-                     @keyup.enter="usernameHandler"
+            <q-input
+              v-model="usernameR"
+              ref="usernameRef"
+              rounded
+              label="用户名"
+              :lazy-rules="true"
+              :rules="[(val) => (val.length > 0) || '输入值为空']"
+              @keyup.enter="usernameHandler"
             />
           </q-card-section>
 
@@ -89,7 +90,7 @@
 import {ref} from "vue";
 import {useMeta, useQuasar} from "quasar";
 import {api} from "../../boot/axios";
-import {CommFail, CommSeccess} from "../../components/notifyTools";
+import {CommFail, CommSuccess} from "../../components/notifyTools";
 import {useRouter} from "vue-router";
 import {TITLE, TRUE} from "../../components/StringTool";
 
@@ -190,7 +191,7 @@ function handlerLogin() {
     }).then(res => {
       if (res.code === "200") {
         setUserInfo(res.data);
-        CommSeccess("登录成功");
+        CommSuccess("登录成功");
       }
     })
   } else if (second.value === '注册' && regRule()) { // 注册
@@ -231,7 +232,7 @@ async function register(val) {
       "password": passwordR.value
     }).then(res => {
       setUserInfo(res.data);
-      CommSeccess("注册成功");
+      CommSuccess("注册成功");
     })
   } else {
     clearAll();

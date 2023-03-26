@@ -621,7 +621,7 @@ import {ref, watch} from "vue";
 import Header from "../../components/public/Header.vue";
 import {
   CommFail,
-  CommSeccess,
+  CommSuccess,
   CommWarn,
   LoadingFail,
   LoadingNotify,
@@ -1237,7 +1237,7 @@ function deleteBtnImg() {
               "id": id
             }
           }).then(() => {
-            CommSeccess("删除成功");
+            CommSuccess("删除成功");
           }).catch(() => {
             CommFail("删除失败");
           }).then(() => {
@@ -1274,7 +1274,7 @@ function deleteBtnImgs() {
                 "id": item.id
               }
             }).then(() => {
-              CommSeccess("删除成功");
+              CommSuccess("删除成功");
             }).catch(() => {
               CommFail("删除失败");
             }).then(() => {
@@ -1356,7 +1356,7 @@ async function submit() {
       "detail": detailInfo.value
     }).then(res => {
       // 处理结果
-      CommSeccess("修改成功");
+      CommSuccess("修改成功");
     }).catch(() => {
       CommFail("修改失败");
     }).then(() => {
@@ -1378,7 +1378,7 @@ async function submitImg() {
     while (!uploadDone.value) {
       await sleep(233);
     }
-    CommSeccess("上传成功");
+    CommSuccess("上传成功");
     await refreshBtnImg();
     // 上传后自动赋值给imgInfo了
   } else if (dialogTextImg.value === '修改') {
@@ -1407,7 +1407,7 @@ async function submitImg() {
     while (!uploadDone.value) {
       await sleep(233);
     }
-    CommSeccess("上传成功");
+    CommSuccess("上传成功");
     await uploadAvatarHandler();
   }
 }
@@ -1427,7 +1427,7 @@ function updateImg(id, f) {
     "idList": [id],
     "field": f
   }).then(() => {
-    CommSeccess("修改成功");
+    CommSuccess("修改成功");
   }).catch(() => {
     CommFail("修改失败");
   }).then(() => {
@@ -1442,7 +1442,7 @@ function updateImgs(idList, f) {
     "idList": idList,
     "field": f
   }).then(() => {
-    CommSeccess("修改成功");
+    CommSuccess("修改成功");
   }).catch(() => {
     CommFail("修改失败");
   }).then(() => {
@@ -1563,7 +1563,7 @@ function mdUploadFinish(info) {
     dialogShow.value = false;
   } else {
     // 处理
-    CommSeccess("上传成功");
+    CommSuccess("上传成功");
   }
 }
 

@@ -27,7 +27,7 @@ export function LoadingFail(not: any) {
 }
 
 //一般类型操作成功
-export function CommSeccess(message?: any) {
+export function CommSuccess(message?: any) {
   Notify.create({
     icon: 'done',
     color: 'positive',

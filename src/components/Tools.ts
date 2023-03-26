@@ -1,6 +1,6 @@
 import {ref} from "vue";
 import axios, {api} from "../boot/axios";
-import {CommFail, CommSeccess} from "./notifyTools";
+import {CommFail, CommSuccess} from "./notifyTools";
 import {EMPTY_STRING, REDIS_SPLIT} from "components/StringTool";
 import {laCalendar} from "@quasar/extras/line-awesome";
 
@@ -16,7 +16,7 @@ export function isInteger(x: string){
 export async function apiThen(api: Promise<any>) {
   return await api.then(res => {
     if (res.code && res.code === "200") {
-      CommSeccess("操作成功");
+      CommSuccess("操作成功");
     } else {
       CommFail(res.msg);
     }

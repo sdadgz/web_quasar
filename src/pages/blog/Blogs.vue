@@ -101,7 +101,7 @@ import {useRouter} from "vue-router";
 import Header from "components/public/Header.vue";
 import {checkPic} from "../../components/img/img.js";
 import {api} from "../../boot/axios";
-import {CommSeccess} from "../../components/notifyTools";
+import {CommSuccess} from "../../components/notifyTools";
 import {BlogsColumns, WaterFullOther} from "../../components/models";
 import {DEFAULT_USERNAME, PAGE_SIZE, START_PAGE} from "../../components/StringTool";
 import {getRegionalByIp, isInteger, notNull} from "../../components/Tools";
@@ -135,10 +135,10 @@ function ipHandler() {
     getRegionalByIp(ip).then(res => {
       // 中国特殊
       if (res.country === '中国') {
-        CommSeccess('来自' + (res.area || res.city || res.province || ipAllInfo(res)) + '~');
+        CommSuccess('来自' + (res.area || res.city || res.province || ipAllInfo(res)) + '~');
       } else {
         // 其他地区
-        CommSeccess(ipAllInfo(res));
+        CommSuccess(ipAllInfo(res));
       }
     })
   })
