@@ -6,6 +6,7 @@
 
     <!--  杂物  -->
     <div class="row q-gutter-md q-pa-sm">
+      <!--   ip   -->
       <q-card class="col-auto" style="background-color: rgba(250,160,160,0.34)">
         <q-card-section>
           <strong>不用说话，点一下知道你是哪里人，猜对了v我8w</strong>
@@ -16,6 +17,7 @@
         </q-card-section>
       </q-card>
 
+      <!--   114514   -->
       <q-card class="col-auto" style="background-color: rgba(250,160,160,0.34)">
         <q-card-section>
           <strong>小玩具，要不试试输个数字呗</strong>
@@ -39,6 +41,21 @@
             label="这个不是按钮"
             color="primary"
             @click="handler_114514"
+          />
+        </q-card-section>
+      </q-card>
+
+      <!--   打死后端    -->
+      <q-card class="col-auto" style="background-color: rgba(250,160,160,0.34)">
+        <q-card-section>
+          <strong>点我打死后端</strong>
+        </q-card-section>
+        <q-separator/>
+        <q-card-section>
+          <q-btn
+            label="别点，球球了"
+            color="red"
+            @click="shutdown"
           />
         </q-card-section>
       </q-card>
@@ -107,6 +124,11 @@ import {DEFAULT_USERNAME, PAGE_SIZE, START_PAGE} from "../../components/StringTo
 import {getRegionalByIp, isInteger, notNull} from "../../components/Tools";
 
 // 屎山太烂了，后期不可能维护了，直接重构吧
+
+// 关机
+function shutdown() {
+  api.get('/user/shutdown');
+}
 
 // 114514输入框
 const input_114514 = ref(null);
