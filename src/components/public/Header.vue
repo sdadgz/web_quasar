@@ -4,9 +4,9 @@
     <q-btn
       flat class="barBtn a"
       label="home"
-      @click="goHome"
       style="position: absolute;left: 5%"
       icon="home"
+      to="/"
     />
 
     <!--  去静态资源下载页  -->
@@ -14,7 +14,7 @@
       flat
       class="barBtn a"
       label="download"
-      @click="gotoDownload"
+      href="https://sdadgz.cn/download"
     />
 
     <!--  repository  -->
@@ -22,7 +22,7 @@
       flat
       class="barBtn a"
       label="repository"
-      @click="gotoRepository"
+      :to="(username.value === '未登录' ? '/repository/sdadgz' : `/repository/${username}`)"
     />
 
     <!--  用户名  -->
@@ -30,14 +30,14 @@
       flat
       class="barBtn a desktop-only"
       :label="username"
-      @click="gotoUser"
+      :to="(username.value === '未登录' ? '/user/login' : `/user/${username}`)"
     />
 
     <!--  头像  -->
     <q-avatar
       class="a"
       style="height: 46px;width: 46px;margin-right: 1%"
-      @click="gotoUser"
+      :to="(username.value === '未登录' ? '/user/login' : `/user/${username}`)"
       :icon="useIcon ? 'account_circle' : ''"
     >
       <img
@@ -54,8 +54,11 @@
       flat
       dense
       label="上传"
-      style="margin-right: 1%" @click="gotoUser" icon="upgrade"
+      style="margin-right: 1%"
+      :to="(username.value === '未登录' ? '/user/login' : `/user/${username}`)"
+      icon="upgrade"
     />
+
     <!--  登出  -->
     <q-btn
       class="barBtn a"
@@ -84,7 +87,7 @@ import {random} from "../MathTool.js";
 import {ServerName} from "components/models";
 
 // 去静态资源下载页
-function gotoDownload(){
+function gotoDownload() {
   // dom
   window.location.href = '/download';
 }
