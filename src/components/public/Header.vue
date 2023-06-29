@@ -37,7 +37,7 @@
     <q-avatar
       class="a"
       style="height: 46px;width: 46px;margin-right: 1%"
-      :to="(username.value === '未登录' ? '/user/login' : `/user/${username}`)"
+      @click="gotoUser"
       :icon="useIcon ? 'account_circle' : ''"
     >
       <img

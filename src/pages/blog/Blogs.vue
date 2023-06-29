@@ -221,8 +221,6 @@ async function loadBlogs() {
         item.user.avatar.startsWith('http') || (item.user.avatar = ServerName + item.user.avatar);
       }
 
-      console.log(res.data.lists);
-
       if (data.length < 1) {
         turnOff();
       }

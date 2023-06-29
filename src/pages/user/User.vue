@@ -984,6 +984,12 @@ async function loadImg() {
     if (res.code === "200") {
       imgData = res.data.lists; // 获取imgs数据
 
+      // url改造
+      for (let item of res.data.lists) {
+        item.url = ServerName + item.url;
+        item.reduceUrl && (item.reduceUrl = ServerName + item.reduceUrl);
+      }
+
       // 分页
       pageCountImg.value = Math.ceil(res.data.total / pageSizeImg.value);
 
