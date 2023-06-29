@@ -8,6 +8,7 @@ import {ref} from "vue";
 import {api} from "../../boot/axios";
 import {sleep} from "../Common.js";
 import {random} from "../MathTool.js";
+import {ServerName} from "../models";
 
 const backgroundImg = ref("https://sdadgz.cn/download/img/1.png");
 
@@ -28,6 +29,12 @@ async function start() {
   }
   // 获取banner
   await api.get("/img/" + urlUserName + "/background").then(res => {
+
+    // url改造
+    for (let item of res.data) {
+      item.url = ServerName + item.url;
+    }
+
     imgArr.value = res.data;
   })
 }

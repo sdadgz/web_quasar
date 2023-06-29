@@ -119,7 +119,7 @@ import Header from "components/public/Header.vue";
 import {checkPic} from "../../components/img/img.js";
 import {api} from "../../boot/axios";
 import {CommSuccess} from "../../components/notifyTools";
-import {BlogsColumns, WaterFullOther} from "../../components/models";
+import {BlogsColumns, ServerName, WaterFullOther} from "../../components/models";
 import {DEFAULT_USERNAME, PAGE_SIZE, START_PAGE} from "../../components/StringTool";
 import {getRegionalByIp, isInteger, notNull} from "../../components/Tools";
 
@@ -213,6 +213,16 @@ async function loadBlogs() {
   }).then(res => {
     if (res && res.code === "200") {
       data = res.data.lists;
+
+      // url改造
+      for (let item of res.data.lists) {
+        item.img.url.startsWith('http') || (item.img.url = ServerName + item.img.url);
+        item.img.reduceUrl && (item.img.reduceUrl.startsWith('http') || (item.img.reduceUrl = ServerName + item.img.reduceUrl))
+        item.user.avatar.startsWith('http') || (item.user.avatar = ServerName + item.user.avatar);
+      }
+
+      console.log(res.data.lists);
+
       if (data.length < 1) {
         turnOff();
       }

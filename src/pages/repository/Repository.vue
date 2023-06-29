@@ -228,6 +228,11 @@ async function onLoad(index, done) {
     pageCount.value =
       Math.ceil(res.data.total / pageSize.value) === 0 ? 1 : Math.ceil(res.data.total / pageSize.value);
 
+    // url改造
+    for (let item of res.data.lists) {
+      item.url = ServerName + item.url;
+    }
+
     // 仍里头
     fileArr.value.push(...res.data.lists);
   }).catch(res => {

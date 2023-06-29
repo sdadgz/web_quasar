@@ -81,6 +81,7 @@ import {useRouter} from "vue-router";
 import {api} from "../../boot/axios";
 import {sleep} from "../Common.js";
 import {random} from "../MathTool.js";
+import {ServerName} from "components/models";
 
 // 去静态资源下载页
 function gotoDownload(){
@@ -121,6 +122,12 @@ async function getBanner() {
   }
   // 获取banner
   await api.get("/img/" + urlUserName + "/banner").then(res => {
+
+    // url改造
+    for (let item of res.data) {
+      item.url = ServerName + item.url;
+    }
+
     bannerArr.value = res.data;
   })
 }
