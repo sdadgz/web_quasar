@@ -217,7 +217,7 @@ async function onLoad(index, done) {
     return;
   }
 
-  await api.get("/file/" + username.value + "/page", {
+  await api.get("/file/" + username.value  + "/page", {
     params: {
       "currentPage": index,
       "pageSize": pageSize.value

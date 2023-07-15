@@ -8,7 +8,6 @@
         {{ blogTitle }}
       </q-card-section>
       <q-img :src="blogBanner" style="margin-bottom: 66px"/>
-      <!--      <BlogContent v-if="blogDone" :textArr="textArr"/>-->
 
       <v-md-preview :text="blogText"/>
 

@@ -22,7 +22,7 @@
       flat
       class="barBtn a"
       label="repository"
-      :to="(username.value === '未登录' ? '/repository/sdadgz' : `/repository/${username}`)"
+      :to="(username === '未登录' ? '/repository/sdadgz' : `/repository/${username}`)"
     />
 
     <!--  用户名  -->
@@ -30,7 +30,7 @@
       flat
       class="barBtn a desktop-only"
       :label="username"
-      :to="(username.value === '未登录' ? '/user/login' : `/user/${username}`)"
+      :to="(username === '未登录' ? '/user/login' : `/user/${username}`)"
     />
 
     <!--  头像  -->
@@ -55,7 +55,7 @@
       dense
       label="上传"
       style="margin-right: 1%"
-      :to="(username.value === '未登录' ? '/user/login' : `/user/${username}`)"
+      :to="(username === '未登录' ? '/user/login' : `/user/${username}`)"
       icon="upgrade"
     />
 
