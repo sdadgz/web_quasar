@@ -28,7 +28,7 @@ import Table from "../../components/blog/Table.vue";
 import BackgroundImg from "../../components/public/BackgroundImg.vue";
 import {useMeta} from "quasar";
 import Header from "../../components/public/Header.vue";
-import { createApp } from 'vue';
+import {createApp} from 'vue';
 import VMdPreview from '@kangc/v-md-editor/lib/preview';
 import '@kangc/v-md-editor/lib/style/preview.css';
 import githubTheme from '@kangc/v-md-editor/lib/theme/github.js';
@@ -74,7 +74,7 @@ function getBlog() {
     username.value = apiUsername;
 
     // v-md-editor md内容
-    blogText.value = res.data.text;
+    blogText.value = res.data.text.replaceAll('/static/', ServerName + '/static/');
 
     // 文章md转html
     const str = res.data.text;
@@ -124,7 +124,7 @@ watch(() => blogTitle.value, () => {
   setMeta();
 })
 
-function start(){
+function start() {
   getBlog();
   setUserInfo();
 }

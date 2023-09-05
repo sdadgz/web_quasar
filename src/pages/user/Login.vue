@@ -93,6 +93,7 @@ import {api} from "../../boot/axios";
 import {CommFail, CommSuccess} from "../../components/notifyTools";
 import {useRouter} from "vue-router";
 import {TITLE, TRUE} from "../../components/StringTool";
+import {ServerName} from "../../components/models";
 
 const $q = useQuasar();
 const $router = useRouter();
@@ -203,7 +204,7 @@ function handlerLogin() {
 function setUserInfo(data) {
   localStorage.setItem("token", data.token);
   localStorage.setItem("username", data.user.name);
-  localStorage.setItem("avatar", data.user.avatar);
+  localStorage.setItem("avatar", ServerName + data.user.avatar);
   $router.push("/");
 }
 
