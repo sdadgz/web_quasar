@@ -3,17 +3,25 @@
     <!--  主页  -->
     <q-btn
       flat class="barBtn a"
-      label="home"
+      label="主页"
       style="position: absolute;left: 5%"
       icon="home"
       to="/"
+    />
+
+    <!--  友链  -->
+    <q-btn
+      flat
+      class="barBtn a"
+      label="友链"
+      to="/friendLink"
     />
 
     <!--  去静态资源下载页  -->
     <q-btn
       flat
       class="barBtn a"
-      label="download"
+      label="下载"
       href="https://sdadgz.cn/download"
     />
 
@@ -21,7 +29,7 @@
     <q-btn
       flat
       class="barBtn a"
-      label="repository"
+      label="仓库"
       :to="(username === '未登录' ? '/repository/sdadgz' : `/repository/${username}`)"
     />
 

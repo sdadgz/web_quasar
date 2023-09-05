@@ -37,6 +37,13 @@ const routes: RouteRecordRaw[] = [
       {path: '', component: () => import('pages/CMS/views.vue')}
     ],
   },
+  {
+    path: '/friendLink',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {path: '', component: () => import('pages/FriendLinkPage.vue')}
+    ],
+  },
 
   // Always leave this as last one,
   // but you can also remove it
