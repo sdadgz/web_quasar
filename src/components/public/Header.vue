@@ -95,10 +95,10 @@ import {random} from "../MathTool.js";
 import {ServerName} from "components/models";
 
 // 去静态资源下载页
-function gotoDownload() {
-  // dom
-  window.location.href = '/download';
-}
+// function gotoDownload() {
+//   // dom
+//   window.location.href = '/download';
+// }
 
 const props = defineProps(['closeBanner']);
 const showBanner = ref(!props.closeBanner);
@@ -116,13 +116,13 @@ start();
 setUrl();
 
 // 去私人仓库
-function gotoRepository() {
-  if (username.value !== "未登录") {
-    $router.push("/repository/" + username.value);
-  } else {
-    $router.push("/repository/sdadgz");
-  }
-}
+// function gotoRepository() {
+//   if (username.value !== "未登录") {
+//     $router.push("/repository/" + username.value);
+//   } else {
+//     $router.push("/repository/sdadgz");
+//   }
+// }
 
 // 获取banner
 async function getBanner() {
@@ -165,9 +165,9 @@ function gotoUser() {
 }
 
 // 欢迎回家
-function goHome() {
-  $router.push("/");
-}
+// function goHome() {
+//   $router.push("/");
+// }
 
 // 初始化
 function start() {

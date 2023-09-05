@@ -1,5 +1,5 @@
 <template>
-  <q-img :src="backgroundImg" style="width: 101%;height: 101%;position: fixed;z-index: -1"/>
+  <q-img :src="backgroundImg" style="width: 101%;height: 101%;position: fixed;z-index: -1;filter: blur(10px)"/>
 </template>
 
 <script setup>
