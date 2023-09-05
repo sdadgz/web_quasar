@@ -7,15 +7,15 @@
     <!--  杂物  -->
     <div class="row q-gutter-md q-pa-sm">
       <!--   ip   -->
-      <q-card class="col-auto" style="background-color: rgba(250,160,160,0.34)">
-        <q-card-section>
-          <strong>不用说话，点一下知道你是哪里人，猜对了v我8w</strong>
-        </q-card-section>
-        <q-separator/>
-        <q-card-section>
-          <q-btn label="点我开始测试" color="primary" @click="ipHandler"/>
-        </q-card-section>
-      </q-card>
+<!--      <q-card class="col-auto" style="background-color: rgba(250,160,160,0.34)">-->
+<!--        <q-card-section>-->
+<!--          <strong>不用说话，点一下知道你是哪里人，猜对了v我8w</strong>-->
+<!--        </q-card-section>-->
+<!--        <q-separator/>-->
+<!--        <q-card-section>-->
+<!--          <q-btn label="点我开始测试" color="primary" @click="ipHandler"/>-->
+<!--        </q-card-section>-->
+<!--      </q-card>-->
 
       <!--   114514   -->
       <q-card class="col-auto" style="background-color: rgba(250,160,160,0.34)">
