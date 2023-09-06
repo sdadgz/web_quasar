@@ -9,6 +9,14 @@
       to="/"
     />
 
+    <!--  小玩具  -->
+    <q-btn
+      flat
+      class="barBtn a"
+      label="小玩具"
+      to="/toy"
+    />
+
     <!--  友链  -->
     <q-btn
       flat
