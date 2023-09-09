@@ -209,11 +209,13 @@
                     />
                   </q-card-section>
 
+                  <!--         上传器         -->
                   <q-card-section v-else>
                     <q-uploader
                       ref="imgUploader"
                       label="上传博客主页图片"
                       accept=".jpg, image/*"
+                      batch
                       hide-upload-btn
                       :factory="imgUploadFn"
                       @added="imgExists = true"
