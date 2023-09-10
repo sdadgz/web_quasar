@@ -634,7 +634,7 @@ import {useRouter} from "vue-router";
 import {BlogColumns, ImgColumns} from "../../components/user/Table";
 import {
   ImgsColumns, ImgSelectedStatus, ImgUnSelectedStatus,
-  ServerName,
+  BackendPrefix,
   TableLength,
   TableLengthImg,
   WaterFullOtherImg,
@@ -838,7 +838,7 @@ function mdsUploadFn(files) {
   const createTime = toLocalDatetime(lastModified / 1000);
   return new Promise(resolve => {
     resolve({
-      "url": ServerName + mdsUploadUrl.value,
+      "url": BackendPrefix + mdsUploadUrl.value,
       "fieldName": "files",
       formFields: [
         {
@@ -988,8 +988,8 @@ async function loadImg() {
 
       // url改造
       for (let item of res.data.lists) {
-        item.url = ServerName + item.url;
-        item.reduceUrl && (item.reduceUrl = ServerName + item.reduceUrl);
+        item.url = BackendPrefix + item.url;
+        item.reduceUrl && (item.reduceUrl = BackendPrefix + item.reduceUrl);
       }
 
       // 分页
@@ -1465,7 +1465,7 @@ function imgUploadFn(files) {
   const createTime = toLocalDatetime(lastModified / 1000);
   return new Promise(resolve => {
     resolve({
-      "url": ServerName + imgUploadUrl.value,
+      "url": BackendPrefix + imgUploadUrl.value,
       "fieldName": "file",
       "formFields": [
         {
@@ -1491,7 +1491,7 @@ function imgUploadsFn(files) {
   const createTime = toLocalDatetime(lastModified / 1000);
   return new Promise(resolve => {
     resolve({
-      "url": ServerName + imgUploadsUrl.value,
+      "url": BackendPrefix + imgUploadsUrl.value,
       "fieldName": "files",
       "formFields": [
         {
@@ -1517,7 +1517,7 @@ function mdUploadFn(files) {
   const createTime = toLocalDatetime(lastModified / 1000);
   return new Promise(resolve => {
     resolve({
-      "url": ServerName + mdUploadUrl.value,
+      "url": BackendPrefix + mdUploadUrl.value,
       "fieldName": "file",
       "formFields": [
         {

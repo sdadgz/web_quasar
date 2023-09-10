@@ -122,7 +122,7 @@
 <script setup>
 
 // 批量提交工厂
-import {FILE_PAGE_SIZE, ServerName} from "../../components/models";
+import {FILE_PAGE_SIZE, BackendPrefix, DomainName} from "../../components/models";
 import {ref, watch} from "vue";
 import Header from "../../components/public/Header.vue";
 import {CommFail, CommSuccess} from "../../components/notifyTools";
@@ -139,7 +139,7 @@ const title = ref(TITLE);
 
 // 复制
 function copyUrlHandler(url) {
-  navigator.clipboard.writeText(url).then(() => {
+  navigator.clipboard.writeText(DomainName + url).then(() => {
     CommSuccess("复制成功");
   })
 }
@@ -230,7 +230,7 @@ async function onLoad(index, done) {
 
     // url改造
     for (let item of res.data.lists) {
-      item.url = ServerName + item.url;
+      item.url = BackendPrefix + item.url;
     }
 
     // 仍里头
@@ -246,7 +246,7 @@ async function onLoad(index, done) {
 function uploadFn() {
   return new Promise(resolve => {
     resolve({
-      "url": ServerName + uploadUrl.value,
+      "url": BackendPrefix + uploadUrl.value,
       "fieldName": "file",
       "headers": [{
         "name": "token",

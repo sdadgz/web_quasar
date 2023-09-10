@@ -1,6 +1,6 @@
 // 上传到服务器需要改的
-export const ServerName = '/springboot/8000';
-// export const ServerName = 'http://localhost:8000';
+export const BackendPrefix = '/springboot/8000';
+export const DomainName = "https://sdadgz.cn"
 
 // blogs页面分几列
 export const BlogsColumns = 4;

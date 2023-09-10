@@ -8,7 +8,7 @@ import {ref} from "vue";
 import {api} from "../../boot/axios";
 import {sleep} from "../Common.js";
 import {random} from "../MathTool.js";
-import {ServerName} from "../models";
+import {BackendPrefix} from "../models";
 
 const backgroundImg = ref("https://sdadgz.cn/download/img/1.png");
 
@@ -32,7 +32,7 @@ async function start() {
 
     // url改造
     for (let item of res.data) {
-      item.url = ServerName + item.url;
+      item.url = BackendPrefix + item.url;
     }
 
     imgArr.value = res.data;

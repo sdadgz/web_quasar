@@ -2,7 +2,7 @@ import {boot} from 'quasar/wrappers';
 import axios, {AxiosInstance} from 'axios';
 import {CommFail} from "components/notifyTools";
 import {useRouter} from "vue-router";
-import {ServerName} from "components/models";
+import {BackendPrefix} from "components/models";
 
 declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
@@ -32,7 +32,7 @@ declare module "axios" {
 // good idea to move this instance creation inside of the
 // "export default () => {}" function below (which runs individually
 // for each client)
-const api = axios.create({baseURL: ServerName});
+const api = axios.create({baseURL: BackendPrefix});
 
 export default boot(({app}) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api

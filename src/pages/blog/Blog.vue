@@ -34,7 +34,7 @@ import '@kangc/v-md-editor/lib/style/preview.css';
 import githubTheme from '@kangc/v-md-editor/lib/theme/github.js';
 import '@kangc/v-md-editor/lib/theme/style/github.css';
 import hljs from 'highlight.js';
-import {ServerName} from "../../components/models";
+import {BackendPrefix} from "../../components/models";
 
 VMdPreview.use(githubTheme, {
   Hljs: hljs,
@@ -74,12 +74,12 @@ function getBlog() {
     username.value = apiUsername;
 
     // v-md-editor md内容
-    blogText.value = res.data.text.replaceAll('/static/', ServerName + '/static/');
+    blogText.value = res.data.text.replaceAll('/static/', BackendPrefix + '/static/');
 
     // 文章md转html
     const str = res.data.text;
     textArr.value = str.split("\n");
-    blogBanner.value = ServerName + res.data.img.url;
+    blogBanner.value = BackendPrefix + res.data.img.url;
     blogTitle.value = res.data.title;
     blogTextShow.value = true;
   }).catch(() => {
