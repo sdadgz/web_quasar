@@ -4,63 +4,6 @@
     <!--  头  -->
     <Header/>
 
-    <!--  杂物  -->
-<!--    <div class="row q-gutter-md q-pa-sm">-->
-<!--      &lt;!&ndash;   ip   &ndash;&gt;-->
-<!--&lt;!&ndash;      <q-card class="col-auto" style="background-color: rgba(250,160,160,0.34)">&ndash;&gt;-->
-<!--&lt;!&ndash;        <q-card-section>&ndash;&gt;-->
-<!--&lt;!&ndash;          <strong>不用说话，点一下知道你是哪里人，猜对了v我8w</strong>&ndash;&gt;-->
-<!--&lt;!&ndash;        </q-card-section>&ndash;&gt;-->
-<!--&lt;!&ndash;        <q-separator/>&ndash;&gt;-->
-<!--&lt;!&ndash;        <q-card-section>&ndash;&gt;-->
-<!--&lt;!&ndash;          <q-btn label="点我开始测试" color="primary" @click="ipHandler"/>&ndash;&gt;-->
-<!--&lt;!&ndash;        </q-card-section>&ndash;&gt;-->
-<!--&lt;!&ndash;      </q-card>&ndash;&gt;-->
-
-<!--      &lt;!&ndash;   114514   &ndash;&gt;-->
-<!--      <q-card class="col-auto" style="background-color: rgba(250,160,160,0.34)">-->
-<!--        <q-card-section>-->
-<!--          <strong>小玩具，要不试试输个数字呗</strong>-->
-<!--        </q-card-section>-->
-<!--        <q-separator/>-->
-<!--        <q-card-section>-->
-<!--          <q-input-->
-<!--            v-model="input_114514"-->
-<!--            type="number"-->
-<!--            lazy-rules-->
-<!--            :rules="notNull"-->
-<!--            label="这里这里"-->
-<!--            @keyup.enter="handler_114514"-->
-<!--          />-->
-<!--        </q-card-section>-->
-<!--        <q-card-section>-->
-<!--          <strong style="word-break: break-word">{{ text_114514 }}</strong>-->
-<!--        </q-card-section>-->
-<!--        <q-card-section>-->
-<!--          <q-btn-->
-<!--            label="这个不是按钮"-->
-<!--            color="primary"-->
-<!--            @click="handler_114514"-->
-<!--          />-->
-<!--        </q-card-section>-->
-<!--      </q-card>-->
-
-<!--      &lt;!&ndash;   打死后端    &ndash;&gt;-->
-<!--      <q-card class="col-auto" style="background-color: rgba(250,160,160,0.34)">-->
-<!--        <q-card-section>-->
-<!--          <strong>点我打死后端</strong>-->
-<!--        </q-card-section>-->
-<!--        <q-separator/>-->
-<!--        <q-card-section>-->
-<!--          <q-btn-->
-<!--            label="别点，球球了"-->
-<!--            color="red"-->
-<!--            @click="shutdown"-->
-<!--          />-->
-<!--        </q-card-section>-->
-<!--      </q-card>-->
-<!--    </div>-->
-
     <!--  电脑独享博客  -->
     <q-infinite-scroll
       class="desktop-only"
@@ -182,7 +125,7 @@ const $router = useRouter();
 // banner
 const backgroundImg = ref("https://sdadgz.cn/download/img/1.png");
 
-const blogs = ref([]);
+const blogs = ref(new Array(BlogsColumns));
 const username = ref(DEFAULT_USERNAME);
 
 // 博客分页
@@ -236,15 +179,15 @@ function turnOff() {
 }
 
 // 瀑布流数数的那个
-const numArr = ref([]);
+const numArr = ref(Array(BlogsColumns).fill(0));
 
 // 初始化blogs
 function initBlogs() {
   // 初始化blogs
-  blogs.value = new Array(BlogsColumns);
+  // blogs.value = new Array(BlogsColumns);
   // 初始化瀑布流控制数组
-  numArr.value = new Array(BlogsColumns);
-  numArr.value.fill(0);
+  // numArr.value = new Array(BlogsColumns);
+  // numArr.value.fill(0);
   // 无限滚动
   disable.value = false;
 }
