@@ -8,7 +8,7 @@ import {ref} from "vue";
 import {sleep} from "../Common.js";
 import {random} from "../MathTool.js";
 import {BackendPrefix} from "../models";
-import {getBannerByUsername} from "../../api/img";
+import {getBackgroundByUsername, getBannerByUsername} from "../../api/img";
 
 const backgroundImg = ref("https://sdadgz.cn/download/img/1.png");
 
@@ -28,7 +28,7 @@ async function start() {
     urlUserName = 'sdadgz';
   }
   // 获取banner
-  await getBannerByUsername(urlUserName).then(res => {
+  await getBackgroundByUsername(urlUserName).then(res => {
 
     // url改造
     for (let item of res.data) {

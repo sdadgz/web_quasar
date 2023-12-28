@@ -1,7 +1,10 @@
 import {api} from "boot/axios";
 
 // 获取banner
-export const getBannerByUsername = (username) => api.get("/img/" + username + "/background")
+export const getBannerByUsername = (username) => api.get("/img/" + username + "/banner")
+
+// 获取banner
+export const getBackgroundByUsername = (username) => api.get("/img/" + username + "/background")
 
 // 获取图片分页
 export const getImgByPage = (username, currentPage, pageSize) => api.get("/img/" + username + "/page", {
