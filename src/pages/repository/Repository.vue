@@ -130,7 +130,7 @@ import {useRoute, useRouter} from "vue-router";
 import {setTime} from "../../components/TimeUtil";
 import {TITLE} from "../../components/StringTool";
 import {useMeta} from "quasar";
-import {deleteFileById, getFileByUsername, updateFile} from "../../api/file";
+import {deleteFileById, getFileByUsername, updateFileById} from "../../api/file";
 
 const $router = useRouter();
 const $route = useRoute();
@@ -174,7 +174,7 @@ function downloadHandler(file) {
 
 // 恢复文件
 async function reHandler(file) {
-  await updateFile(file.id).then(res => {
+  await updateFileById(file.id).then(res => {
     CommSuccess("修改成功");
   }).catch(res => {
     CommFail("修改失败");
