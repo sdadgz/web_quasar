@@ -3,7 +3,7 @@ export const EMPTY_STRING = '';
 export const SPLIT = ' ';
 export const ZERO = 0;
 
-export const TITLE = "优菈天下第一";
+export const TITLE = "个人学习日志";
 
 export const DEFAULT_USERNAME = 'sdadgz';
 
