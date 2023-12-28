@@ -55,7 +55,7 @@
           <q-btn
             label="别点，球球了"
             color="red"
-            @click="shutdown"
+            @click="userShutdown"
           />
         </q-card-section>
       </q-card>
@@ -66,13 +66,14 @@
 
 <script setup>
 import Header from "../components/public/Header.vue";
-import {api} from "../boot/axios";
 import {ref} from "vue";
 import {isInteger, notNull} from "../components/Tools";
+import {userShutdown} from "../api/user";
+import {toy114514} from "../api/toy";
 
 // 关机
 function shutdown() {
-  api.get('/user/shutdown');
+  userShutdown();
 }
 
 // 114514输入框
@@ -84,12 +85,7 @@ const text_114514 = ref("欸嘿");
 function handler_114514() {
   text_114514.value = "加载中。。。";
   if (isInteger(input_114514.value)) {
-    api.get('/toy/114514', {
-      params: {
-        src: input_114514.value,
-        target_114514: target_114514.value
-      }
-    }).then(res => {
+    toy114514(input_114514, target_114514).then(res => {
       text_114514.value = res.data;
     })
   }

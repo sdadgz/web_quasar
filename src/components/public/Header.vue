@@ -97,10 +97,10 @@
 
 import {ref} from "vue";
 import {useRouter} from "vue-router";
-import {api} from "../../boot/axios";
 import {sleep} from "../Common.js";
 import {random} from "../MathTool.js";
 import {BackendPrefix} from "components/models";
+import {getBannerByUsername} from "src/api/img";
 
 // 去静态资源下载页
 // function gotoDownload() {
@@ -140,7 +140,7 @@ async function getBanner() {
     urlUserName = 'sdadgz';
   }
   // 获取banner
-  await api.get("/img/" + urlUserName + "/banner").then(res => {
+  await getBannerByUsername(urlUserName).then(res => {
 
     // url改造
     for (let item of res.data) {

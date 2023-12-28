@@ -629,7 +629,6 @@ import {
   LoadingNotify,
   LoadingSucceed
 } from "../../components/notifyTools";
-import {api} from "../../boot/axios";
 import {useRouter} from "vue-router";
 import {BlogColumns, ImgColumns} from "../../components/user/Table";
 import {
@@ -648,6 +647,9 @@ import {sleep} from "../../components/Common";
 import {EMPTY_STRING, TITLE} from "../../components/StringTool";
 import {toLocalDatetime} from "../../components/TimeUtil";
 import {apiThen} from "../../components/Tools";
+import {updateAvatar, userPassword} from "../../api/user";
+import {deleteBlogByIdList, getBlogByPage, updateBlog} from "../../api/blog";
+import {deleteImgById, getImgByPage, updateImgField} from "../../api/img";
 
 // 上传头像弹窗
 const uploadAvatarDialog = ref(false);
@@ -681,11 +683,7 @@ const conform = ref(EMPTY_STRING);
 
 // 修改密码
 function updatePasswordHandler() {
-  apiThen(api.put('/user/password', {
-    username: username.value,
-    oldPassword: oldPassword.value,
-    newPassword: newPassword.value
-  })).then(res => {
+  apiThen(userPassword(username.value, oldPassword.value, newPassword.value)).then(res => {
     localStorage.clear();
     $router.push('/user/login');
   })
@@ -910,12 +908,7 @@ async function loadBlogs() {
     return;
   }
 
-  await api.get("/blog/" + username + "/page", {
-    params: {
-      "currentPage": currentPage.value,
-      "pageSize": pageSize.value
-    }
-  }).then(res => {
+  await getBlogByPage(username, currentPage.value, pageSize.value).then(res => {
     if (res.code === "200") {
       rows.value = [];
       blogs.value = res.data.lists;
@@ -977,12 +970,7 @@ async function loadImg() {
     return;
   }
 
-  await api.get("/img/" + username + "/page", {
-    params: {
-      "currentPage": currentPageImg.value,
-      "pageSize": pageSizeImg.value
-    }
-  }).then(res => {
+  await getImgByPage(username, currentPageImg.value, pageSizeImg.value).then(res => {
     if (res.code === "200") {
       imgData = res.data.lists; // 获取imgs数据
 
@@ -1211,11 +1199,7 @@ function deleteBtn() {
             idlist.push(blog.id);
           })
           // 删除用户
-          api.delete("/blog", {
-            data: {
-              "idList": idlist
-            }
-          }).then(() => {
+          deleteBlogByIdList(idlist).then(() => {
             selected.value = [];
             loadBlogs();
           })
@@ -1240,11 +1224,7 @@ function deleteBtnImg() {
         label: '确定', color: 'yellow', handler: () => {
           const id = rightClickItem.value.id;
           // 删除图片
-          api.delete("/img", {
-            data: {
-              "id": id
-            }
-          }).then(() => {
+          deleteImgById(id).then(() => {
             CommSuccess("删除成功");
           }).catch(() => {
             CommFail("删除失败");
@@ -1277,11 +1257,7 @@ function deleteBtnImgs() {
 
           selectedImgs.value.forEach((item) => {
             // 删除图片
-            api.delete("/img", {
-              data: {
-                "id": item.id
-              }
-            }).then(() => {
+            deleteImgById(item.id).then(() => {
               CommSuccess("删除成功");
             }).catch(() => {
               CommFail("删除失败");
@@ -1357,12 +1333,7 @@ async function submit() {
     }
     await loadBlogs();
   } else if (dialogText.value === '修改') {
-    await api.post("/blog/update", {
-      "id": blogId.value,
-      "imgId": imgInfo.value,
-      "title": titleInfo.value,
-      "detail": detailInfo.value
-    }).then(res => {
+    await updateBlog(blogId.value, imgInfo.value, titleInfo.value, detailInfo.value).then(res => {
       // 处理结果
       CommSuccess("修改成功");
     }).catch(() => {
@@ -1422,19 +1393,12 @@ async function submitImg() {
 
 // 上传头像
 async function uploadAvatarHandler() {
-  await apiThen(api.put('/user/avatar', null, {
-    params: {
-      imgId: imgInfo.value
-    }
-  }))
+  await apiThen(updateAvatar(imgInfo.value))
 }
 
 // 修改图片
 function updateImg(id, f) {
-  api.put("/img/update", {
-    "idList": [id],
-    "field": f
-  }).then(() => {
+  updateImgField([id], f).then(() => {
     CommSuccess("修改成功");
   }).catch(() => {
     CommFail("修改失败");
@@ -1446,10 +1410,7 @@ function updateImg(id, f) {
 
 // 修改图片s
 function updateImgs(idList, f) {
-  api.put("/img/update", {
-    "idList": idList,
-    "field": f
-  }).then(() => {
+  updateImgField(idList, f).then(() => {
     CommSuccess("修改成功");
   }).catch(() => {
     CommFail("修改失败");

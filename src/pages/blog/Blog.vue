@@ -17,15 +17,9 @@
 
 <script setup>
 
-import {onMounted, ref, watch} from "vue";
-import LeftIndex from "../../components/blog/LeftIndex.vue";
-import BlogContent from "../../components/blog/BlogContent.vue";
+import {ref, watch} from "vue";
 import {useRouter} from "vue-router";
-import {api} from "../../boot/axios";
 import {LoadingFail, LoadingNotify, LoadingSucceed} from "../../components/notifyTools";
-import Special from "../../components/blog/Special.vue";
-import Table from "../../components/blog/Table.vue";
-import BackgroundImg from "../../components/public/BackgroundImg.vue";
 import {useMeta} from "quasar";
 import Header from "../../components/public/Header.vue";
 import {createApp} from 'vue';
@@ -35,6 +29,7 @@ import githubTheme from '@kangc/v-md-editor/lib/theme/github.js';
 import '@kangc/v-md-editor/lib/theme/style/github.css';
 import hljs from 'highlight.js';
 import {BackendPrefix} from "../../components/models";
+import {getBlogDetail} from "../../api/blog";
 
 VMdPreview.use(githubTheme, {
   Hljs: hljs,
@@ -68,7 +63,7 @@ function getBlog() {
   // 获取url参数
   const apiUsername = $router.currentRoute.value.params.username;
   const title = $router.currentRoute.value.params.title;
-  api.get("/blog/" + apiUsername + "/blog/" + title).then(res => {
+  getBlogDetail(apiUsername, title).then(res => {
     LoadingSucceed(not);
     // 名字
     username.value = apiUsername;

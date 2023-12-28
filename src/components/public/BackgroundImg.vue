@@ -5,10 +5,10 @@
 <script setup>
 
 import {ref} from "vue";
-import {api} from "../../boot/axios";
 import {sleep} from "../Common.js";
 import {random} from "../MathTool.js";
 import {BackendPrefix} from "../models";
+import {getBannerByUsername} from "../../api/img";
 
 const backgroundImg = ref("https://sdadgz.cn/download/img/1.png");
 
@@ -28,7 +28,7 @@ async function start() {
     urlUserName = 'sdadgz';
   }
   // 获取banner
-  await api.get("/img/" + urlUserName + "/background").then(res => {
+  await getBannerByUsername(urlUserName).then(res => {
 
     // url改造
     for (let item of res.data) {

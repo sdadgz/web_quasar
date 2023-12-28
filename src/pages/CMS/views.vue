@@ -73,11 +73,11 @@
 
 import Header from "components/public/Header.vue";
 import Ip from "components/cms/ip.vue";
-import {api} from "boot/axios";
 import {ref} from "vue";
 import {IP_LIST_MAX, REDIS_SPLIT, REGIONAL_ARR, ZERO} from "components/StringTool";
 import {getIp, getRegionalByIp, labelChildren, setChildren} from "components/Tools";
 import {sleep} from "components/Common";
+import {getIpToday} from "src/api/ip";
 
 const todayIpList = ref([]);
 const todayIpListMin = ref([] as any[]);
@@ -90,7 +90,7 @@ const todayHeadItem = ref([] as any[]);
 
 // 获取访问信息
 function getTodayIpList() {
-  api.get('/ip/today').then(res => {
+  getIpToday().then(res => {
     // 总数据
     setTodayIpList(res);
   }).then(() => {

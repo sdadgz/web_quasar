@@ -60,17 +60,20 @@ import BlogCard from "components/blog/BlogCard.vue";
 import {useRouter} from "vue-router";
 import Header from "components/public/Header.vue";
 import {checkPic} from "../../components/img/img.js";
-import {api} from "../../boot/axios";
 import {CommSuccess} from "../../components/notifyTools";
 import {BlogsColumns, BackendPrefix, WaterFullOther} from "../../components/models";
 import {DEFAULT_USERNAME, PAGE_SIZE, START_PAGE} from "../../components/StringTool";
 import {getRegionalByIp, isInteger, notNull} from "../../components/Tools";
+import {userShutdown} from "../../api/user";
+import {toy114514} from "../../api/toy";
+import {getIp} from "../../api/ip";
+import {getBlogs} from "../../api/blog";
 
 // 屎山太烂了，后期不可能维护了，直接重构吧
 
 // 关机
 function shutdown() {
-  api.get('/user/shutdown');
+  userShutdown();
 }
 
 // 114514输入框
@@ -82,12 +85,7 @@ const text_114514 = ref("欸嘿");
 function handler_114514() {
   text_114514.value = "加载中。。。";
   if (isInteger(input_114514.value)) {
-    api.get('/toy/114514', {
-      params: {
-        src: input_114514.value,
-        target_114514: target_114514.value
-      }
-    }).then(res => {
+    toy114514(input_114514, target_114514).then(res => {
       text_114514.value = res.data;
     })
   }
@@ -95,7 +93,7 @@ function handler_114514() {
 
 // 获取ip按钮
 function ipHandler() {
-  api.get('/ip').then(res => {
+  getIp().then(res => {
     const ip = res.data;
     getRegionalByIp(ip).then(res => {
       // 中国特殊
@@ -148,12 +146,7 @@ async function loadBlogs() {
   }
 
   // 获取数据
-  await api.get("/blog/" + username.value + "/blogs", {
-    params: {
-      currentPage: currentPage.value,
-      pageSize: pageSize.value
-    }
-  }).then(res => {
+  await getBlogs(username.value, currentPage.value, pageSize.value).then(res => {
     if (res && res.code === "200") {
       data = res.data.lists;
 

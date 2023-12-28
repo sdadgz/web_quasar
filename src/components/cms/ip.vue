@@ -5,9 +5,9 @@
 <script setup lang="ts">
 
 import {ref, watch} from "vue";
-import {EMPTY_STRING, REDIS_SPLIT} from "components/StringTool";
-import {api} from "boot/axios";
+import {EMPTY_STRING} from "components/StringTool";
 import {getIp} from "components/Tools";
+import {getInfoByIp} from "src/api/other";
 
 const props = defineProps(['ip', 'count']);
 
@@ -25,11 +25,7 @@ function getRealIp() {
 // 获取地区
 function getField(ip: string) {
   // 获取ip的地区，别处搞到的接口
-  api.get('https://ip.useragentinfo.com/json', {
-    params: {
-      ip: ip
-    }
-  }).then(res => {
+  getInfoByIp(ip).then(res => {
     const country = res.country;
     const province = res.province;
     let city = res.city;

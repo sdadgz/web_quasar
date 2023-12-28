@@ -29,9 +29,9 @@
 import BackgroundImg from "components/public/BackgroundImg.vue";
 import {useMeta} from "quasar";
 import {GENERAL_TIME, TITLE, TOKEN} from "../components/StringTool";
-import {api} from "../boot/axios";
 import {CommWarn} from "../components/notifyTools";
 import {getTimeNow, isTimeout} from "../components/TimeUtil";
+import {getUserToken} from "../api/user";
 
 useMeta({
   title: TITLE,
@@ -45,7 +45,7 @@ useMeta({
 
 // 更新token api
 function refreshTokenApi() {
-  api.get("/user/token").then(res => {
+  getUserToken().then(res => {
     if (res && res.code === "200") {
       const token = res.data;
       localStorage.setItem(TOKEN, token);

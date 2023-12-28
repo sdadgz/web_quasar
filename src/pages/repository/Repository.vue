@@ -127,10 +127,10 @@ import {ref, watch} from "vue";
 import Header from "../../components/public/Header.vue";
 import {CommFail, CommSuccess} from "../../components/notifyTools";
 import {useRoute, useRouter} from "vue-router";
-import {api} from "../../boot/axios";
 import {setTime} from "../../components/TimeUtil";
 import {TITLE} from "../../components/StringTool";
 import {useMeta} from "quasar";
+import {deleteFileById, getFileByUsername, updateFile} from "../../api/file";
 
 const $router = useRouter();
 const $route = useRoute();
@@ -174,10 +174,7 @@ function downloadHandler(file) {
 
 // 恢复文件
 async function reHandler(file) {
-  await api.put("/file/update", {
-    "id": file.id,
-    "isDelete": false
-  }).then(res => {
+  await updateFile(file.id).then(res => {
     CommSuccess("修改成功");
   }).catch(res => {
     CommFail("修改失败");
@@ -189,11 +186,7 @@ async function reHandler(file) {
 // 删除
 async function deleteHandler(file) {
 
-  await api.delete("/file", {
-    params: {
-      "id": file.id
-    }
-  }).then(res => {
+  await deleteFileById(file.id).then(res => {
     if (res.code === "200") {
       CommSuccess("删除成功");
     } else {
@@ -217,12 +210,7 @@ async function onLoad(index, done) {
     return;
   }
 
-  await api.get("/file/" + username.value  + "/page", {
-    params: {
-      "currentPage": index,
-      "pageSize": pageSize.value
-    }
-  }).then(res => {
+  await getFileByUsername(username.value, index, pageSize.value).then(res => {
 
     // 分页上限
     pageCount.value =

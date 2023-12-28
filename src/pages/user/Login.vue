@@ -89,11 +89,11 @@
 
 import {ref} from "vue";
 import {useMeta, useQuasar} from "quasar";
-import {api} from "../../boot/axios";
 import {CommFail, CommSuccess} from "../../components/notifyTools";
 import {useRouter} from "vue-router";
 import {TITLE, TRUE} from "../../components/StringTool";
 import {BackendPrefix} from "../../components/models";
+import {userInfo, userLogin, userRegister} from "../../api/user";
 
 const $q = useQuasar();
 const $router = useRouter();
@@ -186,10 +186,7 @@ function clearAll() {
 function handlerLogin() {
   localStorage.clear();
   if (second.value === '登录' && loginRule()) { // 登录
-    api.post("/user/login", {
-      "name": usernameR.value,
-      "password": passwordR.value
-    }).then(res => {
+    userLogin(usernameR.value, passwordR.value).then(res => {
       if (res.code === "200") {
         setUserInfo(res.data);
         CommSuccess("登录成功");
@@ -220,18 +217,11 @@ function regRule() {
 
 // 注册
 async function register(val) {
-  const nameE = await api.get("/user", {
-    params: {
-      "username": val
-    }
-  }).then(res => {
+  const nameE = await userInfo(val).then(res => {
     return res.data;
   });
   if (!nameE) {
-    await api.post("/user", {
-      "name": usernameR.value,
-      "password": passwordR.value
-    }).then(res => {
+    await userRegister(usernameR.value, passwordR.value).then(res => {
       setUserInfo(res.data);
       CommSuccess("注册成功");
     })
