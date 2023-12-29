@@ -74,7 +74,7 @@ function getBlog() {
     // 文章md转html
     const str = res.data.text;
     textArr.value = str.split("\n");
-    blogBanner.value = BackendPrefix + res.data.img.url;
+    blogBanner.value = BackendPrefix + res.data.imgUrl;
     blogTitle.value = res.data.title;
     blogTextShow.value = true;
   }).catch(() => {
