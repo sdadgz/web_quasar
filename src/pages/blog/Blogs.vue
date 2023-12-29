@@ -151,10 +151,10 @@ async function loadBlogs() {
       data = res.data.lists;
 
       // url改造
-      for (let item of res.data.lists) {
-        item.img.url.startsWith('http') || (item.img.url = BackendPrefix + item.img.url);
-        item.img.reduceUrl && (item.img.reduceUrl.startsWith('http') || (item.img.reduceUrl = BackendPrefix + item.img.reduceUrl))
-        item.user.avatar.startsWith('http') || (item.user.avatar = BackendPrefix + item.user.avatar);
+      for (let item of data) {
+        item.imgUrl.startsWith('http') || (item.imgUrl = BackendPrefix + item.imgUrl);
+        item.imgReduceUrl && (item.imgReduceUrl.startsWith('http') || (item.imgReduceUrl = BackendPrefix + item.imgReduceUrl))
+        item.userAvatar.startsWith('http') || (item.userAvatar = BackendPrefix + item.userAvatar);
       }
 
       if (data.length < 1) {
@@ -215,7 +215,7 @@ async function setBlogs(data) {
       }
     }
     // 设置url
-    let url = data[i].img.reduceUrl !== null ? data[i].img.reduceUrl : data[i].img.url;
+    let url = data[i].imgReduceUrl !== null ? data[i].imgReduceUrl : data[i].imgUrl;
     // 最小索引增加图片
     let add = await checkPic(url);
     // while (add === undefined && url || add === 0) {

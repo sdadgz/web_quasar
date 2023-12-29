@@ -648,7 +648,7 @@ import {EMPTY_STRING, TITLE} from "../../components/StringTool";
 import {toLocalDatetime} from "../../components/TimeUtil";
 import {apiThen} from "../../components/Tools";
 import {updateAvatar, userPassword} from "../../api/user";
-import {deleteBlogByIdList, getBlogByPage, updateBlog} from "../../api/blog";
+import {deleteBlogByIdList, getBlogs, updateBlog} from "../../api/blog";
 import {deleteImgById, getImgByPage, updateImgField} from "../../api/img";
 
 // 上传头像弹窗
@@ -908,7 +908,7 @@ async function loadBlogs() {
     return;
   }
 
-  await getBlogByPage(username, currentPage.value, pageSize.value).then(res => {
+  await getBlogs(username, currentPage.value, pageSize.value).then(res => {
     if (res.code === "200") {
       rows.value = [];
       blogs.value = res.data.lists;

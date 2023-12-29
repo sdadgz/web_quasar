@@ -11,14 +11,6 @@ export const getBlogs = (username, currentPage, pageSize) => api.get("/blog/" + 
   }
 });
 
-// 获取博客分页
-export const getBlogByPage = (username, currentPage, pageSize) => api.get("/blog/" + username + "/page", {
-  params: {
-    currentPage,
-    pageSize,
-  }
-})
-
 // 删除博客
 export const deleteBlogByIdList = (idList) => api.delete("/blog", {
   data: {

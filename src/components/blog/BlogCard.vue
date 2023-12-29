@@ -10,9 +10,9 @@
 
         <!--   图片   -->
         <q-card class="blog-img" @mouseover="onImg" @mouseout="outImg">
-          <div class="img-to-big" v-if="blog.img != null">
-            <q-img v-if="blog.img.reduceUrl != null" :src="blog.img.reduceUrl"/>
-            <q-img v-else-if="blog.img.url != null" :src="blog.img.url"/>
+          <div class="img-to-big">
+            <q-img v-if="blog.imgReduceUrl != null" :src="blog.imgReduceUrl"/>
+            <q-img v-else-if="blog.imgUrl != null" :src="blog.imgUrl"/>
             <div class="info-to-small" :class="{canSee: imgMagnify}">
               {{ blog.detail }}
             </div>
@@ -21,7 +21,7 @@
 
         <!--    落款    -->
         <q-card-section>
-          <div class="text-h6">{{ blog.user.name }}</div>
+          <div class="text-h6">{{ blog.userName }}</div>
           <div class="text-h6">{{ blog.createTime }}</div>
         </q-card-section>
       </q-card>
@@ -40,7 +40,7 @@ const props = defineProps(['blog', 'backgroundImg']);
 const imgMagnify = ref(false);
 
 function toBlog() {
-  const username = props.blog.user.name;
+  const username = props.blog.userName;
   const title = props.blog.title;
   $router.push("/blog/" + username + "/blog/" + title);
 }
